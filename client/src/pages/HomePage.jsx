@@ -354,7 +354,62 @@ const HomePage = () => {
   const [navOpen, setNavOpen] = useState(false);
 
   return (
-    <div className="min-h-screen w-full bg-[#0A0908] text-[#F5EFE0] font-sans">
+    <div className="min-h-screen w-full bg-[#0A0908] text-[#F5EFE0] font-sans relative overflow-x-hidden">
+      {/* Golden Dim Background Net/Mesh */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        {/* Main golden glow */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(201,162,75,0.06)_0%,_transparent_70%)]" />
+        
+        {/* Grid pattern overlay */}
+        <div 
+          className="absolute inset-0 opacity-[0.08]"
+          style={{
+            backgroundImage: `
+              linear-gradient(rgba(201,162,75,0.3) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(201,162,75,0.3) 1px, transparent 1px)
+            `,
+            backgroundSize: '60px 60px',
+          }}
+        />
+        
+        {/* Diagonal lines pattern */}
+        <div 
+          className="absolute inset-0 opacity-[0.05]"
+          style={{
+            backgroundImage: `
+              repeating-linear-gradient(
+                45deg,
+                rgba(201,162,75,0.4) 0px,
+                rgba(201,162,75,0.4) 1px,
+                transparent 1px,
+                transparent 20px
+              ),
+              repeating-linear-gradient(
+                -45deg,
+                rgba(201,162,75,0.4) 0px,
+                rgba(201,162,75,0.4) 1px,
+                transparent 1px,
+                transparent 20px
+              )
+            `,
+          }}
+        />
+
+        {/* Subtle golden dots pattern */}
+        <div 
+          className="absolute inset-0 opacity-[0.06]"
+          style={{
+            backgroundImage: 'radial-gradient(rgba(201,162,75,0.6) 1px, transparent 1px)',
+            backgroundSize: '40px 40px',
+          }}
+        />
+
+        {/* Floating golden orbs */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-[#C9A24B]/5 blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/3 right-1/4 w-80 h-80 rounded-full bg-[#C9A24B]/5 blur-3xl animate-pulse delay-1000" />
+        <div className="absolute top-2/3 left-1/2 w-64 h-64 rounded-full bg-[#C9A24B]/5 blur-3xl animate-pulse delay-2000" />
+      </div>
+
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
         .font-display { font-family: 'Fraunces', serif; }
@@ -433,7 +488,7 @@ const HomePage = () => {
       </header>
 
       {/* -------------------------------------------------- Hero */}
-      <section className="relative overflow-hidden px-6 pb-20 pt-16 md:pb-28 md:pt-24">
+      <section className="relative z-10 overflow-hidden px-6 pb-20 pt-16 md:pb-28 md:pt-24">
         <div className="pointer-events-none absolute -top-40 left-1/2 h-[560px] w-[900px] -translate-x-1/2 rounded-full bg-[#C9A24B]/20 blur-3xl" />
         <div className="mx-auto grid max-w-7xl items-center gap-14 md:grid-cols-2">
           <div>
@@ -520,7 +575,7 @@ const HomePage = () => {
       </section>
 
       {/* -------------------------------------------------- Ledger */}
-      <section className="px-6 py-16 md:py-24">
+      <section className="relative z-10 px-6 py-16 md:py-24">
         <div className="mx-auto max-w-7xl">
           <Reveal className="mx-auto mb-10 max-w-2xl text-center">
             <p className="text-xs uppercase tracking-[0.25em] text-[#C9A24B]">
@@ -541,7 +596,7 @@ const HomePage = () => {
       </section>
 
       {/* -------------------------------------------------- How it works */}
-      <section id="how" className="px-6 py-16 md:py-24">
+      <section id="how" className="relative z-10 px-6 py-16 md:py-24">
         <div className="mx-auto max-w-7xl">
           <Reveal className="mb-14 max-w-xl">
             <p className="text-xs uppercase tracking-[0.25em] text-[#C9A24B]">
@@ -571,7 +626,7 @@ const HomePage = () => {
       </section>
 
       {/* -------------------------------------------------- Countries */}
-      <section id="countries" className="px-6 py-16 md:py-24">
+      <section id="countries" className="relative z-10 px-6 py-16 md:py-24">
         <div className="mx-auto max-w-7xl">
           <Reveal className="mb-10 flex flex-wrap items-end justify-between gap-4">
             <div>
@@ -599,7 +654,7 @@ const HomePage = () => {
       </section>
 
       {/* -------------------------------------------------- Features */}
-      <section id="features" className="px-6 py-16 md:py-24">
+      <section id="features" className="relative z-10 px-6 py-16 md:py-24">
         <div className="mx-auto max-w-7xl">
           <Reveal className="mb-14 max-w-xl">
             <p className="text-xs uppercase tracking-[0.25em] text-[#C9A24B]">
@@ -631,7 +686,7 @@ const HomePage = () => {
       </section>
 
       {/* -------------------------------------------------- CTA */}
-      <section className="px-6 py-16 md:py-24">
+      <section className="relative z-10 px-6 py-16 md:py-24">
         <Reveal className="relative mx-auto max-w-5xl overflow-hidden rounded-3xl border border-[#C9A24B]/30 bg-[#131110] px-8 py-14 text-center md:py-20">
           <div className="pointer-events-none absolute -top-24 left-1/2 h-64 w-[600px] -translate-x-1/2 rounded-full bg-[#C9A24B]/25 blur-3xl" />
           <h2 className="relative font-display text-3xl md:text-5xl">
@@ -652,7 +707,7 @@ const HomePage = () => {
       </section>
 
       {/* -------------------------------------------------- Footer */}
-      <footer className="border-t border-[#C9A24B]/15 px-6 py-12">
+      <footer className="relative z-10 border-t border-[#C9A24B]/15 px-6 py-12">
         <div className="mx-auto flex max-w-7xl flex-col gap-8 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-2">
             <div
