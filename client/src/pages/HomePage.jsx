@@ -1,67 +1,793 @@
-// src/App.jsx
-import React, { useRef, useEffect } from 'react';
-import Navbar from '../components/Navbar';
-import Hero from '../components/Hero';
-import About from '../components/About';
-import Services from '../components/Services';
-import ThreeSection from '../components/ThreeSection';
-import WhyUs from '../components/WhyUs';
-import Testimonials from '../components/Testimonials';
-import Contact from '../components/Contact';
-import Footer from '../components/Footer';
-import { motion } from 'framer-motion';
-import FloatingChat from '../components/FloatingChat';
+import React, { useEffect, useRef, useState } from "react";
+import {
+  motion,
+  useMotionValue,
+  useTransform,
+  AnimatePresence,
+} from "framer-motion";
+import {
+  Shield,
+  Zap,
+  Globe2,
+  Code2,
+  Clock,
+  Lock,
+  CheckCircle2,
+  ChevronRight,
+  ArrowRight,
+  Menu,
+  X,
+  PhoneCall,
+  KeyRound,
+  Radio,
+} from "lucide-react";
 
-function App() {
-  // Add smooth scroll behavior for anchor links
+import { Link } from "react-router-dom";
+
+/* ------------------------------------------------------------------ */
+/*  Data                                                               */
+/* ------------------------------------------------------------------ */
+
+const COUNTRIES = [
+  { flag: "🇺🇸", name: "United States", dial: "+1", price: "₦3500" },
+  { flag: "🇬🇧", name: "United Kingdom", dial: "+44", price: "₦2020" },
+  { flag: "🇳🇬", name: "Nigeria", dial: "+234", price: "₦2800" },
+  { flag: "🇩🇪", name: "Germany", dial: "+49", price: "₦4050" },
+  { flag: "🇮🇳", name: "India", dial: "+91", price: "₦1990" },
+  { flag: "🇧🇷", name: "Brazil", dial: "+55", price: "₦3210" },
+  { flag: "🇯🇵", name: "Japan", dial: "+81", price: "₦2520" },
+  { flag: "🇿🇦", name: "South Africa", dial: "+27", price: "₦1330" },
+];
+
+const LEDGER = [
+  { flag: "🇺🇸", country: "United States", number: "+1 202 •••• 91" },
+  { flag: "🇬🇧", country: "United Kingdom", number: "+44 7700 •••• 12" },
+  { flag: "🇳🇬", country: "Nigeria", number: "+234 803 •••• 44" },
+  { flag: "🇮🇳", country: "India", number: "+91 98100 ••••5" },
+  { flag: "🇩🇪", country: "Germany", number: "+49 152 •••• 03" },
+  { flag: "🇧🇷", country: "Brazil", number: "+55 11 9•••• 82" },
+  { flag: "🇯🇵", country: "Japan", number: "+81 90 •••• 67" },
+  { flag: "🇿🇦", country: "South Africa", number: "+27 71 •••• 29" },
+];
+
+const STEPS = [
+  {
+    n: "01",
+    title: "Pick a country",
+    body: "Browse 150+ countries by coverage, delivery speed and price. Stock updates in real time.",
+    icon: Globe2,
+  },
+  {
+    n: "02",
+    title: "Get a number instantly",
+    body: "Numbers are issued in seconds, no paperwork. Use it for one verification or keep it on lease.",
+    icon: PhoneCall,
+  },
+  {
+    n: "03",
+    title: "Receive the code",
+    body: "Codes land in your dashboard or via API, usually in under ten seconds, with delivery receipts.",
+    icon: KeyRound,
+  },
+];
+
+const FEATURES = [
+  {
+    icon: Zap,
+    title: "Sub-10s delivery",
+    body: "Codes are routed over redundant carrier links, so verification rarely waits.",
+  },
+  {
+    icon: Shield,
+    title: "Carrier-verified lines",
+    body: "Every number is sourced from licensed carriers, not spoofed or recycled ranges.",
+  },
+  {
+    icon: Globe2,
+    title: "150+ countries",
+    body: "From major markets to long-tail regions, with live stock so you never buy dead numbers.",
+  },
+  {
+    icon: Lock,
+    title: "Private by default",
+    body: "Numbers are never reused across two active verifications on our side.",
+  },
+  {
+    icon: Clock,
+    title: "24/7 delivery desk",
+    body: "A human reviews stuck deliveries around the clock, not just business hours.",
+  },
+];
+
+/* ------------------------------------------------------------------ */
+/*  Small building blocks                                              */
+/* ------------------------------------------------------------------ */
+
+function DigitSlot({ target, delay }) {
+  const [display, setDisplay] = useState("0");
+
   useEffect(() => {
-    const handleAnchorClick = (e) => {
-      const target = e.target.closest('a');
-      if (target && target.hash) {
-        const hash = target.hash;
-        if (hash === '#home' || hash === '#about' || hash === '#services' || hash === '#contact') {
-          e.preventDefault();
-          const element = document.querySelector(hash);
-          if (element) {
-            element.scrollIntoView({ behavior: 'smooth' });
-            // Update URL without jumping
-            window.history.pushState(null, null, hash);
-          }
-        }
+    let n = 0;
+    const id = setInterval(() => {
+      n += 1;
+      if (n > 9) {
+        setDisplay(target);
+        clearInterval(id);
+        return;
       }
-    };
-
-    document.addEventListener('click', handleAnchorClick);
-    
-    // Handle initial hash on load
-    if (window.location.hash) {
-      const element = document.querySelector(window.location.hash);
-      if (element) {
-        setTimeout(() => {
-          element.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
-      }
-    }
-
-    return () => document.removeEventListener('click', handleAnchorClick);
-  }, []);
+      setDisplay(String(Math.floor(Math.random() * 10)));
+    }, 55);
+    return () => clearInterval(id);
+  }, [target]);
 
   return (
-    <div className="bg-black overflow-x-hidden">
-      <Navbar />
-      
-      {/* Add id attributes to each section for anchor linking */}
-      <section id="home"><Hero /></section>
-      <section id="about"><About /></section>
-      <section id="services"><Services /></section>
-      <ThreeSection />
-      <WhyUs />
-      <Testimonials />
-      <section id="contact"><Contact /></section>
-      <Footer />
-      <FloatingChat />
+    <motion.span
+      initial={{ opacity: 0, y: -8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay, duration: 0.3 }}
+      className="flex h-11 w-8 items-center justify-center rounded-md border font-mono text-lg shadow-inner md:h-12 md:w-9 md:text-xl"
+      style={{
+        background: "var(--ink-3)",
+        borderColor: "rgba(201,162,75,0.35)",
+        color: "var(--gold-bright)",
+      }}
+    >
+      {display}
+    </motion.span>
+  );
+}
+
+function OtpReveal({ code = "574192", interval = 4200 }) {
+  const [cycle, setCycle] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setCycle((c) => c + 1), interval);
+    return () => clearInterval(id);
+  }, [interval]);
+
+  return (
+    <div className="flex gap-1.5" key={cycle}>
+      {code.split("").map((d, i) => (
+        <DigitSlot key={i} target={d} delay={i * 0.05} />
+      ))}
     </div>
   );
 }
 
-export default App;
+function LedgerTicker() {
+  const items = [...LEDGER, ...LEDGER];
+  return (
+    <div
+      className="relative h-[360px] overflow-hidden rounded-2xl border"
+      style={{ borderColor: "rgba(201,162,75,0.25)", background: "var(--ink-2)" }}
+    >
+      <motion.div
+        className="flex flex-col"
+        animate={{ y: ["0%", "-50%"] }}
+        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+      >
+        {items.map((it, i) => (
+          <div
+            key={i}
+            className="flex items-center justify-between gap-4 border-b px-6 py-4"
+            style={{ borderColor: "rgba(255,255,255,0.05)" }}
+          >
+            <div className="flex items-center gap-3">
+              <span className="text-xl">{it.flag}</span>
+              <div>
+                <p className="text-sm font-medium" style={{ color: "var(--cream)" }}>
+                  {it.country}
+                </p>
+                <p className="font-mono text-xs" style={{ color: "var(--muted)" }}>
+                  {it.number}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <LedgerCode />
+              <CheckCircle2 className="h-4 w-4" style={{ color: "var(--verify-green)" }} />
+            </div>
+          </div>
+        ))}
+      </motion.div>
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 h-16"
+        style={{ background: "linear-gradient(to bottom, var(--ink-2), transparent)" }}
+      />
+      <div
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-16"
+        style={{ background: "linear-gradient(to top, var(--ink-2), transparent)" }}
+      />
+    </div>
+  );
+}
+
+function LedgerCode() {
+  const [code] = useState(() =>
+    String(Math.floor(100000 + Math.random() * 900000))
+  );
+  return (
+    <span
+      className="font-mono text-sm tracking-widest"
+      style={{ color: "var(--gold-bright)" }}
+    >
+      {code}
+    </span>
+  );
+}
+
+function TiltHeroCard() {
+  const ref = useRef(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const rotateX = useTransform(y, [-80, 80], [8, -8]);
+  const rotateY = useTransform(x, [-80, 80], [-8, 8]);
+
+  function onMove(e) {
+    const rect = ref.current.getBoundingClientRect();
+    x.set(e.clientX - rect.left - rect.width / 2);
+    y.set(e.clientY - rect.top - rect.height / 2);
+  }
+  function onLeave() {
+    x.set(0);
+    y.set(0);
+  }
+
+  return (
+    <div style={{ perspective: 1200 }} className="relative mx-auto w-full max-w-md">
+      {/* stacked back cards for depth */}
+      <div
+        className="absolute inset-0 -rotate-6 translate-x-3 translate-y-4 rounded-2xl border"
+        style={{ borderColor: "rgba(201,162,75,0.15)", background: "var(--ink-2)" }}
+      />
+      <div
+        className="absolute inset-0 rotate-3 translate-x-6 translate-y-8 rounded-2xl border opacity-70"
+        style={{ borderColor: "rgba(201,162,75,0.1)", background: "var(--ink-2)" }}
+      />
+
+      <motion.div
+        ref={ref}
+        onMouseMove={onMove}
+        onMouseLeave={onLeave}
+        style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
+        className="relative rounded-2xl border p-6 shadow-2xl md:p-7"
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, delay: 0.15 }}
+      >
+        <div
+          className="absolute inset-0 rounded-2xl"
+          style={{
+            background:
+              "linear-gradient(155deg, rgba(201,162,75,0.14), rgba(201,162,75,0) 40%)",
+          }}
+        />
+        <div
+          className="absolute inset-0 rounded-2xl border"
+          style={{ borderColor: "rgba(201,162,75,0.35)" }}
+        />
+        <div
+          className="rounded-2xl p-5 md:p-6"
+          style={{ background: "var(--ink-2)", transform: "translateZ(30px)" }}
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              {/* SIM chip */}
+              <div
+                className="h-7 w-9 rounded-[4px]"
+                style={{
+                  background:
+                    "linear-gradient(135deg, var(--gold-bright), var(--gold) 55%, var(--gold-dim))",
+                  boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.25)",
+                }}
+              />
+              <span
+                className="font-display text-sm tracking-wide"
+                style={{ color: "var(--cream)" }}
+              >
+                FastOTP
+              </span>
+            </div>
+            <Radio className="h-4 w-4 animate-pulse" style={{ color: "var(--verify-green)" }} />
+          </div>
+
+          <div className="mt-6">
+            <p className="text-xs uppercase tracking-[0.2em]" style={{ color: "var(--muted)" }}>
+              Live number
+            </p>
+            <p
+              className="mt-1 font-mono text-lg md:text-xl"
+              style={{ color: "var(--cream)" }}
+            >
+              🇬🇧 +44 7700 •••• 12
+            </p>
+          </div>
+
+          <div className="mt-6">
+            <p className="text-xs uppercase tracking-[0.2em]" style={{ color: "var(--muted)" }}>
+              Incoming code
+            </p>
+            <div className="mt-2">
+              <OtpReveal />
+            </div>
+          </div>
+
+          <div
+            className="mt-6 flex items-center gap-2 rounded-lg border px-3 py-2"
+            style={{ borderColor: "rgba(111,207,151,0.3)", background: "rgba(111,207,151,0.06)" }}
+          >
+            <CheckCircle2 className="h-4 w-4" style={{ color: "var(--verify-green)" }} />
+            <span className="text-xs" style={{ color: "var(--verify-green)" }}>
+              Delivered in 4.2s
+            </span>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+function CountryCard({ c, index }) {
+  const ref = useRef(null);
+  const [style, setStyle] = useState({});
+
+  function onMove(e) {
+    const r = ref.current.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width - 0.5;
+    const py = (e.clientY - r.top) / r.height - 0.5;
+    setStyle({
+      transform: `perspective(700px) rotateX(${py * -7}deg) rotateY(${px * 7}deg) translateZ(6px)`,
+    });
+  }
+  function onLeave() {
+    setStyle({ transform: "perspective(700px) rotateX(0) rotateY(0)" });
+  }
+
+  return (
+    <motion.div
+      ref={ref}
+      onMouseMove={onMove}
+      onMouseLeave={onLeave}
+      style={style}
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.4, delay: (index % 4) * 0.06 }}
+      className="group relative rounded-xl border p-5 transition-[border-color,box-shadow] duration-300"
+      style={{
+        borderColor: "rgba(201,162,75,0.22)",
+        background: "var(--ink-2)",
+      }}
+    >
+      <div className="flex items-center justify-between">
+        <span className="text-2xl">{c.flag}</span>
+        <span
+          className="rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-widest"
+          style={{ borderColor: "rgba(111,207,151,0.35)", color: "var(--verify-green)" }}
+        >
+          Live
+        </span>
+      </div>
+      <p className="mt-4 font-display text-lg" style={{ color: "var(--cream)" }}>
+        {c.name}
+      </p>
+      <p className="font-mono text-xs" style={{ color: "var(--muted)" }}>
+        {c.dial}
+      </p>
+      <div className="mt-4 flex items-center justify-between">
+        <span className="font-mono" style={{ color: "var(--gold-bright)" }}>
+          {c.price}
+        </span>
+        <ChevronRight
+          className="h-4 w-4 transition-transform group-hover:translate-x-1"
+          style={{ color: "var(--gold)" }}
+        />
+      </div>
+    </motion.div>
+  );
+}
+
+function Reveal({ children, className = "", delay = 0 }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ duration: 0.5, delay }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Page                                                                */
+/* ------------------------------------------------------------------ */
+
+const HomePage = () => {
+  const [navOpen, setNavOpen] = useState(false);
+
+  return (
+    <div
+      className="min-h-screen w-full"
+      style={{
+        "--ink": "#0A0908",
+        "--ink-2": "#131110",
+        "--ink-3": "#1C1917",
+        "--gold": "#C9A24B",
+        "--gold-bright": "#F0CB6E",
+        "--gold-dim": "#7A6530",
+        "--cream": "#F5EFE0",
+        "--muted": "#9B948A",
+        "--verify-green": "#6FCF97",
+        background: "var(--ink)",
+        color: "var(--cream)",
+        fontFamily: "var(--font-body)",
+      }}
+    >
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+        :root { --font-display: 'Fraunces', serif; --font-body: 'Inter', sans-serif; --font-mono: 'JetBrains Mono', monospace; }
+        .font-display { font-family: var(--font-display); }
+        .font-mono { font-family: var(--font-mono); }
+      `}</style>
+
+      {/* -------------------------------------------------- Nav */}
+      <header
+        className="sticky top-0 z-50 border-b backdrop-blur-md"
+        style={{ borderColor: "rgba(201,162,75,0.18)", background: "rgba(10,9,8,0.75)" }}
+      >
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+          <div className="flex items-center gap-2">
+            <div
+              className="h-6 w-8 rounded-[3px]"
+              style={{
+                background:
+                  "linear-gradient(135deg, var(--gold-bright), var(--gold) 55%, var(--gold-dim))",
+              }}
+            />
+            <span className="font-display text-lg tracking-wide">FastOTP</span>
+          </div>
+
+          <nav className="hidden items-center gap-8 text-sm md:flex" style={{ color: "var(--muted)" }}>
+            <a href="#countries" className="transition-colors hover:text-[var(--gold-bright)]">
+              Numbers
+            </a>
+            <a href="#how" className="transition-colors hover:text-[var(--gold-bright)]">
+              How it works
+            </a>
+            <a href="#features" className="transition-colors hover:text-[var(--gold-bright)]">
+              Platform
+            </a>
+            <a href="#pricing" className="transition-colors hover:text-[var(--gold-bright)]">
+              Pricing
+            </a>
+          </nav>
+
+          <div className="hidden items-center gap-4 md:flex">
+            <Link to='/login'>
+              <button className="text-sm" style={{ color: "var(--muted)" }}>
+                Sign in
+              </button>
+            </Link>
+            <Link to='/signup'> <button
+              className="rounded-lg px-4 py-2 text-sm font-medium transition-transform hover:-translate-y-0.5"
+              style={{ background: "var(--gold)", color: "var(--ink)" }}
+            >
+              Get a number
+            </button></Link>
+           
+          </div>
+
+          <button className="md:hidden" onClick={() => setNavOpen((o) => !o)}>
+            {navOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
+
+        <AnimatePresence>
+          {navOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden border-t md:hidden"
+              style={{ borderColor: "rgba(201,162,75,0.18)" }}
+            >
+              <div className="flex flex-col gap-4 px-6 py-4 text-sm" style={{ color: "var(--muted)" }}>
+                <a href="#countries">Numbers</a>
+                <a href="#how">How it works</a>
+                <a href="#features">Platform</a>
+                <a href="#pricing">Pricing</a>
+                <button
+                  className="mt-2 rounded-lg px-4 py-2 text-center font-medium"
+                  style={{ background: "var(--gold)", color: "var(--ink)" }}
+                >
+                  Get a number
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </header>
+
+      {/* -------------------------------------------------- Hero */}
+      <section className="relative overflow-hidden px-6 pb-20 pt-16 md:pb-28 md:pt-24">
+        <div
+          className="pointer-events-none absolute -top-40 left-1/2 h-[560px] w-[900px] -translate-x-1/2 rounded-full opacity-20 blur-3xl"
+          style={{ background: "radial-gradient(circle, var(--gold), transparent 65%)" }}
+        />
+        <div className="mx-auto grid max-w-7xl items-center gap-14 md:grid-cols-2">
+          <div>
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="mb-5 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs"
+              style={{ borderColor: "rgba(201,162,75,0.35)", color: "var(--gold-bright)" }}
+            >
+              <span className="h-1.5 w-1.5 rounded-full" style={{ background: "var(--verify-green)" }} />
+              150+ countries · live stock
+            </motion.div>
+
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.05 }}
+              className="font-display text-4xl leading-[1.1] md:text-6xl"
+            >
+              Numbers the world{" "}
+              <span style={{ color: "var(--gold-bright)" }}>answers to.</span>
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.15 }}
+              className="mt-5 max-w-md text-base leading-relaxed md:text-lg"
+              style={{ color: "var(--muted)" }}
+            >
+              Rent a real, carrier-verified phone number from almost any
+              country and receive OTP codes in seconds. Built for teams who
+              verify accounts at scale.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.25 }}
+              className="mt-8 flex flex-wrap items-center gap-4"
+            >
+              <Link to="/signup">  <button
+                className="flex items-center gap-2 rounded-lg px-6 py-3 text-sm font-medium transition-transform hover:-translate-y-0.5"
+                style={{ background: "var(--gold)", color: "var(--ink)" }}
+              >
+                Get your first number
+                <ArrowRight className="h-4 w-4" />
+              </button>
+              </Link>
+             
+            
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="mt-12 grid max-w-md grid-cols-3 gap-6 border-t pt-6"
+              style={{ borderColor: "rgba(255,255,255,0.08)" }}
+            >
+              <div>
+                <p className="font-display text-2xl" style={{ color: "var(--gold-bright)" }}>
+                  99.9%
+                </p>
+                <p className="text-xs" style={{ color: "var(--muted)" }}>
+                  Delivery rate
+                </p>
+              </div>
+              <div>
+                <p className="font-display text-2xl" style={{ color: "var(--gold-bright)" }}>
+                  &lt;10s
+                </p>
+                <p className="text-xs" style={{ color: "var(--muted)" }}>
+                  Avg. delivery
+                </p>
+              </div>
+              <div>
+                <p className="font-display text-2xl" style={{ color: "var(--gold-bright)" }}>
+                  150+
+                </p>
+                <p className="text-xs" style={{ color: "var(--muted)" }}>
+                  Countries
+                </p>
+              </div>
+            </motion.div>
+          </div>
+
+          <TiltHeroCard />
+        </div>
+      </section>
+
+      {/* -------------------------------------------------- Ledger */}
+      <section className="px-6 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl">
+          <Reveal className="mx-auto mb-10 max-w-2xl text-center">
+            <p className="text-xs uppercase tracking-[0.25em]" style={{ color: "var(--gold)" }}>
+              The ledger
+            </p>
+            <h2 className="mt-3 font-display text-3xl md:text-4xl">
+              Verifications, as they happen.
+            </h2>
+            <p className="mt-3" style={{ color: "var(--muted)" }}>
+              A live feed of numbers being issued and codes being delivered
+              across our network right now.
+            </p>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <LedgerTicker />
+          </Reveal>
+        </div>
+      </section>
+
+      {/* -------------------------------------------------- How it works */}
+      <section id="how" className="px-6 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl">
+          <Reveal className="mb-14 max-w-xl">
+            <p className="text-xs uppercase tracking-[0.25em]" style={{ color: "var(--gold)" }}>
+              How it works
+            </p>
+            <h2 className="mt-3 font-display text-3xl md:text-4xl">
+              Three steps, no waiting room.
+            </h2>
+          </Reveal>
+
+          <div className="relative grid gap-10 md:grid-cols-3 md:gap-6">
+            <div
+              className="absolute left-0 right-0 top-8 hidden h-px md:block"
+              style={{ background: "rgba(201,162,75,0.25)" }}
+            />
+            {STEPS.map((s, i) => (
+              <Reveal key={s.n} delay={i * 0.1} className="relative">
+                <div
+                  className="relative z-10 flex h-14 w-14 items-center justify-center rounded-full border font-display text-lg"
+                  style={{
+                    borderColor: "rgba(201,162,75,0.4)",
+                    background: "var(--ink-2)",
+                    color: "var(--gold-bright)",
+                  }}
+                >
+                  {s.n}
+                </div>
+                <s.icon className="mt-5 h-5 w-5" style={{ color: "var(--gold)" }} />
+                <h3 className="mt-3 font-display text-xl">{s.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed" style={{ color: "var(--muted)" }}>
+                  {s.body}
+                </p>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* -------------------------------------------------- Countries */}
+      <section id="countries" className="px-6 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl">
+          <Reveal className="mb-10 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <p className="text-xs uppercase tracking-[0.25em]" style={{ color: "var(--gold)" }}>
+                Coverage
+              </p>
+              <h2 className="mt-3 font-display text-3xl md:text-4xl">
+                Popular right now.
+              </h2>
+            </div>
+            <a
+              href="/signup"
+              className="flex items-center gap-1 text-sm"
+              style={{ color: "var(--gold-bright)" }}
+            >
+              View all 150+ countries <ChevronRight className="h-4 w-4" />
+            </a>
+          </Reveal>
+
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            {COUNTRIES.map((c, i) => (
+              <CountryCard key={c.name} c={c} index={i} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* -------------------------------------------------- Features */}
+      <section id="features" className="px-6 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl">
+          <Reveal className="mb-14 max-w-xl">
+            <p className="text-xs uppercase tracking-[0.25em]" style={{ color: "var(--gold)" }}>
+              Platform
+            </p>
+            <h2 className="mt-3 font-display text-3xl md:text-4xl">
+              Built like infrastructure, not a trick.
+            </h2>
+          </Reveal>
+
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {FEATURES.map((f, i) => (
+              <Reveal
+                key={f.title}
+                delay={(i % 3) * 0.08}
+                className="rounded-xl border p-6"
+              >
+                <div
+                  className="flex h-10 w-10 items-center justify-center rounded-lg"
+                  style={{ background: "rgba(201,162,75,0.12)" }}
+                >
+                  <f.icon className="h-5 w-5" style={{ color: "var(--gold-bright)" }} />
+                </div>
+                <h3 className="mt-4 font-display text-lg">{f.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed" style={{ color: "var(--muted)" }}>
+                  {f.body}
+                </p>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* -------------------------------------------------- CTA */}
+      <section className="px-6 py-16 md:py-24">
+        <Reveal
+          className="relative mx-auto max-w-5xl overflow-hidden rounded-3xl border px-8 py-14 text-center md:py-20"
+          style={{ borderColor: "rgba(201,162,75,0.3)", background: "var(--ink-2)" }}
+        >
+          <div
+            className="pointer-events-none absolute -top-24 left-1/2 h-64 w-[600px] -translate-x-1/2 rounded-full opacity-25 blur-3xl"
+            style={{ background: "radial-gradient(circle, var(--gold), transparent 65%)" }}
+          />
+          <h2 className="relative font-display text-3xl md:text-5xl">
+            Ready to verify anything, anywhere?
+          </h2>
+          <p className="relative mx-auto mt-4 max-w-md" style={{ color: "var(--muted)" }}>
+            Start with a free sandbox number, no card required. Scale up
+            when you're ready to ship.
+          </p>
+
+          <Link to='/signup'> <button
+            className="relative mt-8 inline-flex items-center gap-2 rounded-lg px-7 py-3 text-sm font-medium transition-transform hover:-translate-y-0.5"
+            style={{ background: "var(--gold)", color: "var(--ink)" }}
+          >
+            Create free account
+            <ArrowRight className="h-4 w-4" />
+          </button></Link>
+         
+        </Reveal>
+      </section>
+
+      {/* -------------------------------------------------- Footer */}
+      <footer className="border-t px-6 py-12" style={{ borderColor: "rgba(201,162,75,0.15)" }}>
+        <div className="mx-auto flex max-w-7xl flex-col gap-8 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-2">
+            <div
+              className="h-6 w-8 rounded-[3px]"
+              style={{
+                background:
+                  "linear-gradient(135deg, var(--gold-bright), var(--gold) 55%, var(--gold-dim))",
+              }}
+            />
+            <span className="font-display text-base">FastOTP</span>
+          </div>
+          <nav className="flex flex-wrap gap-6 text-sm" style={{ color: "var(--muted)" }}>
+            <a href="#" className="hover:text-[var(--gold-bright)] cursor-pointer">Numbers</a>
+            <Link to="/terms" className="hover:text-[var(--gold-bright)] cursor-pointer">terms and conditions</Link>
+            <Link to="/privacy" className="hover:text-[var(--gold-bright)] cursor-pointer">privacy</Link>
+            <a href="#" className="hover:text-[var(--gold-bright)] cursor-pointer">Status</a>
+            <a href="#" className="hover:text-[var(--gold-bright)] cursor-pointer">Support</a>
+          </nav>
+          <p className="text-xs" style={{ color: "var(--muted)" }}>
+            © {new Date().getFullYear()} FastOTP. All numbers rented, not owned.
+          </p>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default HomePage;
