@@ -175,18 +175,18 @@ export default function ManualTransferPayment({ amount = "", onBack }) {
           <div className="rounded-xl border border-white/10 bg-black/35 p-4 text-sm text-gray-300">
             <div className="flex justify-between gap-4 py-1">
               <span className="text-gray-500">Bank</span>
-              <span className="font-semibold text-white">Opay</span>
+              <span className="font-semibold text-white">First Bank</span>
             </div>
             <div className="flex justify-between gap-4 py-1">
               <span className="text-gray-500">Account Name</span>
               <span className="font-semibold text-white">
-                Victory Onyekwerre
+                Anige Chidera Babara
               </span>
             </div>
             <div className="flex justify-between gap-4 py-1">
               <span className="text-gray-500">Account Number</span>
               <span className="font-mono font-semibold text-white">
-                7089526653
+                3218162119
               </span>
             </div>
           </div>
