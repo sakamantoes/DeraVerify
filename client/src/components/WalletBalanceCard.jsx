@@ -21,17 +21,17 @@ export default function WalletBalanceCard({
 
   return (
     <div
-      className={`group rounded-xl border border-white/10 shadow-md bg-white/5 p-5 transition-all transform hover:-translate-y-1 hover:border-red-light/40 hover:bg-white/5 ${className}`.trim()}
+      className={`group rounded-xl border border-white/10 shadow-md bg-white/5 p-5 transition-all transform hover:-translate-y-1 hover:border-gold-light/40 hover:bg-white/5 ${className}`.trim()}
     >
       <div className="flex items-start justify-between gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-red/15 text-red">
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gold/15 text-gold">
           <Wallet size={19} />
         </div>
         <div className="flex items-center gap-1">
           <button
             type="button"
             onClick={() => setShowBalance((prev) => !prev)}
-            className="rounded-lg border border-white/10 p-2 text-gray-400 transition-colors hover:border-red-light/30 hover:bg-white/10 hover:text-white"
+            className="rounded-lg border border-white/10 p-2 text-gray-400 transition-colors hover:border-gold-light/30 hover:bg-white/10 hover:text-white"
             aria-label={showBalance ? "Hide wallet balance" : "Show wallet balance"}
           >
             {showBalance ? <EyeOff size={14} /> : <Eye size={14} />}
@@ -42,7 +42,7 @@ export default function WalletBalanceCard({
               void refetch().catch(() => {});
             }}
             disabled={isLoading}
-            className="rounded-lg border border-white/10 p-2 text-gray-400 transition-colors hover:border-red-light/30 hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+            className="rounded-lg border border-white/10 p-2 text-gray-400 transition-colors hover:border-gold-light/30 hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
             aria-label="Refresh wallet balance"
           >
             <RefreshCw size={14} className={isLoading ? "animate-spin" : ""} />
@@ -55,11 +55,11 @@ export default function WalletBalanceCard({
       <div className="mt-1 min-h-[2rem]">
         {isLoading ? (
           <div className="flex items-center gap-2 text-sm text-gray-400">
-            <Loader2 size={16} className="animate-spin text-red" />
+            <Loader2 size={16} className="animate-spin text-gold" />
             <span>Loading balance...</span>
           </div>
         ) : isError ? (
-          <p className="text-sm font-medium text-red-light">
+          <p className="text-sm font-medium text-gold-light">
             Unable to load balance
           </p>
         ) : (
@@ -68,7 +68,7 @@ export default function WalletBalanceCard({
           </p>
         )}
       </div>
-      <span className="mt-3 inline-flex rounded-full border border-white/10 bg-red/10 px-2.5 py-0.5 text-xs font-medium text-red shadow-md">
+      <span className="mt-3 inline-flex rounded-full border border-white/10 bg-gold/10 px-2.5 py-0.5 text-xs font-medium text-gold shadow-md">
         {statusText}
       </span>
     </div>

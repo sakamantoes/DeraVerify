@@ -8,7 +8,7 @@ export default function StatCard({
   changeBg = "bg-white/8 text-gray-300 border-white/10",
 }) {
   return (
-    <div className="group rounded-xl border border-white/10 bg-white/5 p-5 shadow-md transition-all hover:-translate-y-1 hover:border-red-light/40 hover:bg-white/5">
+    <div className="group rounded-xl border border-white/10 bg-white/5 p-5 shadow-md transition-all hover:-translate-y-1 hover:border-gold-light/40 hover:bg-white/5">
       <div className="flex items-start justify-between gap-3">
         {Icon ? (
           <div

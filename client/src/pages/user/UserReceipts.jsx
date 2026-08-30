@@ -75,7 +75,7 @@ const getStatusBadge = (status) => {
     case "FAILED":
       return {
         label: "Failed",
-        className: "border-red-light/20 bg-red-light/15 text-red",
+        className: "border-gold-light/20 bg-gold-light/15 text-gold",
         icon: XCircle,
       };
     default:
@@ -152,8 +152,8 @@ export default function UserReceipts() {
       value: receipts.length,
       change: "All purchases",
       icon: FileText,
-      iconBg: "bg-red/15",
-      iconColor: "text-red",
+      iconBg: "bg-gold/15",
+      iconColor: "text-gold",
       changeBg: "bg-white/8 text-gray-300 border-white/10",
     },
     {
@@ -187,11 +187,11 @@ export default function UserReceipts() {
 
   return (
     <div className="mx-auto max-w-7xl space-y-6">
-      <section className="relative overflow-hidden rounded-2xl border border-white/10 shadow-md bg-gradient-to-br from-red-950/40 via-black to-black p-6 text-white sm:p-8">
-        <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-red-dark/10 blur-3xl" />
+      <section className="relative overflow-hidden rounded-2xl border border-white/10 shadow-md bg-gradient-to-br from-gold-950/40 via-black to-black p-6 text-white sm:p-8">
+        <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-gold-dark/10 blur-3xl" />
         <div className="relative flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-red-light/40 bg-red-light/10 px-3 py-1 text-xs font-semibold text-red-300">
+            <div className="inline-flex items-center gap-2 rounded-full border border-gold-light/40 bg-gold-light/10 px-3 py-1 text-xs font-semibold text-gold-300">
               <ReceiptText size={13} />
               Purchase Receipts
             </div>
@@ -210,7 +210,7 @@ export default function UserReceipts() {
               void fetchReceipts();
             }}
             disabled={loading}
-            className="inline-flex h-11 shrink-0 items-center gap-2 rounded-xl bg-red-dark/40 px-5 text-sm font-semibold text-white transition-colors hover:bg-red-light active:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex h-11 shrink-0 items-center gap-2 rounded-xl bg-gold-dark/40 px-5 text-sm font-semibold text-white transition-colors hover:bg-gold-light active:bg-gold-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
             Refresh Receipts
@@ -223,7 +223,7 @@ export default function UserReceipts() {
         {stats.map((stat) => (
           <div
             key={stat.label}
-            className="group rounded-xl border border-white/10 shadow-md bg-white/5 p-5 transition-all transform hover:-translate-y-1 hover:border-red-light/40 hover:bg-white/5"
+            className="group rounded-xl border border-white/10 shadow-md bg-white/5 p-5 transition-all transform hover:-translate-y-1 hover:border-gold-light/40 hover:bg-white/5"
           >
             <div className="flex items-start justify-between gap-3">
               <div
@@ -265,7 +265,7 @@ export default function UserReceipts() {
                 value={searchTerm}
                 onChange={(event) => setSearchTerm(event.target.value)}
                 placeholder="Search receipt ID"
-                className="h-11 w-full min-w-0 rounded-lg border border-white/10 bg-black/40 py-2 pl-10 pr-4 text-sm text-white placeholder:text-gray-600 focus:border-red-light/50 focus:outline-none focus:ring-1 focus:ring-red-light/50 sm:min-w-72"
+                className="h-11 w-full min-w-0 rounded-lg border border-white/10 bg-black/40 py-2 pl-10 pr-4 text-sm text-white placeholder:text-gray-600 focus:border-gold-light/50 focus:outline-none focus:ring-1 focus:ring-gold-light/50 sm:min-w-72"
               />
             </div>
 
@@ -274,7 +274,7 @@ export default function UserReceipts() {
               <select
                 value={typeFilter}
                 onChange={(event) => setTypeFilter(event.target.value)}
-                className="h-11 min-w-44 rounded-lg border border-white/10 bg-black/40 py-2 pl-10 pr-4 text-sm text-white focus:border-red-light/50 focus:outline-none focus:ring-1 focus:ring-red-light/50"
+                className="h-11 min-w-44 rounded-lg border border-white/10 bg-black/40 py-2 pl-10 pr-4 text-sm text-white focus:border-gold-light/50 focus:outline-none focus:ring-1 focus:ring-gold-light/50"
               >
                 <option value="ALL">All Types</option>
                 <option value="LOG">Log Purchase</option>
@@ -298,10 +298,10 @@ export default function UserReceipts() {
 
         {loading ? (
           <div className="flex items-center justify-center py-16">
-            <Loader2 className="h-8 w-8 animate-spin text-red-400" />
+            <Loader2 className="h-8 w-8 animate-spin text-gold-400" />
           </div>
         ) : error ? (
-          <div className="flex items-center justify-center gap-2 px-5 py-12 text-red-300">
+          <div className="flex items-center justify-center gap-2 px-5 py-12 text-gold-300">
             <AlertCircle size={18} />
             <span>{error}</span>
           </div>
@@ -388,7 +388,7 @@ export default function UserReceipts() {
                         type="button"
                         onClick={() => handleCopyReceipt(receipt.receiptNo)}
                         disabled={!receipt.receiptNo}
-                        className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-black/30 px-3 py-2 text-sm font-medium text-gray-300 transition-colors hover:border-red-light/30 hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                        className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-black/30 px-3 py-2 text-sm font-medium text-gray-300 transition-colors hover:border-gold-light/30 hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         <Copy size={14} />
                         Copy ID

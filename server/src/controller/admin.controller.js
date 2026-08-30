@@ -118,12 +118,12 @@ const updateDepositsStatus = async (req, res, next) => {
 };
 
 const priceSettingController = async (req, res, next) => {
-  const { nairaRate, markupType, markupValue } = req.body;
+  const { nariaRate, markupType, markupValue } = req.body;
   try {
     const priceSetting = await PriceSetting.findOneAndUpdate(
       {},
       {
-        usdToNgnRate: nairaRate,
+        usdToNgnRate: nariaRate,
         globalMarkupType: markupType,
         globalMarkupValue: markupValue,
       },

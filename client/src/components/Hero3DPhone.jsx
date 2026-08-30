@@ -320,7 +320,7 @@ export default function Hero3DPhone() {
   return (
     <div className="w-full h-full relative">
       {/* CSS overlay for extra glow */}
-      <div className="absolute inset-0 pointer-events-none bg-gradient-radial from-red-light/10 via-transparent to-transparent" />
+      <div className="absolute inset-0 pointer-events-none bg-gradient-radial from-gold-light/10 via-transparent to-transparent" />
       
       <Canvas
         style={{ width: "100%", height: "100%", background: "transparent" }}

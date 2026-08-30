@@ -82,7 +82,7 @@ function FloatingRing() {
 
 export default function ThreeSection() {
   return (
-    <section className="py-24 bg-gradient-to-b from-black to-red-950/10 relative overflow-hidden">
+    <section className="py-24 bg-gradient-to-b from-black to-gold-950/10 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-12">
         <motion.h2
           initial={{ opacity: 0, y: 30 }}
@@ -90,7 +90,7 @@ export default function ThreeSection() {
           transition={{ duration: 0.6 }}
           className="text-4xl md:text-6xl font-bold"
         >
-          Global <span className="text-red-light">Connectivity</span> Visualized
+          Global <span className="text-gold-light">Connectivity</span> Visualized
         </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 30 }}

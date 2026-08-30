@@ -33,8 +33,8 @@ const ServiceCard = ({ icon: Icon, title, description, index }) => {
       whileHover={{ y: -10, scale: 1.02 }}
       className="glass-card rounded-2xl p-6 cursor-pointer group glow-border"
     >
-      <div className="w-14 h-14 bg-gradient-to-br from-red-light/20 to-red-dark/20 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-        <Icon className="w-7 h-7 text-red-light" />
+      <div className="w-14 h-14 bg-gradient-to-br from-gold-light/20 to-gold-dark/20 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+        <Icon className="w-7 h-7 text-gold-light" />
       </div>
       <h3 className="text-xl font-bold mb-2">{title}</h3>
       <p className="text-gray-400">{description}</p>
@@ -54,7 +54,7 @@ const Services = () => {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Our <span className="text-red-light">Services</span>
+            Our <span className="text-gold-light">Services</span>
           </h2>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
             Comprehensive virtual number solutions for all your verification needs

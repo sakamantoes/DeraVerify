@@ -62,9 +62,9 @@ const ForgotPassword = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-radial from-red-light/10 via-transparent to-transparent" />
-        <div className="absolute top-20 right-10 w-72 h-72 bg-red-light/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 left-10 w-96 h-96 bg-red-600/10 rounded-full blur-3xl animate-pulse delay-1000" />
+        <div className="absolute inset-0 bg-gradient-radial from-gold-light/10 via-transparent to-transparent" />
+        <div className="absolute top-20 right-10 w-72 h-72 bg-gold-light/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-20 left-10 w-96 h-96 bg-gold-600/10 rounded-full blur-3xl animate-pulse delay-1000" />
       </div>
 
       <motion.div
@@ -120,13 +120,13 @@ const ForgotPassword = () => {
                     if (error) setError("");
                     if (submitted) setSubmitted(false);
                   }}
-                  className={`w-full pl-10 pr-4 py-3 bg-white/5 border rounded-lg focus:outline-none focus:border-red-light text-white transition-colors ${
-                    error ? "border-red-light" : "border-red-light/20"
+                  className={`w-full pl-10 pr-4 py-3 bg-white/5 border rounded-lg focus:outline-none focus:border-gold-light text-white transition-colors ${
+                    error ? "border-gold-light" : "border-gold-light/20"
                   }`}
                   placeholder="you@example.com"
                 />
               </div>
-              {error && <p className="mt-1 text-xs text-red-light">{error}</p>}
+              {error && <p className="mt-1 text-xs text-gold-light">{error}</p>}
             </div>
 
             {submitted && (
@@ -143,7 +143,7 @@ const ForgotPassword = () => {
               disabled={loading}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full py-3 bg-gradient-to-r from-red-light to-red-dark rounded-lg font-semibold text-white shadow-lg shadow-red-light/30 hover:shadow-red-light/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full py-3 bg-gradient-to-r from-gold-light to-gold-dark rounded-lg font-semibold text-white shadow-lg shadow-gold-light/30 hover:shadow-gold-light/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

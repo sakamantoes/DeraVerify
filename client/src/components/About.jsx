@@ -16,7 +16,7 @@ const About = () => {
   ];
   
   return (
-    <section className="py-24 bg-gradient-to-b from-black to-red-950/20">
+    <section className="py-24 bg-gradient-to-b from-black to-gold-950/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -26,7 +26,7 @@ const About = () => {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            About <span className="text-red-light">Smswinners</span>
+            About <span className="text-gold-light">Smswinners</span>
           </h2>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
             We provide cutting-edge virtual number solutions, Google Voice assistance, 
@@ -56,7 +56,7 @@ const About = () => {
                   transition={{ delay: i * 0.1 }}
                   className="text-gray-300  flex items-center gap-2"
                 >
-                  <span className="text-red-light fineFont  text-xl">✓</span> {item}
+                  <span className="text-gold-light fineFont  text-xl">✓</span> {item}
                 </motion.li>
               ))}
             </ul>
@@ -72,7 +72,7 @@ const About = () => {
           >
             {stats.map((stat, idx) => (
               <div key={idx} className="glass-card rounded-2xl p-6 text-center glow-border">
-                <div className="sm:text-4xl text-2xl font-bold text-red-light mb-2">
+                <div className="sm:text-4xl text-2xl font-bold text-gold-light mb-2">
                   {isInView ? <CountUp end={stat.value} duration={2} /> : 0}{stat.suffix}
                 </div>
                 <p className="text-gray-300">{stat.label}</p>

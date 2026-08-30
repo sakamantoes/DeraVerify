@@ -171,11 +171,11 @@ const AdminSupport = () => {
   return (
     <div className="mx-auto max-w-7xl space-y-6">
       {/* Hero Section */}
-      <section className="relative overflow-hidden rounded-2xl border border-white/10 shadow-md bg-gradient-to-br from-red-950/40 via-black to-black p-6 text-white sm:p-8">
-        <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-red-dark/10 blur-3xl" />
+      <section className="relative overflow-hidden rounded-2xl border border-white/10 shadow-md bg-gradient-to-br from-gold-950/40 via-black to-black p-6 text-white sm:p-8">
+        <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-gold-dark/10 blur-3xl" />
         <div className="relative flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-red-light/40 bg-red-light/10 px-3 py-1 text-xs font-semibold text-red-300">
+            <div className="inline-flex items-center gap-2 rounded-full border border-gold-light/40 bg-gold-light/10 px-3 py-1 text-xs font-semibold text-gold-300">
               <MessageSquare size={13} />
               Admin Support Panel
             </div>
@@ -189,7 +189,7 @@ const AdminSupport = () => {
           </div>
           <div className="flex gap-3">
             <div className="flex items-center gap-2 rounded-lg bg-white/10 px-3 py-2">
-              <Users size={16} className="text-red-400" />
+              <Users size={16} className="text-gold-400" />
               <span className="text-sm font-semibold text-white">
                 {unreadCount} Unread
               </span>
@@ -231,7 +231,7 @@ const AdminSupport = () => {
             onClick={() => setStatusFilter("all")}
             className={`rounded-lg px-3 py-2 text-xs font-medium transition-all ${
               statusFilter === "all"
-                ? "bg-red-500/20 text-red-400 border border-red-500/30"
+                ? "bg-gold-500/20 text-gold-400 border border-gold-500/30"
                 : "bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10"
             }`}
           >
@@ -287,7 +287,7 @@ const AdminSupport = () => {
             <div className="divide-y divide-white/10 max-h-[600px] overflow-y-auto">
               {loading && messages.length === 0 ? (
                 <div className="flex items-center justify-center py-8">
-                  <Loader2 className="h-6 w-6 animate-spin text-red-400" />
+                  <Loader2 className="h-6 w-6 animate-spin text-gold-400" />
                 </div>
               ) : messages.length === 0 ? (
                 <div className="text-center py-8">
@@ -300,15 +300,15 @@ const AdminSupport = () => {
                     key={message._id}
                     onClick={() => handleViewMessage(message._id)}
                     className={`p-4 cursor-pointer transition-all hover:bg-white/5 ${
-                      selectedMessage?._id === message._id ? "bg-red-500/10 border-l-2 border-red-500" : ""
-                    } ${!message.isReadByAdmin ? "bg-red-500/5" : ""}`}
+                      selectedMessage?._id === message._id ? "bg-gold-500/10 border-l-2 border-gold-500" : ""
+                    } ${!message.isReadByAdmin ? "bg-gold-500/5" : ""}`}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
                           <h3 className="text-sm font-medium text-white truncate">{message.subject}</h3>
                           {!message.isReadByAdmin && (
-                            <span className="h-2 w-2 rounded-full bg-red-500"></span>
+                            <span className="h-2 w-2 rounded-full bg-gold-500"></span>
                           )}
                         </div>
                         <p className="text-xs text-gray-400 mt-1">{message.userName}</p>
@@ -351,7 +351,7 @@ const AdminSupport = () => {
                   </select>
                   <button
                     onClick={() => handleDeleteMessage(selectedMessage._id)}
-                    className="rounded-lg p-1 text-gray-400 transition-colors hover:bg-red-500/10 hover:text-red-400"
+                    className="rounded-lg p-1 text-gray-400 transition-colors hover:bg-gold-500/10 hover:text-gold-400"
                   >
                     <Trash2 size={14} />
                   </button>
@@ -373,7 +373,7 @@ const AdminSupport = () => {
                 <div className="rounded-lg border border-white/10 bg-black/30 p-4">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/10 text-red-400">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gold-500/10 text-gold-400">
                         <MessageSquare size={14} />
                       </div>
                       <div>
@@ -422,13 +422,13 @@ const AdminSupport = () => {
                     value={replyText}
                     onChange={(e) => setReplyText(e.target.value)}
                     rows={4}
-                    className="w-full rounded-lg border border-white/10 bg-black/40 px-4 py-2 text-sm text-white placeholder:text-gray-500 focus:border-red-light/50 focus:outline-none focus:ring-1 focus:ring-red-light/50"
+                    className="w-full rounded-lg border border-white/10 bg-black/40 px-4 py-2 text-sm text-white placeholder:text-gray-500 focus:border-gold-light/50 focus:outline-none focus:ring-1 focus:ring-gold-light/50"
                     placeholder="Type your reply here..."
                   />
                   <button
                     onClick={() => handleSendReply(selectedMessage._id)}
                     disabled={loading}
-                    className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-light disabled:opacity-50"
+                    className="inline-flex items-center gap-2 rounded-lg bg-gold-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-gold-light disabled:opacity-50"
                   >
                     {loading ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
                     Send Reply
@@ -457,7 +457,7 @@ const AdminSupport = () => {
       )}
       
       {error && (
-        <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-lg bg-red-500/90 px-4 py-3 text-sm font-medium text-white shadow-lg animate-in slide-in-from-right-5">
+        <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-lg bg-gold-500/90 px-4 py-3 text-sm font-medium text-white shadow-lg animate-in slide-in-from-right-5">
           <AlertCircle size={16} />
           {error}
         </div>

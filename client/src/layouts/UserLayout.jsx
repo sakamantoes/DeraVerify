@@ -6,7 +6,6 @@ import {
   Gauge,
   Inbox,
   LogOut,
-  Mail,
   Menu,
   Phone,
   ReceiptText,
@@ -24,7 +23,6 @@ import NotificationBell from "../components/NotificationBell";
 const userNavItems = [
   { label: "Dashboard", to: "/f/dashboard", icon: Gauge },
   { label: "Numbers and Services", to: "/f/numbers", icon: Phone },
-  { label: "Available Logs", to: "/f/logs", icon: Mail },
   { label: "OTP Inbox", to: "/f/otp-box", icon: Inbox },
   { label: "Deposits History", to: "/f/deposits", icon: CreditCard },
   { label: "View Receipts", to: "/f/receipts", icon: ReceiptText },
@@ -159,7 +157,7 @@ const UserLayout = () => {
 
       <div className="relative min-h-screen lg:pl-72">
         {/* Header */}
-        <header className="sticky top-0 z-30 border-b border-white/30 bg-gradient-to-br from-black via-gray-900 to-black backdrop-blur-xl">
+        <header className="sticky top-0 z-30 border-b border-white/30 bg-black backdrop-blur-xl">
           <div className="flex h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
             {/* Left: mobile toggle + search */}
             <div className="flex items-center gap-3">
@@ -175,7 +173,7 @@ const UserLayout = () => {
 
               <div
                 role="search"
-                className="hidden h-10 w-full max-w-lg items-center gap-2 rounded-lg border border-white/30 bg-black/40 px-3 text-gray-400 transition-colors hover:border-red-light/30 md:flex"
+                className="hidden h-10 w-full max-w-lg items-center gap-2 rounded-lg border border-white/30 bg-black/40 px-3 text-gray-400 transition-colors hover:border-gold-light/30 md:flex"
               >
                 <Search size={16} className="shrink-0" aria-hidden="true" />
                 <input
@@ -193,7 +191,7 @@ const UserLayout = () => {
               <div className="hidden items-center gap-3 border-l border-white/30 pl-3 sm:flex">
                 <div
                   aria-hidden="true"
-                  className="flex h-9 w-9 shrink-0 select-none items-center justify-center rounded-lg bg-gradient-to-br from-red-500 to-red-700 text-sm font-bold text-white"
+                  className="flex h-9 w-9 shrink-0 select-none items-center justify-center rounded-lg bg-gradient-to-br from-gold-500 to-gold-700 text-sm font-bold text-white"
                 >
                   {initial}
                 </div>

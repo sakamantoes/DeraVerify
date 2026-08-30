@@ -8,9 +8,9 @@ const PrivacyPolicy = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black py-12 px-4 sm:px-6 lg:px-8">
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-radial from-red-light/10 via-transparent to-transparent" />
-        <div className="absolute top-20 left-10 w-72 h-72 bg-red-light/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-red-600/10 rounded-full blur-3xl animate-pulse delay-1000" />
+        <div className="absolute inset-0 bg-gradient-radial from-gold-light/10 via-transparent to-transparent" />
+        <div className="absolute top-20 left-10 w-72 h-72 bg-gold-light/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-gold-600/10 rounded-full blur-3xl animate-pulse delay-1000" />
       </div>
 
       <div className="max-w-4xl mx-auto relative z-10">
@@ -19,14 +19,14 @@ const PrivacyPolicy = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <Link to="/" className="inline-flex items-center text-gray-400 hover:text-red-light transition-colors mb-6">
+          <Link to="/" className="inline-flex items-center text-gray-400 hover:text-gold-light transition-colors mb-6">
             <ArrowLeft size={20} className="mr-2" />
             Back to Home
           </Link>
 
           <div className="glass-card rounded-2xl p-8 md:p-10">
             <div className="flex items-center gap-3 mb-6">
-              <Shield className="text-red-light w-8 h-8" />
+              <Shield className="text-gold-light w-8 h-8" />
               <h1 className="text-3xl font-bold text-white">Privacy Policy</h1>
             </div>
             <p className="text-gray-400 text-sm mb-8">Last updated: August 2026</p>
@@ -82,7 +82,7 @@ const PrivacyPolicy = () => {
               {/* Data Security */}
               <section>
                 <div className="flex items-center gap-2 mb-4">
-                  <Lock className="text-red-light w-5 h-5" />
+                  <Lock className="text-gold-light w-5 h-5" />
                   <h2 className="text-xl font-bold text-white">Data Security</h2>
                 </div>
                 <p className="text-sm leading-relaxed">
@@ -140,7 +140,7 @@ const PrivacyPolicy = () => {
                   <li><strong>Access:</strong> You can request access to the personal data we hold about you.</li>
                   <li><strong>Correction:</strong> You can update your account information at any time through your account settings.</li>
                   <li><strong>Unsubscribe:</strong> You may opt out of marketing communications at any time.</li>
-                  <li><strong>Account Closure:</strong> You may close your account by contacting us at <a href="mailto:Smswinner19@gmail.com" className="text-red-light hover:underline">Smswinner19@gmail.com</a>.</li>
+                  <li><strong>Account Closure:</strong> You may close your account by contacting us at <a href="mailto:Smswinner19@gmail.com" className="text-gold-light hover:underline">Smswinner19@gmail.com</a>.</li>
                 </ul>
               </section>
 
@@ -151,7 +151,7 @@ const PrivacyPolicy = () => {
                   <h2 className="text-xl font-bold text-white">Data Retention</h2>
                 </div>
                 <p className="text-sm leading-relaxed">
-                  We retain your personal data for as long as your account is active or as needed to provide you with our services. If you wish to cancel your account or request that we no longer use your data to provide you with services, contact us at <a href="mailto:Smswinner19@gmail.com" className="text-red-light hover:underline">Smswinner19@gmail.com</a>. We will retain and use your information as necessary to comply with our legal obligations, resolve disputes, and enforce our agreements.
+                  We retain your personal data for as long as your account is active or as needed to provide you with our services. If you wish to cancel your account or request that we no longer use your data to provide you with services, contact us at <a href="mailto:Smswinner19@gmail.com" className="text-gold-light hover:underline">Smswinner19@gmail.com</a>. We will retain and use your information as necessary to comply with our legal obligations, resolve disputes, and enforce our agreements.
                 </p>
               </section>
 
@@ -175,7 +175,7 @@ const PrivacyPolicy = () => {
               {/* Prohibited Use */}
               <section>
                 <div className="flex items-center gap-2 mb-4">
-                  <AlertTriangle className="text-red-400 w-5 h-5" />
+                  <AlertTriangle className="text-gold-400 w-5 h-5" />
                   <h2 className="text-xl font-bold text-white">Prohibited Use</h2>
                 </div>
                 <p className="text-sm leading-relaxed">
@@ -201,14 +201,14 @@ const PrivacyPolicy = () => {
               </section>
 
               {/* Contact Information */}
-              <section className="border-t border-red-light/20 pt-6">
+              <section className="border-t border-gold-light/20 pt-6">
                 <h2 className="text-xl font-bold text-white mb-2">Contact Us</h2>
                 <p className="text-sm leading-relaxed">
                   If you have any questions about this Privacy Policy, please contact us:
                 </p>
                 <ul className="list-disc list-inside space-y-1 text-sm pl-4 mt-2">
-                  <li>Email: <a href="mailto:Smswinner19@gmail.com" className="text-red-light hover:underline">Smswinner19@gmail.com</a></li>
-                  <li>Telegram: <span className="text-red-light">@@smswinnerssupport</span></li>
+                  <li>Email: <a href="mailto:Smswinner19@gmail.com" className="text-gold-light hover:underline">Smswinner19@gmail.com</a></li>
+                  <li>Telegram: <span className="text-gold-light">@@smswinnerssupport</span></li>
                 </ul>
               </section>
             </div>

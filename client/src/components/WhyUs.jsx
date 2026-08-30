@@ -21,8 +21,8 @@ const FeatureCard = ({ icon: Icon, title, description, index }) => (
     whileHover={{ y: -5 }}
     className="glass-card rounded-2xl p-6 text-center glow-border"
   >
-    <div className="w-16 h-16 bg-red-light/10 rounded-full flex items-center justify-center mx-auto mb-4">
-      <Icon className="w-8 h-8 text-red-light" />
+    <div className="w-16 h-16 bg-gold-light/10 rounded-full flex items-center justify-center mx-auto mb-4">
+      <Icon className="w-8 h-8 text-gold-light" />
     </div>
     <h3 className="text-xl font-bold mb-2">{title}</h3>
     <p className="text-gray-400">{description}</p>
@@ -31,7 +31,7 @@ const FeatureCard = ({ icon: Icon, title, description, index }) => (
 
 const WhyUs = () => {
   return (
-    <section className="py-24 bg-gradient-to-b from-black to-red-950/20">
+    <section className="py-24 bg-gradient-to-b from-black to-gold-950/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -41,7 +41,7 @@ const WhyUs = () => {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Why Choose <span className="text-red-light">Smswinners</span>
+            Why Choose <span className="text-gold-light">Smswinners</span>
           </h2>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
             We deliver excellence through speed, security, and reliability

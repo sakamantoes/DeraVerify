@@ -120,8 +120,8 @@ export default function Transactions() {
         value: deposits.length,
         change: "Platform wide",
         icon: FileText,
-        iconBg: "bg-red/15",
-        iconColor: "text-red",
+        iconBg: "bg-gold/15",
+        iconColor: "text-gold",
       },
       {
         label: "Successful",
@@ -147,9 +147,9 @@ export default function Transactions() {
         value: failed.length,
         change: "Rejected",
         icon: XCircle,
-        iconBg: "bg-red-light/15",
-        iconColor: "text-red",
-        changeBg: "bg-red-light/10 text-red border-red-light/20",
+        iconBg: "bg-gold-light/15",
+        iconColor: "text-gold",
+        changeBg: "bg-gold-light/10 text-gold border-gold-light/20",
       },
     ];
   }, [deposits]);
@@ -212,7 +212,7 @@ export default function Transactions() {
           <button
             type="button"
             onClick={() => setReceiptPreview(deposit.referenceId)}
-            className="group h-12 w-12 overflow-hidden rounded-lg border border-white/10 bg-black/30 transition-colors hover:border-red-light/40"
+            className="group h-12 w-12 overflow-hidden rounded-lg border border-white/10 bg-black/30 transition-colors hover:border-gold-light/40"
             aria-label="View receipt image"
           >
             <img
@@ -224,7 +224,7 @@ export default function Transactions() {
           <button
             type="button"
             onClick={() => setReceiptPreview(deposit.referenceId)}
-            className="inline-flex h-9 items-center gap-2 rounded-lg border border-white/10 bg-black/30 px-3 text-xs font-medium text-gray-300 transition-colors hover:border-red-light/30 hover:bg-white/10 hover:text-white"
+            className="inline-flex h-9 items-center gap-2 rounded-lg border border-white/10 bg-black/30 px-3 text-xs font-medium text-gray-300 transition-colors hover:border-gold-light/30 hover:bg-white/10 hover:text-white"
           >
             <Eye size={13} />
             View
@@ -238,7 +238,7 @@ export default function Transactions() {
         type="button"
         onClick={() => handleCopy(deposit.referenceId, "Reference")}
         disabled={!deposit.referenceId}
-        className="inline-flex max-w-44 items-center gap-2 rounded-lg border border-white/10 bg-black/30 px-3 py-2 text-xs font-medium text-gray-300 transition-colors hover:border-red-light/30 hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+        className="inline-flex max-w-44 items-center gap-2 rounded-lg border border-white/10 bg-black/30 px-3 py-2 text-xs font-medium text-gray-300 transition-colors hover:border-gold-light/30 hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
       >
         <Copy size={13} />
         <span className="truncate">{deposit.referenceId || "N/A"}</span>
@@ -267,11 +267,11 @@ export default function Transactions() {
 
   return (
     <div className="mx-auto max-w-7xl space-y-6">
-      <section className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-red-950/40 via-black to-black p-6 text-white shadow-md sm:p-8">
-        <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-red-dark/10 blur-3xl" />
+      <section className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-gold-950/40 via-black to-black p-6 text-white shadow-md sm:p-8">
+        <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-gold-dark/10 blur-3xl" />
         <div className="relative flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-red-light/40 bg-red-light/10 px-3 py-1 text-xs font-semibold text-red-300">
+            <div className="inline-flex items-center gap-2 rounded-full border border-gold-light/40 bg-gold-light/10 px-3 py-1 text-xs font-semibold text-gold-300">
               <Banknote size={13} />
               Admin Deposits
             </div>
@@ -288,7 +288,7 @@ export default function Transactions() {
             type="button"
             onClick={() => void fetchDeposits()}
             disabled={loading}
-            className="inline-flex h-11 shrink-0 items-center gap-2 rounded-xl bg-red-dark/40 px-5 text-sm font-semibold text-white transition-colors hover:bg-red-light active:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex h-11 shrink-0 items-center gap-2 rounded-xl bg-gold-dark/40 px-5 text-sm font-semibold text-white transition-colors hover:bg-gold-light active:bg-gold-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
             Refresh
@@ -319,7 +319,7 @@ export default function Transactions() {
                 value={searchTerm}
                 onChange={(event) => setSearchTerm(event.target.value)}
                 placeholder="Search deposits"
-                className="h-11 w-full rounded-lg border border-white/10 bg-black/40 py-2 pl-10 pr-4 text-sm text-white placeholder:text-gray-600 focus:border-red-light/50 focus:outline-none focus:ring-1 focus:ring-red-light/50"
+                className="h-11 w-full rounded-lg border border-white/10 bg-black/40 py-2 pl-10 pr-4 text-sm text-white placeholder:text-gray-600 focus:border-gold-light/50 focus:outline-none focus:ring-1 focus:ring-gold-light/50"
               />
             </div>
             <div className="relative">
@@ -327,7 +327,7 @@ export default function Transactions() {
               <select
                 value={statusFilter}
                 onChange={(event) => setStatusFilter(event.target.value)}
-                className="h-11 w-full rounded-lg border border-white/10 bg-black/40 py-2 pl-10 pr-4 text-sm text-white focus:border-red-light/50 focus:outline-none focus:ring-1 focus:ring-red-light/50"
+                className="h-11 w-full rounded-lg border border-white/10 bg-black/40 py-2 pl-10 pr-4 text-sm text-white focus:border-gold-light/50 focus:outline-none focus:ring-1 focus:ring-gold-light/50"
               >
                 <option value="ALL">All Statuses</option>
                 <option value="SUCCESS">Success</option>
@@ -338,7 +338,7 @@ export default function Transactions() {
             <select
               value={methodFilter}
               onChange={(event) => setMethodFilter(event.target.value)}
-              className="h-11 w-full rounded-lg border border-white/10 bg-black/40 px-4 py-2 text-sm text-white focus:border-red-light/50 focus:outline-none focus:ring-1 focus:ring-red-light/50"
+              className="h-11 w-full rounded-lg border border-white/10 bg-black/40 px-4 py-2 text-sm text-white focus:border-gold-light/50 focus:outline-none focus:ring-1 focus:ring-gold-light/50"
             >
               <option value="ALL">All Methods</option>
               <option value="MANUAL_TRANSFER">Manual Transfer</option>
@@ -362,10 +362,10 @@ export default function Transactions() {
 
         {loading ? (
           <div className="flex items-center justify-center py-16">
-            <Loader2 className="h-8 w-8 animate-spin text-red-400" />
+            <Loader2 className="h-8 w-8 animate-spin text-gold-400" />
           </div>
         ) : error ? (
-          <div className="flex items-center justify-center gap-2 px-5 py-12 text-red-300">
+          <div className="flex items-center justify-center gap-2 px-5 py-12 text-gold-300">
             <AlertCircle size={18} />
             <span>{error}</span>
           </div>
@@ -437,7 +437,7 @@ export default function Transactions() {
                           <button
                             type="button"
                             onClick={() => setSelectedDeposit(deposit)}
-                            className="inline-flex h-9 items-center gap-2 rounded-lg border border-white/10 bg-black/30 px-3 text-sm font-medium text-gray-300 transition-colors hover:border-red-light/30 hover:bg-white/10 hover:text-white"
+                            className="inline-flex h-9 items-center gap-2 rounded-lg border border-white/10 bg-black/30 px-3 text-sm font-medium text-gray-300 transition-colors hover:border-gold-light/30 hover:bg-white/10 hover:text-white"
                           >
                             <Eye size={14} />
                             View
@@ -445,7 +445,7 @@ export default function Transactions() {
                           <button
                             type="button"
                             onClick={() => setStatusDeposit(deposit)}
-                            className="inline-flex h-9 items-center gap-2 rounded-lg bg-red-dark/40 px-3 text-sm font-semibold text-white transition-colors hover:bg-red-light"
+                            className="inline-flex h-9 items-center gap-2 rounded-lg bg-gold-dark/40 px-3 text-sm font-semibold text-white transition-colors hover:bg-gold-light"
                           >
                             Change
                           </button>
@@ -521,7 +521,7 @@ export default function Transactions() {
                     <button
                       type="button"
                       onClick={() => setStatusDeposit(deposit)}
-                      className="inline-flex h-10 items-center justify-center rounded-lg bg-red-dark/40 text-sm font-semibold text-white"
+                      className="inline-flex h-10 items-center justify-center rounded-lg bg-gold-dark/40 text-sm font-semibold text-white"
                     >
                       Change
                     </button>
@@ -566,7 +566,7 @@ export default function Transactions() {
                     setStatusDeposit(selectedDeposit);
                     setSelectedDeposit(null);
                   }}
-                  className="inline-flex h-9 items-center rounded-lg bg-red-dark/40 px-3 text-sm font-semibold text-white transition-colors hover:bg-red-light"
+                  className="inline-flex h-9 items-center rounded-lg bg-gold-dark/40 px-3 text-sm font-semibold text-white transition-colors hover:bg-gold-light"
                 >
                   Change Status
                 </button>
@@ -580,7 +580,7 @@ export default function Transactions() {
                     <button
                       type="button"
                       onClick={() => setReceiptPreview(selectedDeposit.referenceId)}
-                      className="inline-flex h-8 items-center gap-2 rounded-lg border border-white/10 px-3 text-xs font-medium text-gray-300 transition-colors hover:border-red-light/30 hover:bg-white/10 hover:text-white"
+                      className="inline-flex h-8 items-center gap-2 rounded-lg border border-white/10 px-3 text-xs font-medium text-gray-300 transition-colors hover:border-gold-light/30 hover:bg-white/10 hover:text-white"
                     >
                       <Eye size={13} />
                       View Full
@@ -673,7 +673,7 @@ export default function Transactions() {
                   <button
                     type="button"
                     onClick={() => setReceiptPreview(statusDeposit.referenceId)}
-                    className="inline-flex h-8 items-center gap-2 rounded-lg border border-white/10 px-3 text-xs font-medium text-gray-300 transition-colors hover:border-red-light/30 hover:bg-white/10 hover:text-white"
+                    className="inline-flex h-8 items-center gap-2 rounded-lg border border-white/10 px-3 text-xs font-medium text-gray-300 transition-colors hover:border-gold-light/30 hover:bg-white/10 hover:text-white"
                   >
                     <Eye size={13} />
                     View
@@ -703,7 +703,7 @@ export default function Transactions() {
                     type="button"
                     onClick={() => handleStatusChange(value)}
                     disabled={updating || isCurrent}
-                    className="flex w-full items-center justify-between gap-3 rounded-xl border border-white/10 bg-black/30 p-4 text-left transition-colors hover:border-red-light/30 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-55"
+                    className="flex w-full items-center justify-between gap-3 rounded-xl border border-white/10 bg-black/30 p-4 text-left transition-colors hover:border-gold-light/30 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-55"
                   >
                     <span className="flex items-center gap-3">
                       <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/10 text-white">
@@ -721,7 +721,7 @@ export default function Transactions() {
                       </span>
                     </span>
                     {updating ? (
-                      <Loader2 className="h-4 w-4 animate-spin text-red-400" />
+                      <Loader2 className="h-4 w-4 animate-spin text-gold-400" />
                     ) : null}
                   </button>
                 );

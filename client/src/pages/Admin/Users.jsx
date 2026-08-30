@@ -202,8 +202,8 @@ export default function Users() {
       value: totalUsers,
       change: "All time",
       icon: UsersIcon,
-      iconBg: "bg-red/15",
-      iconColor: "text-red",
+      iconBg: "bg-gold/15",
+      iconColor: "text-gold",
     },
     {
       label: "Active Users",
@@ -245,11 +245,11 @@ export default function Users() {
   return (
     <div className="mx-auto max-w-7xl space-y-6">
       {/* Hero Section */}
-      <section className="relative overflow-hidden rounded-2xl border border-white/10 shadow-md bg-gradient-to-br from-red-950/40 via-black to-black p-6 text-white sm:p-8">
-        <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-red-dark/10 blur-3xl" />
+      <section className="relative overflow-hidden rounded-2xl border border-white/10 shadow-md bg-gradient-to-br from-gold-950/40 via-black to-black p-6 text-white sm:p-8">
+        <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-gold-dark/10 blur-3xl" />
         <div className="relative flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-red-light/40 bg-red-500/10 px-3 py-1 text-xs font-semibold text-red-300">
+            <div className="inline-flex items-center gap-2 rounded-full border border-gold-light/40 bg-gold-500/10 px-3 py-1 text-xs font-semibold text-gold-300">
               <UsersIcon size={13} />
               User Management
             </div>
@@ -263,7 +263,7 @@ export default function Users() {
           </div>
           <button
             onClick={fetchUsers}
-            className="inline-flex h-11 shrink-0 items-center gap-2 rounded-xl bg-red-dark/40 px-5 text-sm font-semibold text-white transition-colors hover:bg-red-500 active:bg-red-700"
+            className="inline-flex h-11 shrink-0 items-center gap-2 rounded-xl bg-gold-dark/40 px-5 text-sm font-semibold text-white transition-colors hover:bg-gold-500 active:bg-gold-700"
           >
             <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
             Refresh
@@ -276,7 +276,7 @@ export default function Users() {
         {stats.map((stat) => (
           <div
             key={stat.label}
-            className="group rounded-xl border border-white/10 shadow-md bg-white/5 p-5 transition-all transform hover:-translate-y-1 hover:border-red-light/40"
+            className="group rounded-xl border border-white/10 shadow-md bg-white/5 p-5 transition-all transform hover:-translate-y-1 hover:border-gold-light/40"
           >
             <div className="flex items-start justify-between gap-3">
               <div
@@ -343,7 +343,7 @@ export default function Users() {
             placeholder="Search users by name, email, or phone..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full rounded-lg border border-white/10 bg-black/40 py-2 pl-9 pr-4 text-sm text-white placeholder:text-gray-500 focus:border-red-500/50 focus:outline-none focus:ring-1 focus:ring-red-500/50"
+            className="w-full rounded-lg border border-white/10 bg-black/40 py-2 pl-9 pr-4 text-sm text-white placeholder:text-gray-500 focus:border-gold-500/50 focus:outline-none focus:ring-1 focus:ring-gold-500/50"
           />
         </div>
         <div className="flex gap-2 flex-wrap">
@@ -351,7 +351,7 @@ export default function Users() {
             onClick={() => setStatusFilter("all")}
             className={`rounded-lg px-3 py-2 text-xs font-medium transition-all ${
               statusFilter === "all"
-                ? "bg-red-500/20 text-red-light border border-red-500/30"
+                ? "bg-gold-500/20 text-gold-light border border-gold-500/30"
                 : "bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10"
             }`}
           >
@@ -384,11 +384,11 @@ export default function Users() {
       <div className="rounded-xl border border-white/10 shadow-md bg-white/5 overflow-hidden">
         {loading ? (
           <div className="flex items-center justify-center py-12 flex-col gap-1">
-            <Loader2 className="h-8 w-8 animate-spin text-red-light" />
+            <Loader2 className="h-8 w-8 animate-spin text-gold-light" />
             <p className="text-white text-[12px]">getting all user.....</p>
           </div>
         ) : error ? (
-          <div className="flex items-center justify-center gap-2 rounded-lg bg-red-500/10 p-4 text-red-light m-4">
+          <div className="flex items-center justify-center gap-2 rounded-lg bg-gold-500/10 p-4 text-gold-light m-4">
             <AlertCircle size={20} />
             {error}
           </div>
@@ -423,7 +423,7 @@ export default function Users() {
                   >
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-500/10 text-red-light font-semibold">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gold-500/10 text-gold-light font-semibold">
                           {user.username ? user.username.charAt(0).toUpperCase() : user.email?.charAt(0).toUpperCase() || "U"}
                         </div>
                         <div>
@@ -478,7 +478,7 @@ export default function Users() {
                               e.stopPropagation();
                               handleEditWalletCancel();
                             }}
-                            className="rounded p-1 text-red-400 hover:bg-red-500/20 transition-colors"
+                            className="rounded p-1 text-gold-400 hover:bg-gold-500/20 transition-colors"
                             title="Cancel"
                           >
                             <X size={14} />
@@ -609,7 +609,7 @@ export default function Users() {
             <div className="p-6 space-y-4">
               {/* User Header */}
               <div className="flex items-center gap-4">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-500/10 text-red-light text-2xl font-bold">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gold-500/10 text-gold-light text-2xl font-bold">
                   {selectedUser.username ? selectedUser.username.charAt(0).toUpperCase() : selectedUser.email?.charAt(0).toUpperCase() || "U"}
                 </div>
                 <div>
@@ -741,7 +741,7 @@ export default function Users() {
       )}
       
       {error && (
-        <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-lg bg-red-500/90 px-4 py-3 text-sm font-medium text-white shadow-lg animate-in slide-in-from-right-5">
+        <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-lg bg-gold-500/90 px-4 py-3 text-sm font-medium text-white shadow-lg animate-in slide-in-from-right-5">
           <AlertCircle size={16} />
           {error}
         </div>

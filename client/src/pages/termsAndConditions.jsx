@@ -8,9 +8,9 @@ const TermsAndConditions = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black py-12 px-4 sm:px-6 lg:px-8">
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-radial from-red-light/10 via-transparent to-transparent" />
-        <div className="absolute top-20 left-10 w-72 h-72 bg-red-light/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-red-600/10 rounded-full blur-3xl animate-pulse delay-1000" />
+        <div className="absolute inset-0 bg-gradient-radial from-gold-light/10 via-transparent to-transparent" />
+        <div className="absolute top-20 left-10 w-72 h-72 bg-gold-light/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-gold-600/10 rounded-full blur-3xl animate-pulse delay-1000" />
       </div>
 
       <div className="max-w-4xl mx-auto relative z-10">
@@ -19,14 +19,14 @@ const TermsAndConditions = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <Link to="/" className="inline-flex items-center text-gray-400 hover:text-red-light transition-colors mb-6">
+          <Link to="/" className="inline-flex items-center text-gray-400 hover:text-gold-light transition-colors mb-6">
             <ArrowLeft size={20} className="mr-2" />
             Back to Home
           </Link>
 
           <div className="glass-card rounded-2xl p-8 md:p-10">
             <div className="flex items-center gap-3 mb-6">
-              <Shield className="text-red-light w-8 h-8" />
+              <Shield className="text-gold-light w-8 h-8" />
               <h1 className="text-3xl font-bold text-white">Terms & Conditions</h1>
             </div>
             <p className="text-gray-400 text-sm mb-8">Last updated: August 2026</p>
@@ -35,7 +35,7 @@ const TermsAndConditions = () => {
               {/* Payment Section */}
               <section>
                 <div className="flex items-center gap-2 mb-4">
-                  <CreditCard className="text-red-light w-5 h-5" />
+                  <CreditCard className="text-gold-light w-5 h-5" />
                   <h2 className="text-xl font-bold text-white">Payment for Services and Purchase Procedure</h2>
                 </div>
                 <ol className="list-decimal list-inside space-y-2 text-sm leading-relaxed">
@@ -47,7 +47,7 @@ const TermsAndConditions = () => {
                   <li>A purchase is considered completed if an OTP code has been received and displayed to the user;</li>
                   <li>If an OTP code does not arrive for any reason, the funds are returned to the balance;</li>
                   <li>If a code does not arrive after multiple numbers purchase, Smswinners may apply sanctions to the account;</li>
-                  <li>To withdraw funds from your balance, send a request to <a href="mailto:smswinner19@gmail.com" className="text-red-light hover:underline">smswinner19@gmail.com</a> from the email address that was used to register your account. Requests are reviewed within 3 business days. The standard withdrawal period is 7 days. In some cases, the review period for a withdrawal request may take up to 4 weeks.</li>
+                  <li>To withdraw funds from your balance, send a request to <a href="mailto:smswinner19@gmail.com" className="text-gold-light hover:underline">smswinner19@gmail.com</a> from the email address that was used to register your account. Requests are reviewed within 3 business days. The standard withdrawal period is 7 days. In some cases, the review period for a withdrawal request may take up to 4 weeks.</li>
                   <li>Refunds are made to the same wallet which the deposit was made with.</li>
                   <li>A 5% fee is charged for withdrawals. If one year or more has passed since the last top-up, the fee is 15%; after 2 years – 25%; after 3 years – 35%.</li>
                 </ol>
@@ -174,7 +174,7 @@ const TermsAndConditions = () => {
                 </ul>
 
                 <h3 className="font-semibold text-white text-sm mt-4 mb-2">8. Refunds</h3>
-                <p className="text-sm pl-4">Refunds are only possible by request from the email that you have registered with to: <a href="mailto:Smswinner19@gmail.com" className="text-red-light hover:underline">Smswinner19@gmail.com</a>, or via Telegram <span className="text-red-light">@@smswinnerssupport</span>. Refunds are processed only to the original payment card in the same currency.</p>
+                <p className="text-sm pl-4">Refunds are only possible by request from the email that you have registered with to: <a href="mailto:Smswinner19@gmail.com" className="text-gold-light hover:underline">Smswinner19@gmail.com</a>, or via Telegram <span className="text-gold-light">@@smswinnerssupport</span>. Refunds are processed only to the original payment card in the same currency.</p>
 
                 <h3 className="font-semibold text-white text-sm mt-4 mb-2">9. Payment Security</h3>
                 <p className="text-sm pl-4">When paying for an order with a bank card, the payment is processed (including card number entry) on a secure page of a certified payment processing system. This means that your confidential data (such as card details, registration information, etc.) is not sent to the online store. The entire process is protected, and no one, including our platform, can access your personal or banking data. When handling card data, the system complies with the Payment Card Industry Data Security Standard (PCI DSS), a global security standard developed by major payment systems such as Visa and MasterCard. The data transmission technology ensures the safety of card transactions using Secure Sockets Layer (SSL) encryption, Verified by Visa, SecureCode, and closed banking networks with the highest level of protection.</p>

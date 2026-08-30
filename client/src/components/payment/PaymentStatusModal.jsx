@@ -18,15 +18,15 @@ const statusContent = {
       "Your payment is still being confirmed. We will update your wallet once it clears.",
     icon: Clock3,
     iconClass: "bg-amber-500/10 text-amber-400",
-    buttonClass: "bg-red-dark hover:bg-red",
+    buttonClass: "bg-gold-dark hover:bg-gold",
   },
   failed: {
     title: "Payment Failed",
     message:
       "We could not confirm this payment. Please try again or use another payment method.",
     icon: XCircle,
-    iconClass: "bg-red-light/10 text-red-light",
-    buttonClass: "bg-red-dark hover:bg-red",
+    iconClass: "bg-gold-light/10 text-gold-light",
+    buttonClass: "bg-gold-dark hover:bg-gold",
   },
 };
 
@@ -50,7 +50,7 @@ export default function PaymentStatusModal() {
       "We could not read the payment status from this redirect link.",
     icon: Clock3,
     iconClass: "bg-white/10 text-gray-300",
-    buttonClass: "bg-red-dark hover:bg-red",
+    buttonClass: "bg-gold-dark hover:bg-gold",
   };
 
   const Icon = content.icon;
@@ -90,13 +90,13 @@ export default function PaymentStatusModal() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-black px-4 py-6">
-      <div className="w-full max-w-md overflow-hidden rounded-2xl border border-red-light/20 bg-[#111] shadow-2xl">
+      <div className="w-full max-w-md overflow-hidden rounded-2xl border border-gold-light/20 bg-[#111] shadow-2xl">
         <div className="flex justify-end px-4 pt-4">
           <button
             type="button"
             onClick={handleClose}
             aria-label="Close payment status"
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-gray-400 transition-colors hover:border-red-light/40 hover:text-white"
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-gray-400 transition-colors hover:border-gold-light/40 hover:text-white"
           >
             <X size={18} />
           </button>
