@@ -26,8 +26,8 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://sms-winner.vercel.app",
-      "https://www.smswinners.online",
+      "https://dera-verify.vercel.app",
+      "https://www.waveverify.com",
     ],
     credentials: true,
   }),
