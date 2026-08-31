@@ -157,29 +157,29 @@ const TESTIMONIALS = [
   {
     quote:
       "We switched our onboarding flow over in an afternoon. Delivery times dropped and support tickets about missing codes basically disappeared.",
-    name: "Amaka O.",
+    name: "Emeka O.",
     role: "Founder, Kestrel Pay",
-    avatar: "https://i.pravatar.cc/150?img=1",
+    avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvuGrhsm3CrHq7jQM7Xz35arAmit1kGULZj-Aa2WhsOQ&s=10",
   },
   {
     quote:
       "The service is exactly what we needed — predictable, reliable, and we shipped a working integration quickly.",
-    name: "Daniel R.",
+    name: "Daniella R.",
     role: "Backend lead, Nimbus",
-    avatar: "https://i.pravatar.cc/150?img=2",
+    avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSWnl4i0tynHjqzvejcNOXxEaByysStVgAlAvBe4HDv7Q&s=10",
   },
   {
     quote:
       "Coverage in markets our old provider barely touched. That alone paid for the switch inside the first month.",
     name: "Priya M.",
     role: "Growth, Lumen Labs",
-    avatar: "https://i.pravatar.cc/150?img=3",
+    avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTAN0xAM41rWk_jFp5AjN9Y8x-NpucLRr60sdqK8oPFrA&s=10",
   },
   {
     quote: "Their delivery desk caught a routing issue on a Sunday night before we even noticed it ourselves.",
     name: "Tomiwa A.",
     role: "CTO, Anchorpoint",
-    avatar: "https://i.pravatar.cc/150?img=4",
+    avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSjPFEukcpbsOe9IVZr57HqcDIme0wFDlYnFXt4ZQtDag&s=10",
   },
 ];
 
@@ -580,13 +580,15 @@ const AnimatedCounter = React.memo(({ target, format, duration = 1600 }) => {
 
 const FaqItem = React.memo(({ q, a, isOpen, onClick }) => {
   return (
-    <div className="border-b border-white/8 py-5 hover:bg-white/5 px-4 rounded-lg transition-colors">
-      <button onClick={onClick} className="flex w-full items-center justify-between gap-4 text-left">
-        <span className="header-font text-[15px] text-[#F5EFE0] md:text-[17px]">{q}</span>
+    <div className="border-b border-white/8 py-4 md:py-5 hover:bg-white/5 px-3 md:px-4 rounded-lg transition-colors">
+      <button onClick={onClick} className="flex w-full items-center justify-between gap-3 md:gap-4 text-left">
+        <span className="header-font text-[#F5EFE0] text-sm md:text-base leading-tight md:leading-normal">
+          {q}
+        </span>
         <span
           className={`shrink-0 text-[#C9A24B] transition-transform duration-300 ${isOpen ? 'rotate-45' : ''}`}
         >
-          <Plus className="h-5 w-5" />
+          <Plus className="h-4 w-4 md:h-5 md:w-5" />
         </span>
       </button>
       <AnimatePresence initial={false}>
@@ -598,7 +600,9 @@ const FaqItem = React.memo(({ q, a, isOpen, onClick }) => {
             transition={{ duration: 0.25 }}
             className="overflow-hidden"
           >
-            <p className="pt-3 text-sm leading-relaxed text-[#9B948A] body-font">{a}</p>
+            <p className="pt-2 md:pt-3 text-xs md:text-sm leading-relaxed text-[#9B948A] body-font">
+              {a}
+            </p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -1161,27 +1165,28 @@ const HomePage = () => {
       </section>
 
       {/* FAQ - Reduced font sizes */}
-      <section id="faq" className="relative z-10 px-6 py-20 md:py-28 bg-[#131110]/50">
-        <div className="mx-auto max-w-3xl">
-          <Reveal className="mb-12 text-center">
-            <p className="text-xs uppercase tracking-[0.25em] text-[#C9A24B] body-font">FAQ</p>
-            <h2 className="mt-3 header-font-mobile text-3xl md:text-4xl" style={{ fontSize: '32px', lineHeight: '38px' }}>Common questions.</h2>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <GlassCard className="p-1 text-red-300">
-              {FAQS.map((f, i) => (
-                <FaqItem
-                  key={f.q}
-                  q={f.q}
-                  a={f.a}
-                  isOpen={faqOpen === i}
-                  onClick={() => setFaqOpen(faqOpen === i ? -1 : i)}
-                />
-              ))}
-            </GlassCard>
-          </Reveal>
-        </div>
-      </section>
+{/* FAQ - Reduced font sizes for mobile */}
+<section id="faq" className="relative z-10 px-6 py-20 md:py-28 bg-[#131110]/50">
+  <div className="mx-auto max-w-3xl">
+    <Reveal className="mb-12 text-center">
+      <p className="text-xs uppercase tracking-[0.25em] text-[#C9A24B] body-font">FAQ</p>
+      <h2 className="mt-3 header-font-mobile text-3xl md:text-4xl" style={{ fontSize: '32px', lineHeight: '38px' }}>Common questions.</h2>
+    </Reveal>
+    <Reveal delay={0.1}>
+      <GlassCard className="p-1">
+        {FAQS.map((f, i) => (
+          <FaqItem
+            key={f.q}
+            q={f.q}
+            a={f.a}
+            isOpen={faqOpen === i}
+            onClick={() => setFaqOpen(faqOpen === i ? -1 : i)}
+          />
+        ))}
+      </GlassCard>
+    </Reveal>
+  </div>
+</section>
 
       {/* CTA */}
       <section className="relative z-10 px-6 py-20 md:py-28">
