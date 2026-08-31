@@ -31,6 +31,7 @@ import {
   Cloud,
   Database,
   Smartphone,
+  Minus,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -578,35 +579,44 @@ const AnimatedCounter = React.memo(({ target, format, duration = 1600 }) => {
   return <span ref={ref} className="will-change-transform">{format(value)}</span>;
 });
 
+// Redesigned FAQ Item with modern look and responsive typography
 const FaqItem = React.memo(({ q, a, isOpen, onClick }) => {
   return (
-    <div className="border-b border-white/8 py-4 md:py-5 hover:bg-white/5 px-3 md:px-4 rounded-lg transition-colors">
-      <button onClick={onClick} className="flex w-full items-center justify-between gap-3 md:gap-4 text-left">
-        <span className="header-font text-[#F5EFE0] text-sm md:text-base leading-tight md:leading-normal">
+    <motion.div 
+      className="border-b border-[#C9A24B]/10 last:border-b-0 hover:bg-[#C9A24B]/5 transition-colors duration-200"
+      initial={false}
+    >
+      <button
+        onClick={onClick}
+        className="flex w-full items-center justify-between gap-3 px-4 py-4 sm:px-5 sm:py-5 md:px-6 md:py-6 text-left group"
+      >
+        <span className=" text-[#F5EFE0] text-sm sm:text-base md:text-lg lg:text-xl leading-snug sm:leading-normal flex-1 pr-2">
           {q}
         </span>
-        <span
-          className={`shrink-0 text-[#C9A24B] transition-transform duration-300 ${isOpen ? 'rotate-45' : ''}`}
-        >
-          <Plus className="h-4 w-4 md:h-5 md:w-5" />
+        <span className={`shrink-0 flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 rounded-full border border-[#C9A24B]/30 bg-[#C9A24B]/10 text-[#C9A24B] transition-all duration-300 group-hover:border-[#C9A24B] group-hover:bg-[#C9A24B]/20 ${isOpen ? 'rotate-45 border-[#C9A24B] bg-[#C9A24B]/20' : ''}`}>
+          <Plus className={`h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-4.5 md:w-4.5 transition-transform duration-300 ${isOpen ? 'rotate-0' : ''}`} />
         </span>
       </button>
+      
       <AnimatePresence initial={false}>
         {isOpen && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
             className="overflow-hidden"
           >
-            <p className="pt-2 md:pt-3 text-xs md:text-sm leading-relaxed text-[#9B948A] body-font">
-              {a}
-            </p>
+            <div className="px-4 pb-4 sm:px-5 sm:pb-5 md:px-6 md:pb-6">
+              <div className="w-12 h-0.5 sm:w-16 md:w-20 bg-gradient-to-r from-[#C9A24B] to-transparent mb-3 sm:mb-4"></div>
+              <p className="text-[#9B948A] text-xs sm:text-sm md:text-base leading-relaxed sm:leading-relaxed md:leading-relaxed body-font">
+                {a}
+              </p>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 });
 
@@ -1164,29 +1174,55 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* FAQ - Reduced font sizes */}
-{/* FAQ - Reduced font sizes for mobile */}
-<section id="faq" className="relative z-10 px-6 py-20 md:py-28 bg-[#131110]/50">
-  <div className="mx-auto max-w-3xl">
-    <Reveal className="mb-12 text-center">
-      <p className="text-xs uppercase tracking-[0.25em] text-[#C9A24B] body-font">FAQ</p>
-      <h2 className="mt-3 header-font-mobile text-3xl md:text-4xl" style={{ fontSize: '32px', lineHeight: '38px' }}>Common questions.</h2>
-    </Reveal>
-    <Reveal delay={0.1}>
-      <GlassCard className="p-1">
-        {FAQS.map((f, i) => (
-          <FaqItem
-            key={f.q}
-            q={f.q}
-            a={f.a}
-            isOpen={faqOpen === i}
-            onClick={() => setFaqOpen(faqOpen === i ? -1 : i)}
-          />
-        ))}
-      </GlassCard>
-    </Reveal>
-  </div>
-</section>
+      {/* FAQ - Redesigned with responsive typography */}
+      <section id="faq" className="relative z-10 px-4 sm:px-6 py-16 sm:py-20 md:py-28 bg-[#131110]/50">
+        <div className="mx-auto max-w-4xl">
+          <Reveal className="mb-8 sm:mb-10 md:mb-12 text-center">
+            <p className="text-xs uppercase tracking-[0.25em] text-[#C9A24B] body-font">FAQ</p>
+            <h2 className="mt-3 header-font-mobile text-2xl sm:text-3xl md:text-4xl" style={{ fontSize: 'clamp(28px, 5vw, 48px)', lineHeight: '1.2' }}>
+              Frequently asked <span className="gradient-text">questions</span>
+            </h2>
+            <p className="mt-3 text-xs sm:text-sm text-[#9B948A] body-font max-w-2xl mx-auto">
+              Everything you need to know about getting started with Wave Verify
+            </p>
+          </Reveal>
+          
+          <Reveal delay={0.1}>
+            <div className="rounded-2xl border border-[#C9A24B]/15 bg-[#131110]/90 backdrop-blur-sm shadow-2xl shadow-[#C9A24B]/5 overflow-hidden">
+              {/* Decorative header */}
+              <div className="hidden sm:flex items-center gap-2 px-4 sm:px-6 md:px-8 py-3 sm:py-4 border-b border-[#C9A24B]/10 bg-[#C9A24B]/5">
+                <div className="flex gap-1.5">
+                  <div className="w-2.5 h-2.5 rounded-full bg-red-500/80"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/80"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-green-500/80"></div>
+                </div>
+                <span className="text-xs text-[#9B948A]/60 ml-2 font-mono">faq@waveverify</span>
+                <span className="ml-auto text-[10px] text-[#9B948A]/40 font-mono">~/questions</span>
+              </div>
+              
+              {/* FAQ Items */}
+              {FAQS.map((f, i) => (
+                <FaqItem
+                  key={f.q}
+                  q={f.q}
+                  a={f.a}
+                  isOpen={faqOpen === i}
+                  onClick={() => setFaqOpen(faqOpen === i ? -1 : i)}
+                />
+              ))}
+            </div>
+          </Reveal>
+          
+          {/* Bottom CTA */}
+          <Reveal delay={0.2}>
+            <div className="mt-6 sm:mt-8 md:mt-10 text-center">
+              <p className="text-xs sm:text-sm text-[#9B948A] body-font">
+                Still have questions? <a href="#" className="text-[#F0CB6E] hover:text-[#F0CB6E]/80 transition-colors underline-offset-2 hover:underline">Contact our support team</a>
+              </p>
+            </div>
+          </Reveal>
+        </div>
+      </section>
 
       {/* CTA */}
       <section className="relative z-10 px-6 py-20 md:py-28">
