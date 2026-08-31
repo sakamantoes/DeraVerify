@@ -44,25 +44,100 @@ const getAllUserDeposit = async (req, res, next) => {
       throw new Error("User not found");
     }
 
-    const walletTransaction = await WalletTransaction.find({
-      userId: userExist._id,
-      type: "DEPOSIT",
-    }).sort({ _id: -1 });
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const limit = Math.min(50, Math.max(1, parseInt(req.query.limit, 10) || 8));
+    const { status, paymentMethod, search, dateFilter } = req.query;
 
-    if (!walletTransaction || walletTransaction.length === 0) {
-      return res.status(200).json({
-        success: true,
-        status: 200,
-        message: "request was successfull",
-        data: [],
-      });
+    const baseQuery = { userId: userExist._id, type: "DEPOSIT" };
+    const filterQuery = { ...baseQuery };
+
+    if (status && status !== "ALL") {
+      filterQuery.status = status;
     }
+
+    if (paymentMethod && paymentMethod !== "ALL") {
+      filterQuery.paymentMethod = paymentMethod;
+    }
+
+    if (search && search.trim()) {
+      const regex = new RegExp(
+        search.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+        "i",
+      );
+      filterQuery.$or = [
+        { depositorName: regex },
+        { referenceId: regex },
+        { orderId: regex },
+      ];
+    }
+
+    if (dateFilter && dateFilter !== "ALL") {
+      const now = new Date();
+      let from;
+
+      if (dateFilter === "TODAY") {
+        from = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      } else if (dateFilter === "7D") {
+        from = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      } else if (dateFilter === "30D") {
+        from = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      }
+
+      if (from) {
+        filterQuery.createdAt = { $gte: from };
+      }
+    }
+
+    const [total, walletTransaction, summaryAgg] = await Promise.all([
+      WalletTransaction.countDocuments(filterQuery),
+      WalletTransaction.find(filterQuery)
+        .sort({ _id: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit),
+      WalletTransaction.aggregate([
+        { $match: baseQuery },
+        {
+          $group: {
+            _id: "$status",
+            count: { $sum: 1 },
+            amount: { $sum: "$amount" },
+          },
+        },
+      ]),
+    ]);
+
+    const summary = {
+      total: 0,
+      successful: 0,
+      pending: 0,
+      failed: 0,
+      confirmedValue: 0,
+    };
+
+    summaryAgg.forEach((row) => {
+      summary.total += row.count;
+      if (row._id === "SUCCESS") {
+        summary.successful = row.count;
+        summary.confirmedValue = row.amount || 0;
+      } else if (row._id === "PENDING") {
+        summary.pending = row.count;
+      } else if (row._id === "FAILED") {
+        summary.failed = row.count;
+      }
+    });
 
     res.status(200).json({
       success: true,
       status: 200,
       message: "request was successfull",
       data: walletTransaction,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.max(1, Math.ceil(total / limit)),
+      },
+      summary,
     });
   } catch (error) {
     next(error);
@@ -106,6 +181,7 @@ const getPurchaseHistory = async (req, res, next) => {
 
 const getUserOtpOrders = async (req, res, next) => {
   const user = req.user;
+  const { status, search } = req.query;
 
   try {
     const userExist = await User.findById({ _id: user._id });
@@ -115,9 +191,26 @@ const getUserOtpOrders = async (req, res, next) => {
       throw new Error("User not found");
     }
 
-    const otpOrders = await OtpOrder.find({
-      userId: userExist._id,
-    }).sort({ _id: -1 });
+    const query = { userId: userExist._id };
+
+    if (status && status !== "ALL") {
+      query.status = status;
+    }
+
+    if (search && search.trim()) {
+      const regex = new RegExp(
+        search.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+        "i",
+      );
+      query.$or = [
+        { phoneNumber: regex },
+        { service: regex },
+        { country: regex },
+        { activationId: regex },
+      ];
+    }
+
+    const otpOrders = await OtpOrder.find(query).sort({ _id: -1 });
 
     res.status(200).json({
       success: true,

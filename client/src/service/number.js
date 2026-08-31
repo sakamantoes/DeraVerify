@@ -36,8 +36,8 @@ export const cancelActivation = async (orderId) => {
 };
 
 // ================= ORDER HISTORY =================
-export const getMyOrders = async () => {
-  const res = await api.get("/api/user/otp/orders");
+export const getMyOrders = async (params = {}) => {
+  const res = await api.get("/api/user/otp/orders", { params });
 
   return res.data;
 };

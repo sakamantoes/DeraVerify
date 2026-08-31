@@ -146,7 +146,7 @@ const emailSignup = async (req, res, next) => {
 
     if (isUser) {
       res.statusCode = 400;
-      throw new Error("User with this email or username already exists");
+      throw new Error("An account with htese details could not be created");
     }
 
     const hashedPassword = await hashPassword(password);

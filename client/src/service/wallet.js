@@ -5,8 +5,8 @@ export const getWalletBalance = async () => {
 
   return res.data;
 };
-export const getAllUserDeposits = async () => {
-  const res = await api.get("/api/user/wallet/deposits");
+export const getAllUserDeposits = async (params = {}) => {
+  const res = await api.get("/api/user/wallet/deposits", { params });
 
   return res.data;
 };

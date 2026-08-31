@@ -54,7 +54,7 @@ const Navbar = () => {
         transition={{ duration: 0.5 }}
         className={`fixed top-0 w-full z-50 transition-all duration-300 ${
           scrolled
-            ? "bg-black/90 backdrop-blur-xl border-b border-red-light/20 shadow-lg"
+            ? "bg-black/90 backdrop-blur-xl border-b border-gold-light/20 shadow-lg"
             : "bg-transparent"
         }`}
       >
@@ -89,12 +89,12 @@ const Navbar = () => {
                     repeat: Infinity,
                     ease: "easeInOut",
                   }}
-                  className="absolute inset-0 rounded-full border-2 border-red-light/50"
+                  className="absolute inset-0 rounded-full border-2 border-gold-light/50"
                   style={{ width: "100%", height: "100%" }}
                 />
               </div>
 
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-red-light to-red-dark bg-clip-text text-transparent">
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-gold-light to-gold-dark bg-clip-text text-transparent">
                 Smswinners
               </h1>
             </motion.a>
@@ -119,7 +119,7 @@ const Navbar = () => {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="px-5 py-2 text-gray-300 hover:text-white border border-red-light transition-colors flex items-center gap-2 rounded-lg"
+                    className="px-5 py-2 text-gray-300 hover:text-white border border-gold-light transition-colors flex items-center gap-2 rounded-lg"
                   >
                     <LogIn size={18} />
                     Login
@@ -130,7 +130,7 @@ const Navbar = () => {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="px-5 py-2 bg-gradient-to-r from-red-light to-red-dark rounded-lg text-white font-semibold shadow-lg shadow-red-light/30 flex items-center gap-2"
+                    className="px-5 py-2 bg-gradient-to-r from-gold-light to-gold-dark rounded-lg text-white font-semibold shadow-lg shadow-gold-light/30 flex items-center gap-2"
                   >
                   <UserPlus size={18} />
                   Sign Up
@@ -190,7 +190,7 @@ const Navbar = () => {
                      <img src={imageObject.Logo} alt="Logo" className="rounded-full " />
                     </motion.div>
                   </div>
-                  <h2 className="text-3xl font-bold bg-gradient-to-r from-red-light to-red-dark bg-clip-text text-transparent">
+                  <h2 className="text-3xl font-bold bg-gradient-to-r from-gold-light to-gold-dark bg-clip-text text-transparent">
                     Smswinners
                   </h2>
                 </div>
@@ -210,14 +210,14 @@ const Navbar = () => {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.1 + index * 0.1 }}
                     whileHover={{ x: 10 }}
-                    className="flex items-center justify-between px-6 py-4 text-white text-xl font-medium border-b border-white/10 hover:border-red-light/50 transition-all group"
+                    className="flex items-center justify-between px-6 py-4 text-white text-xl font-medium border-b border-white/10 hover:border-gold-light/50 transition-all group"
                   >
                     <span className="flex items-center gap-3">
-                      <link.icon className="text-red-light" size={24} />
+                      <link.icon className="text-gold-light" size={24} />
                       <span>{link.name}</span>
                     </span>
                     <ChevronRight
-                      className="opacity-0 group-hover:opacity-100 transition-all text-red-light"
+                      className="opacity-0 group-hover:opacity-100 transition-all text-gold-light"
                       size={20}
                     />
                   </motion.a>
@@ -235,7 +235,7 @@ const Navbar = () => {
                   onClick={() => {
                     setIsOpen(false);
                   }}
-                  className="w-full flex items-center justify-center gap-2 px-6 py-3 border border-red-light/30 mb-2 rounded-xl text-white font-semibold hover:bg-red-light/10 transition-all"
+                  className="w-full flex items-center justify-center gap-2 px-6 py-3 border border-gold-light/30 mb-2 rounded-xl text-white font-semibold hover:bg-gold-light/10 transition-all"
                 >
                   <LogIn size={20} />
                   Login
@@ -247,7 +247,7 @@ const Navbar = () => {
                       handleSignupClick();
                       setIsOpen(false);
                     }}
-                    className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-red-light to-red-dark rounded-xl text-white font-semibold shadow-lg shadow-red-light/30"
+                    className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-gold-light to-gold-dark rounded-xl text-white font-semibold shadow-lg shadow-gold-light/30"
                   >
                     <UserPlus size={20} />
                     Sign Up Free

@@ -1,4 +1,5 @@
 import {
+  Activity,
   ArrowDownRight,
   ArrowUpRight,
   CheckCircle2,
@@ -13,7 +14,6 @@ import {
   Users,
   BarChart3,
   AlertTriangle,
-  Activity,
   Server,
   UserCheck,
   CoinsIcon,
@@ -57,7 +57,6 @@ const quickActions = [
   { label: "Manage Users", icon: Users, path: "/a/users" },
   { label: "View Support", icon: BarChart3, path: "/a/support" },
   { label: "Add Numbers", icon: Phone, path: "/a/numbers" },
-  { label: "Logs", icon: Activity, path: "/a/logs" },
 ];
 
 const parseBalanceValue = (response) => {
@@ -125,9 +124,9 @@ export default function AdminDashboard() {
       value: "0",
       change: "+124 this month",
       icon: Users,
-      iconBg: "bg-red/15",
-      iconColor: "text-red",
-      changeBg: "bg-red/10 text-red border-white/10 shadow-md",
+      iconBg: "bg-gold/15",
+      iconColor: "text-gold",
+      changeBg: "bg-gold/10 text-gold border-white/10 shadow-md",
     },
     {
       label: "Active Sessions",
@@ -136,9 +135,9 @@ export default function AdminDashboard() {
         : Number(total ?? activeOtpSessions.length).toLocaleString(),
       change: "Waiting for OTP",
       icon: Activity,
-      iconBg: "bg-gradient-to-br from-red/50 to-red/20",
+      iconBg: "bg-gradient-to-br from-gold/50 to-gold/20",
       iconColor: "text-white",
-      changeBg: "bg-red/10 text-red border-white/10 shadow-md",
+      changeBg: "bg-gold/10 text-gold border-white/10 shadow-md",
     },
     {
       label: "Total Revenue",
@@ -154,9 +153,9 @@ export default function AdminDashboard() {
       value: "99.97%",
       change: "All systems operational",
       icon: Server,
-      iconBg: "bg-red/15",
-      iconColor: "text-red/90",
-      changeBg: "bg-red/10 text-red border-white/10 shadow-md",
+      iconBg: "bg-gold/15",
+      iconColor: "text-gold/90",
+      changeBg: "bg-gold/10 text-gold border-white/10 shadow-md",
     },
   ];
 
@@ -253,11 +252,11 @@ export default function AdminDashboard() {
   return (
     <div className="mx-auto max-w-7xl space-y-4 sm:space-y-6 px-3 sm:px-4 md:px-6">
       {/* ── Hero banner ── */}
-      <section className="relative overflow-hidden rounded-xl sm:rounded-2xl border border-white/10 shadow-md bg-gradient-to-br from-red-950/40 via-black to-black p-4 sm:p-6 md:p-8 text-white">
-        <div className="pointer-events-none absolute -right-20 -top-20 h-48 w-48 sm:h-64 sm:w-64 rounded-full bg-red-dark/10 blur-3xl" />
+      <section className="relative overflow-hidden rounded-xl sm:rounded-2xl border border-white/10 shadow-md bg-gradient-to-br from-gold-950/40 via-black to-black p-4 sm:p-6 md:p-8 text-white">
+        <div className="pointer-events-none absolute -right-20 -top-20 h-48 w-48 sm:h-64 sm:w-64 rounded-full bg-gold-dark/10 blur-3xl" />
         <div className="relative flex flex-col gap-4 sm:gap-6 md:flex-row md:items-end md:justify-between">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-red-light/40 bg-red-light/10 px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-semibold text-red-300">
+            <div className="inline-flex items-center gap-2 rounded-full border border-gold-light/40 bg-gold-light/10 px-2 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-xs font-semibold text-gold-300">
               <ShieldCheck size={11} className="sm:w-[13px] sm:h-[13px]" />
               Admin Control Panel
             </div>
@@ -275,7 +274,7 @@ export default function AdminDashboard() {
             <button
               type="button"
               onClick={() => navigate("/a/users")}
-              className="inline-flex h-9 sm:h-11 shrink-0 items-center justify-center gap-2 rounded-lg sm:rounded-xl bg-red-dark/40 px-3 sm:px-5 text-xs sm:text-sm font-semibold text-white transition-colors hover:bg-red-light active:bg-red-dark"
+              className="inline-flex h-9 sm:h-11 shrink-0 items-center justify-center gap-2 rounded-lg sm:rounded-xl bg-gold-dark/40 px-3 sm:px-5 text-xs sm:text-sm font-semibold text-white transition-colors hover:bg-gold-light active:bg-gold-dark"
             >
               <Users size={14} className="sm:w-4 sm:h-4" />
               <span className="hidden xs:inline">Manage Users</span>
@@ -295,18 +294,18 @@ export default function AdminDashboard() {
       </section>
 
       {/* ── Provider Balance Cards ── */}
-      <section className="relative overflow-hidden rounded-xl sm:rounded-2xl border-2 border-red-light/30 shadow-lg bg-gradient-to-r from-red-950/60 via-red-900/40 to-black p-4 sm:p-6">
-        <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-red-light/20 blur-3xl" />
+      <section className="relative overflow-hidden rounded-xl sm:rounded-2xl border-2 border-gold-light/30 shadow-lg bg-gradient-to-r from-gold-950/60 via-gold-900/40 to-black p-4 sm:p-6">
+        <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gold-light/20 blur-3xl" />
         <div className="relative flex flex-col gap-5">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-red-light/20 border-2 border-red-light/40">
-              <Wallet size={24} className="sm:w-8 sm:h-8 text-red-light" />
+            <div className="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-gold-light/20 border-2 border-gold-light/40">
+              <Wallet size={24} className="sm:w-8 sm:h-8 text-gold-light" />
             </div>
             <div className="flex-1">
               <p className="text-[7px] sm:text-sm font-semibold uppercase text-gray-400">
                 Provider Funding Balances
               </p>
-              <p className="text-xs sm:text-sm font-semibold uppercase tracking-widest text-red-light">
+              <p className="text-xs sm:text-sm font-semibold uppercase tracking-widest text-gold-light">
                 SMS provider wallet health
               </p>
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -339,7 +338,7 @@ export default function AdminDashboard() {
               type="button"
               onClick={fetchProviderBalances}
               disabled={loadingBalances}
-              className="inline-flex items-center gap-2 rounded-lg border border-red-light/30 bg-red-light/10 px-4 py-2 text-sm font-semibold text-red-light transition-colors hover:bg-red-light/20 disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-lg border border-gold-light/30 bg-gold-light/10 px-4 py-2 text-sm font-semibold text-gold-light transition-colors hover:bg-gold-light/20 disabled:opacity-50"
             >
               <RefreshCw
                 size={14}
@@ -349,7 +348,7 @@ export default function AdminDashboard() {
             </button>
           </div>
         </div>
-        <div className="mt-4 flex items-center justify-between text-xs text-gray-500 border-t border-red-light/20 pt-3">
+        <div className="mt-4 flex items-center justify-between text-xs text-gray-500 border-t border-gold-light/20 pt-3">
           <span>Last updated: {new Date().toLocaleString()}</span>
           <span className="text-emerald-400">● Active</span>
         </div>
@@ -360,7 +359,7 @@ export default function AdminDashboard() {
         {updatedStats.map((stat) => (
           <div
             key={stat.label}
-            className="group rounded-xl border border-white/10 shadow-md bg-white/5 p-4 sm:p-5 transition-all transform hover:-translate-y-1 hover:border-red-light/40 hover:bg-white/5"
+            className="group rounded-xl border border-white/10 shadow-md bg-white/5 p-4 sm:p-5 transition-all transform hover:-translate-y-1 hover:border-gold-light/40 hover:bg-white/5"
           >
             <div className="flex items-start justify-between gap-2 sm:gap-3">
               <div
@@ -389,7 +388,7 @@ export default function AdminDashboard() {
         {/* Left column */}
         <div className="space-y-4 sm:space-y-5">
           {/* Quick actions */}
-          <div className="rounded-xl border border-red-light/10 shadow-md bg-white/5 p-4 sm:p-5">
+          <div className="rounded-xl border border-gold-light/10 shadow-md bg-white/5 p-4 sm:p-5">
             <h2 className="text-xs sm:text-sm font-semibold uppercase tracking-widest text-gray-400">
               Admin Quick Actions
             </h2>
@@ -399,7 +398,7 @@ export default function AdminDashboard() {
                   key={label}
                   type="button"
                   onClick={() => navigate(path)}
-                  className="flex flex-col items-center justify-center gap-1.5 sm:gap-2 rounded-xl border border-red-light/10 shadow-md bg-black/20 py-3 sm:py-5 px-2 text-center transition-all hover:border-red-light/30 hover:bg-red-light/10 active:scale-105"
+                  className="flex flex-col items-center justify-center gap-1.5 sm:gap-2 rounded-xl border border-gold-light/10 shadow-md bg-black/20 py-3 sm:py-5 px-2 text-center transition-all hover:border-gold-light/30 hover:bg-gold-light/10 active:scale-105"
                 >
                   <Icon size={16} className="sm:w-5 sm:h-5 text-white/40" />
                   <span className="text-[10px] sm:text-xs font-semibold text-gray-300 text-center leading-tight">
@@ -411,8 +410,8 @@ export default function AdminDashboard() {
           </div>
 
           {/* Active sessions monitoring */}
-          <div className="overflow-hidden rounded-xl border border-red-light/10 shadow-md bg-white/5">
-            <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-3 border-b border-red-light/10 shadow-md px-4 sm:px-5 py-3 sm:py-4">
+          <div className="overflow-hidden rounded-xl border border-gold-light/10 shadow-md bg-white/5">
+            <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-3 border-b border-gold-light/10 shadow-md px-4 sm:px-5 py-3 sm:py-4">
               <div>
                 <h2 className="text-sm sm:text-base font-semibold text-white">
                   Active User Sessions
@@ -422,7 +421,7 @@ export default function AdminDashboard() {
                 </p>
               </div>
               <div className="flex gap-2">
-                <button className="flex items-center gap-1 rounded-lg border border-white/10 shadow-md px-2 sm:px-3 py-1 text-[10px] sm:text-xs font-semibold text-gray-300 transition-colors hover:border-red-light/30 hover:bg-red-light/8">
+                <button className="flex items-center gap-1 rounded-lg border border-white/10 shadow-md px-2 sm:px-3 py-1 text-[10px] sm:text-xs font-semibold text-gray-300 transition-colors hover:border-gold-light/30 hover:bg-gold-light/8">
                   <UserCheck size={11} className="sm:w-[13px] sm:h-[13px]" />
                   <span className="hidden xs:inline">Filter</span>
                 </button>
@@ -430,7 +429,7 @@ export default function AdminDashboard() {
                   type="button"
                   onClick={() => void refetch()}
                   disabled={isLoading}
-                  className="flex items-center gap-1 rounded-lg border border-white/10 shadow-md px-2 sm:px-3 py-1 text-[10px] sm:text-xs font-semibold text-gray-300 transition-colors hover:border-red-light/30 hover:bg-red-light/8 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="flex items-center gap-1 rounded-lg border border-white/10 shadow-md px-2 sm:px-3 py-1 text-[10px] sm:text-xs font-semibold text-gray-300 transition-colors hover:border-gold-light/30 hover:bg-gold-light/8 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   <RefreshCw
                     size={11}
@@ -441,7 +440,7 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            <div className="divide-y divide-red-light/10">
+            <div className="divide-y divide-gold-light/10">
               {isLoading ? (
                 <div className="flex items-center justify-center gap-2 px-4 sm:px-5 py-10 text-sm text-gray-400">
                   <RefreshCw size={16} className="animate-spin" />
@@ -462,7 +461,7 @@ export default function AdminDashboard() {
                         <span className="text-sm sm:text-base font-semibold text-white">
                           {session.user}
                         </span>
-                        <span className="rounded-full border border-white/10 shadow-md bg-red-light/10 px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[11px] font-medium text-red">
+                        <span className="rounded-full border border-white/10 shadow-md bg-gold-light/10 px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[11px] font-medium text-gold">
                           {session.service}
                         </span>
                       </div>
@@ -504,7 +503,7 @@ export default function AdminDashboard() {
                           {session.status}
                         </span>
                       </div>
-                      <div className="shrink-0 rounded-lg border border-red-light/10 shadow-md bg-black/40 px-2 sm:px-3 py-1.5 sm:py-2 text-center font-mono text-xs sm:text-sm font-bold tracking-widest text-white">
+                      <div className="shrink-0 rounded-lg border border-gold-light/10 shadow-md bg-black/40 px-2 sm:px-3 py-1.5 sm:py-2 text-center font-mono text-xs sm:text-sm font-bold tracking-widest text-white">
                         {session.time}
                       </div>
                     </div>
@@ -518,7 +517,7 @@ export default function AdminDashboard() {
         {/* Right column */}
         <div className="space-y-4 sm:space-y-5">
           {/* System inventory */}
-          <div className="rounded-xl border border-red-light/10 shadow-md bg-white/5 p-4 sm:p-5">
+          <div className="rounded-xl border border-gold-light/10 shadow-md bg-white/5 p-4 sm:p-5">
             <h2 className="text-sm sm:text-base font-semibold text-white">
               System Inventory
             </h2>
@@ -526,9 +525,9 @@ export default function AdminDashboard() {
               {serviceCards.map((service) => (
                 <div
                   key={service.title}
-                  className="group flex gap-3 rounded-xl border border-red-light/10 shadow-md bg-black/20 p-3 sm:p-4 transition-all hover:-translate-y-1 hover:border-red-light/40 hover:bg-red-light/5"
+                  className="group flex gap-3 rounded-xl border border-gold-light/10 shadow-md bg-black/20 p-3 sm:p-4 transition-all hover:-translate-y-1 hover:border-gold-light/40 hover:bg-gold-light/5"
                 >
-                  <div className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-lg bg-red-light/10 text-red transition-colors group-hover:bg-red-light/20">
+                  <div className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-lg bg-gold-light/10 text-gold transition-colors group-hover:bg-gold-light/20">
                     <service.icon
                       size={16}
                       className="sm:w-[18px] sm:h-[18px]"
@@ -551,7 +550,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* Recent activity / alerts */}
-          <div className="rounded-xl border border-red-light/10 shadow-md bg-white/5 p-4 sm:p-5">
+          <div className="rounded-xl border border-gold-light/10 shadow-md bg-white/5 p-4 sm:p-5">
             <div className="flex items-center justify-between">
               <h2 className="text-sm sm:text-base font-semibold text-white">
                 System Alerts & Activity
@@ -581,14 +580,14 @@ export default function AdminDashboard() {
                 recentNotifications.map((notification, index) => (
                   <div
                     key={index}
-                    className="flex items-center gap-2 sm:gap-3 border-b border-red-light/5 shadow-md rounded-lg px-2 py-2 sm:py-2.5 transition-all hover:-translate-y-1 hover:bg-white/5"
+                    className="flex items-center gap-2 sm:gap-3 border-b border-gold-light/5 shadow-md rounded-lg px-2 py-2 sm:py-2.5 transition-all hover:-translate-y-1 hover:bg-white/5"
                   >
                     <div
                       className={`flex h-7 w-7 sm:h-8 sm:w-8 shrink-0 items-center justify-center rounded-lg ${
                         notification.direction === "up"
                           ? "bg-emerald-500/10 text-emerald-400"
                           : notification.direction === "down"
-                            ? "bg-red-light/10 text-red-light/80"
+                            ? "bg-gold-light/10 text-gold-light/80"
                             : "bg-amber-500/10 text-amber-400"
                       }`}
                     >
@@ -628,7 +627,7 @@ export default function AdminDashboard() {
                           ? "text-emerald-400"
                           : notification.direction === "down"
                             ? "text-amber-400"
-                            : "text-red-400"
+                            : "text-gold-400"
                       }`}
                     >
                       {notification.amount || ""}

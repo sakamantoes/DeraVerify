@@ -54,6 +54,6 @@ export const getNumberAvailabilityInfo = (item) => {
     label: "Unavailable",
     detail: "No active route",
     score: 0,
-    className: "border-red-light/20 bg-red-light/10 text-red-light",
+    className: "border-gold-light/20 bg-gold-light/10 text-gold-light",
   };
 };

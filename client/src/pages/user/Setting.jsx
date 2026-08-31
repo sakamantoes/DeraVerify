@@ -174,10 +174,10 @@ export default function Setting() {
   return (
     <div className="mx-auto max-w-4xl space-y-6">
       {/* Header */}
-      <section className="relative overflow-hidden rounded-2xl border border-white/10 shadow-md bg-gradient-to-br from-red-950/40 via-black to-black p-6 text-white sm:p-8">
-        <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-red-dark/10 blur-3xl" />
+      <section className="relative overflow-hidden rounded-2xl border border-white/10 shadow-md bg-gradient-to-br from-gold-950/40 via-black to-black p-6 text-white sm:p-8">
+        <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-gold-dark/10 blur-3xl" />
         <div className="relative">
-          <div className="inline-flex items-center gap-2 rounded-full border border-red-light/40 bg-red-light/10 px-3 py-1 text-xs font-semibold text-red-300">
+          <div className="inline-flex items-center gap-2 rounded-full border border-gold-light/40 bg-gold-light/10 px-3 py-1 text-xs font-semibold text-gold-300">
             <User size={13} />
             Account Settings
           </div>
@@ -194,7 +194,7 @@ export default function Setting() {
       <section className="rounded-xl border border-white/10 bg-white/5 p-6 shadow-md">
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div className="flex min-w-0 items-center gap-4">
-            <div className="flex h-20 w-20 shrink-0 select-none items-center justify-center rounded-2xl bg-gradient-to-br from-red-light to-red-dark text-3xl font-bold text-white">
+            <div className="flex h-20 w-20 shrink-0 select-none items-center justify-center rounded-2xl bg-gradient-to-br from-gold-light to-gold-dark text-3xl font-bold text-white">
               {initial}
             </div>
             <div className="min-w-0">
@@ -207,14 +207,14 @@ export default function Setting() {
                     type="text"
                     value={newUsername}
                     onChange={(e) => setNewUsername(e.target.value)}
-                    className="rounded-lg border border-white/10 bg-black/40 w-[200px] sm:w-[400px] px-3 py-2 text-lg font-bold text-white focus:border-red-light/50 focus:outline-none focus:ring-1 focus:ring-red-light/50"
+                    className="rounded-lg border border-white/10 bg-black/40 w-[200px] sm:w-[400px] px-3 py-2 text-lg font-bold text-white focus:border-gold-light/50 focus:outline-none focus:ring-1 focus:ring-gold-light/50"
                     autoFocus
                     disabled={updatingUsername}
                   />
                   <button
                     onClick={handleUpdateUsername}
                     disabled={updatingUsername}
-                    className="rounded-lg bg-red-light px-2 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-dark disabled:opacity-50"
+                    className="rounded-lg bg-gold-light px-2 py-2 text-sm font-semibold text-white transition-colors hover:bg-gold-dark disabled:opacity-50"
                   >
                     {updatingUsername ? "Saving..." : "Save"}
                   </button>
@@ -241,7 +241,7 @@ export default function Setting() {
               )}
               <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-gray-400">
                 <div className="flex items-center gap-1">
-                  <Mail size={14} className="text-red-400" />
+                  <Mail size={14} className="text-gold-400" />
                   <span className="break-all">{displayEmail}</span>
                 </div>
                 <button
@@ -324,7 +324,7 @@ export default function Setting() {
                   onChange={(e) =>
                     setPasswordData({ ...passwordData, currentPassword: e.target.value })
                   }
-                  className="w-full rounded-lg border border-white/10 bg-black/40 px-4 py-2 pr-10 text-sm text-white placeholder:text-gray-500 focus:border-red-light/50 focus:outline-none focus:ring-1 focus:ring-red-light/50"
+                  className="w-full rounded-lg border border-white/10 bg-black/40 px-4 py-2 pr-10 text-sm text-white placeholder:text-gray-500 focus:border-gold-light/50 focus:outline-none focus:ring-1 focus:ring-gold-light/50"
                   placeholder="Enter current password"
                 />
                 <button
@@ -348,7 +348,7 @@ export default function Setting() {
                   onChange={(e) =>
                     setPasswordData({ ...passwordData, newPassword: e.target.value })
                   }
-                  className="w-full rounded-lg border border-white/10 bg-black/40 px-4 py-2 pr-10 text-sm text-white placeholder:text-gray-500 focus:border-red-light/50 focus:outline-none focus:ring-1 focus:ring-red-light/50"
+                  className="w-full rounded-lg border border-white/10 bg-black/40 px-4 py-2 pr-10 text-sm text-white placeholder:text-gray-500 focus:border-gold-light/50 focus:outline-none focus:ring-1 focus:ring-gold-light/50"
                   placeholder="Enter new password (min 6 characters)"
                 />
                 <button
@@ -372,7 +372,7 @@ export default function Setting() {
                   onChange={(e) =>
                     setPasswordData({ ...passwordData, confirmPassword: e.target.value })
                   }
-                  className="w-full rounded-lg border border-white/10 bg-black/40 px-4 py-2 pr-10 text-sm text-white placeholder:text-gray-500 focus:border-red-light/50 focus:outline-none focus:ring-1 focus:ring-red-light/50"
+                  className="w-full rounded-lg border border-white/10 bg-black/40 px-4 py-2 pr-10 text-sm text-white placeholder:text-gray-500 focus:border-gold-light/50 focus:outline-none focus:ring-1 focus:ring-gold-light/50"
                   placeholder="Confirm new password"
                 />
                 <button
@@ -389,7 +389,7 @@ export default function Setting() {
               <button
                 onClick={handleUpdatePassword}
                 disabled={updatingPassword}
-                className="inline-flex items-center gap-2 rounded-lg bg-red-light px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-dark disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-lg bg-gold-light px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-gold-dark disabled:opacity-50"
               >
                 {updatingPassword ? "Updating..." : "Update Password"}
               </button>
@@ -417,32 +417,32 @@ export default function Setting() {
         <div className="mt-4 grid gap-3 sm:grid-cols-3">
           <button
             onClick={() => navigate("/f/fund-account")}
-            className="flex items-center gap-3 rounded-lg border border-white/10 bg-black/20 p-3 transition-colors hover:border-red-light/30 hover:bg-red-light/10"
+            className="flex items-center gap-3 rounded-lg border border-white/10 bg-black/20 p-3 transition-colors hover:border-gold-light/30 hover:bg-gold-light/10"
           >
-            <Wallet size={18} className="text-red-400" />
+            <Wallet size={18} className="text-gold-400" />
             <span className="text-sm font-semibold text-white">Fund Wallet</span>
           </button>
           <button
             onClick={() => navigate("/f/deposits")}
-            className="flex items-center gap-3 rounded-lg border border-white/10 bg-black/20 p-3 transition-colors hover:border-red-light/30 hover:bg-red-light/10"
+            className="flex items-center gap-3 rounded-lg border border-white/10 bg-black/20 p-3 transition-colors hover:border-gold-light/30 hover:bg-gold-light/10"
           >
-            <CreditCard size={18} className="text-red-400" />
+            <CreditCard size={18} className="text-gold-400" />
             <span className="text-sm font-semibold text-white">Deposits</span>
           </button>
           <button
             onClick={() => navigate("/f/receipts")}
-            className="flex items-center gap-3 rounded-lg border border-white/10 bg-black/20 p-3 transition-colors hover:border-red-light/30 hover:bg-red-light/10"
+            className="flex items-center gap-3 rounded-lg border border-white/10 bg-black/20 p-3 transition-colors hover:border-gold-light/30 hover:bg-gold-light/10"
           >
-            <ReceiptText size={18} className="text-red-400" />
+            <ReceiptText size={18} className="text-gold-400" />
             <span className="text-sm font-semibold text-white">Receipts</span>
           </button>
         </div>
       </section>
 
       {/* Delete Account */}
-      <section className="rounded-xl border border-red-light/20 bg-red-light/10 p-6 shadow-md">
+      <section className="rounded-xl border border-gold-light/20 bg-gold-light/10 p-6 shadow-md">
         <div className="flex items-start gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-light/15 text-red">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gold-light/15 text-gold">
             <AlertTriangle size={18} />
           </div>
           <div>
@@ -453,19 +453,19 @@ export default function Setting() {
           </div>
         </div>
 
-        <label className="mt-5 block text-xs font-semibold uppercase tracking-widest text-red-200">
+        <label className="mt-5 block text-xs font-semibold uppercase tracking-widest text-gold-200">
           Type DELETE to confirm
         </label>
         <input
           value={deleteConfirm}
           onChange={(event) => setDeleteConfirm(event.target.value)}
           placeholder="DELETE"
-          className="mt-2 h-11 w-full rounded-lg border border-red-light/20 bg-black/40 px-3 text-sm text-white outline-none transition-colors placeholder:text-gray-600 focus:border-red-light/60 focus:ring-1 focus:ring-red-light/50"
+          className="mt-2 h-11 w-full rounded-lg border border-gold-light/20 bg-black/40 px-3 text-sm text-white outline-none transition-colors placeholder:text-gray-600 focus:border-gold-light/60 focus:ring-1 focus:ring-gold-light/50"
         />
         <button
           onClick={handleDeletionRequest}
           disabled={!deleteReady}
-          className="mt-3 inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-red-light px-4 text-sm font-semibold text-white transition-colors hover:bg-red-dark disabled:cursor-not-allowed disabled:bg-red-light/30 disabled:text-white/50"
+          className="mt-3 inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-gold-light px-4 text-sm font-semibold text-white transition-colors hover:bg-gold-dark disabled:cursor-not-allowed disabled:bg-gold-light/30 disabled:text-white/50"
         >
           <Trash2 size={15} />
           Request Account Deletion

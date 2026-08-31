@@ -10,7 +10,6 @@ import {
   Wallet,
   X,
   Users,
-  Activity,
 } from "lucide-react";
 import Sidebar from "../components/Sidebar";
 import useAuth from "../store/useAuth";
@@ -21,7 +20,6 @@ const adminNavItems = [
   { label: "Dashboard", to: "/a/dashboard", icon: Gauge },
   { label: "Users Management", to: "/a/users", icon: Users },
   { label: "Services & Price Control", to: "/a/numbers", icon: Phone },
-  { label: "Logs management", to: "/a/logs", icon: Activity },
   { label: "Payment Tracking", to: "/a/deposits", icon: Wallet },
 ];
 
@@ -143,7 +141,7 @@ const AdminLayout = () => {
 
       <div className="relative min-h-screen min-w-0 overflow-x-hidden text-slate-950 lg:pl-72">
         {/* Header */}
-        <header className="sticky top-0 z-30 border-b border-white/30 bg-gradient-to-br from-black via-gray-900 to-black backdrop-blur-xl">
+        <header className="sticky top-0 z-30 border-b border-white/30 bg-black backdrop-blur-xl">
           <div className="flex h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
             {/* Left: mobile toggle + search */}
             <div className="flex items-center gap-3">
@@ -159,7 +157,7 @@ const AdminLayout = () => {
 
               <div
                 role="search"
-                className="hidden h-10 w-full max-w-lg items-center gap-2 rounded-lg border border-white/30 bg-slate-50 px-3 text-slate-500 transition-colors hover:border-red-light/30 hover:bg-white md:flex"
+                className="hidden h-10 w-full max-w-lg items-center gap-2 rounded-lg border border-white/30 bg-slate-50 px-3 text-slate-500 transition-colors hover:border-gold-light/30 hover:bg-white md:flex"
               >
                 <Search size={16} className="shrink-0" aria-hidden="true" />
                 <input
@@ -180,14 +178,14 @@ const AdminLayout = () => {
                 <Bell size={18} className="text-white" aria-hidden="true" />
                 <span
                   aria-label="Unread notifications"
-                  className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-light"
+                  className="absolute right-2 top-2 h-2 w-2 rounded-full bg-gold-light"
                 />
               </button> */}
 
               <div className="hidden items-center gap-3 border-l border-white/30 pl-3 sm:flex">
                 <div
                   aria-hidden="true"
-                  className="flex h-9 w-9 shrink-0 select-none items-center justify-center rounded-lg bg-gradient-to-br from-red-light to-red-dark text-sm font-bold text-white"
+                  className="flex h-9 w-9 shrink-0 select-none items-center justify-center rounded-lg bg-gradient-to-br from-gold-light to-gold-dark text-sm font-bold text-white"
                 >
                   {initial}
                 </div>

@@ -3,7 +3,6 @@ import { connectDB } from "./config/db.js";
 import errorHandle from "./middleware/errorHandler.js";
 import morgan from "morgan";
 import authRoutes from "./routes/auth.js";
-import logsRoutes from "./routes/logs.js";
 import paymentRoutes from "./routes/payment.js";
 import otpRoutes from "./routes/otpRoutes.js";
 import notificationRoute from "./routes/notification.js";
@@ -41,7 +40,6 @@ app.get("/", (req, res) => {
 
 // routes
 app.use("/api/auth", authRoutes);
-app.use("/api/logs", logsRoutes);
 app.use("/api/payment", paymentRoutes);
 app.use("/api/otp", otpRoutes);
 app.use("/api/user", userRoutes);

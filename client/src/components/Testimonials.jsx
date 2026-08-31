@@ -33,11 +33,11 @@ const TestimonialCard = ({ testimonial, index }) => (
     whileHover={{ y: -5 }}
     className="glass-card rounded-2xl p-6 glow-border"
   >
-    <Quote className="w-8 h-8 text-red-light mb-4 opacity-50" />
+    <Quote className="w-8 h-8 text-gold-light mb-4 opacity-50" />
     <p className="text-gray-300 mb-4">{testimonial.content}</p>
     <div className="flex items-center gap-2 mb-3">
       {[...Array(testimonial.rating)].map((_, i) => (
-        <Star key={i} className="w-4 h-4 fill-red-light text-red-light" />
+        <Star key={i} className="w-4 h-4 fill-gold-light text-gold-light" />
       ))}
     </div>
     <h4 className="font-bold">{testimonial.name}</h4>
@@ -57,7 +57,7 @@ const Testimonials = () => {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            What Our <span className="text-red-light">Clients Say</span>
+            What Our <span className="text-gold-light">Clients Say</span>
           </h2>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
             Trusted by thousands of satisfied customers worldwide

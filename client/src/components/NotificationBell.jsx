@@ -57,7 +57,7 @@ const NotificationBell = () => {
       case 'success':
         return <CheckCircle2 size={16} className="text-emerald-400" />;
       case 'error':
-        return <XCircle size={16} className="text-red-light" />;
+        return <XCircle size={16} className="text-gold-light" />;
       case 'warning':
         return <AlertCircle size={16} className="text-amber-400" />;
       case 'info':
@@ -107,12 +107,12 @@ const NotificationBell = () => {
       {/* Bell Button */}
       <button
         onClick={handleBellClick}
-        className="relative rounded-lg p-2 text-gray-400 transition-all hover:bg-white/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-red-500/50"
+        className="relative rounded-lg p-2 text-gray-400 transition-all hover:bg-white/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-gold-500/50"
         aria-label="Notifications"
       >
         <Bell size={20} />
         {unreadCount > 0 && (
-          <span className="absolute -right-0.5 -top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-red-light text-[10px] font-bold text-white ring-2 ring-white">
+          <span className="absolute -right-0.5 -top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-gold-light text-[10px] font-bold text-white ring-2 ring-white">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
@@ -133,18 +133,18 @@ const NotificationBell = () => {
                     <ArrowLeft size={16} />
                   </button>
                 ) : (
-                  <Bell size={16} className="text-red-light" />
+                  <Bell size={16} className="text-gold-light" />
                 )}
                 <h3 className="text-sm font-semibold text-white">
                   {showAllNotifications ? "All Notifications" : "Notifications"}
                 </h3>
                 {unreadCount > 0 && !showAllNotifications && (
-                  <span className="rounded-full bg-red-500/20 px-1.5 py-0.5 text-[10px] font-medium text-red-light">
+                  <span className="rounded-full bg-gold-500/20 px-1.5 py-0.5 text-[10px] font-medium text-gold-light">
                     {unreadCount} new
                   </span>
                 )}
                 {showAllNotifications && unreadCount > 0 && (
-                  <span className="rounded-full bg-red-500/20 px-1.5 py-0.5 text-[10px] font-medium text-red-light">
+                  <span className="rounded-full bg-gold-500/20 px-1.5 py-0.5 text-[10px] font-medium text-gold-light">
                     {unreadCount} unread
                   </span>
                 )}
@@ -170,7 +170,7 @@ const NotificationBell = () => {
             >
               {loading ? (
                 <div className="flex items-center justify-center py-8">
-                  <Loader2 size={24} className="animate-spin text-red-light" />
+                  <Loader2 size={24} className="animate-spin text-gold-light" />
                 </div>
               ) : notifications.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-8 px-4 text-center">
@@ -184,7 +184,7 @@ const NotificationBell = () => {
                     <div
                       key={notification._id}
                       className={`group relative px-4 py-3 transition-all duration-300 hover:bg-white/5 ${
-                        !notification.read ? 'bg-red-500/5' : ''
+                        !notification.read ? 'bg-gold-500/5' : ''
                       } animate-in slide-in-from-left fade-in`}
                       style={{ 
                         animationDelay: showAllNotifications ? `${index * 50}ms` : '0ms',
@@ -207,7 +207,7 @@ const NotificationBell = () => {
                             </h4>
                             <button
                               onClick={() => handleDelete(notification._id)}
-                              className="opacity-0 transition-opacity group-hover:opacity-100 rounded p-0.5 text-gray-500 hover:text-red-light"
+                              className="opacity-0 transition-opacity group-hover:opacity-100 rounded p-0.5 text-gray-500 hover:text-gold-light"
                               aria-label="Delete"
                             >
                               <Trash2 size={12} />
@@ -224,7 +224,7 @@ const NotificationBell = () => {
                             {!notification.read && (
                               <button
                                 onClick={() => handleMarkAsRead(notification._id)}
-                                className="text-[10px] font-medium text-red-light hover:text-red-300 transition-colors"
+                                className="text-[10px] font-medium text-gold-light hover:text-gold-300 transition-colors"
                               >
                                 Mark as read
                               </button>
@@ -235,7 +235,7 @@ const NotificationBell = () => {
                       
                       {/* Unread indicator */}
                       {!notification.read && (
-                        <div className="absolute left-0 top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-red-500" />
+                        <div className="absolute left-0 top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-gold-500" />
                       )}
                     </div>
                   ))}
@@ -259,7 +259,7 @@ const NotificationBell = () => {
                     <span>Unread: {unreadCount}</span>
                     <button
                       onClick={handleBack}
-                      className="text-red-light hover:text-red-300 transition-colors"
+                      className="text-gold-light hover:text-gold-300 transition-colors"
                     >
                       Show less
                     </button>

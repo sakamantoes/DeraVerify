@@ -281,8 +281,8 @@ export default function AdminNumbers() {
       value: totalServices,
       change: "Available",
       icon: Server,
-      iconBg: "bg-red/15",
-      iconColor: "text-red",
+      iconBg: "bg-gold/15",
+      iconColor: "text-gold",
     },
     {
       label: "Active Countries",
@@ -306,10 +306,10 @@ export default function AdminNumbers() {
   return (
     <div className="mx-auto w-full max-w-7xl min-w-0 space-y-6 overflow-hidden">
       {/* Header */}
-      <section className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-red-dark/40 via-black to-black p-6 text-white shadow-md sm:p-8">
-        <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-red-dark/10 blur-3xl" />
+      <section className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-gold-dark/40 via-black to-black p-6 text-white shadow-md sm:p-8">
+        <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-gold-dark/10 blur-3xl" />
         <div className="relative">
-          <div className="inline-flex items-center gap-2 rounded-full border border-red-light/40 bg-red-light/10 px-3 py-1 text-xs font-semibold text-red-light">
+          <div className="inline-flex items-center gap-2 rounded-full border border-gold-light/40 bg-gold-light/10 px-3 py-1 text-xs font-semibold text-gold-light">
             <Smartphone size={13} />
             Number Inventory Management
           </div>
@@ -331,7 +331,7 @@ export default function AdminNumbers() {
         {stats.map((stat) => (
           <div
             key={stat.label}
-            className="group rounded-xl border border-white/10 shadow-md bg-white/5 p-4 sm:p-5 transition-all transform hover:-translate-y-1 hover:border-red-light/40 hover:bg-white/5"
+            className="group rounded-xl border border-white/10 shadow-md bg-white/5 p-4 sm:p-5 transition-all transform hover:-translate-y-1 hover:border-gold-light/40 hover:bg-white/5"
           >
             <div className="flex items-start justify-between gap-2 sm:gap-3">
               <div
@@ -368,7 +368,7 @@ export default function AdminNumbers() {
               </p>
             </div>
             {loadingCatalog && (
-              <Loader2 size={18} className="animate-spin text-red-light" />
+              <Loader2 size={18} className="animate-spin text-gold-light" />
             )}
           </div>
 
@@ -381,8 +381,8 @@ export default function AdminNumbers() {
               }}
               className={`flex w-full items-center justify-between rounded-lg border px-3 py-3 text-left transition-all ${
                 selectedService === ""
-                  ? "border-red-light/40 bg-red-light/10"
-                  : "border-white/10 bg-black/20 hover:border-red-light/25 hover:bg-white/5"
+                  ? "border-gold-light/40 bg-gold-light/10"
+                  : "border-white/10 bg-black/20 hover:border-gold-light/25 hover:bg-white/5"
               }`}
             >
               <span>
@@ -403,8 +403,8 @@ export default function AdminNumbers() {
                 key={service.code}
                 className={`rounded-lg border transition-all ${
                   selectedService === service.code
-                    ? "border-red-light/40 bg-red-light/10"
-                    : "border-white/10 bg-black/20 hover:border-red-light/25 hover:bg-white/5"
+                    ? "border-gold-light/40 bg-gold-light/10"
+                    : "border-white/10 bg-black/20 hover:border-gold-light/25 hover:bg-white/5"
                 }`}
               >
                 <button
@@ -441,7 +441,7 @@ export default function AdminNumbers() {
                     type="button"
                     onClick={() => handleServiceToggle(service)}
                     disabled={updatingService === service.code}
-                    className="flex h-9 w-full items-center justify-center gap-2 rounded-lg border border-white/10 text-xs font-semibold text-gray-300 transition-colors hover:border-red-light/30 hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+                    className="flex h-9 w-full items-center justify-center gap-2 rounded-lg border border-white/10 text-xs font-semibold text-gray-300 transition-colors hover:border-gold-light/30 hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {updatingService === service.code ? (
                       <Loader2 size={15} className="animate-spin" />
@@ -480,7 +480,7 @@ export default function AdminNumbers() {
                     setCurrentPage(1);
                   }}
                   placeholder="Search country..."
-                  className="h-10 w-full rounded-lg border border-white/10 bg-black/40 py-2 pl-10 pr-4 text-sm text-white transition-all placeholder:text-gray-600 focus:border-red-light/50 focus:outline-none focus:ring-1 focus:ring-red-light/50"
+                  className="h-10 w-full rounded-lg border border-white/10 bg-black/40 py-2 pl-10 pr-4 text-sm text-white transition-all placeholder:text-gray-600 focus:border-gold-light/50 focus:outline-none focus:ring-1 focus:ring-gold-light/50"
                 />
               </div>
 
@@ -488,7 +488,7 @@ export default function AdminNumbers() {
                 type="button"
                 onClick={() => fetchServices()}
                 disabled={loadingCatalog}
-                className="flex h-10 items-center justify-center gap-2 rounded-lg border border-white/10 px-4 text-sm text-gray-400 transition-colors hover:border-red-light/30 hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+                className="flex h-10 items-center justify-center gap-2 rounded-lg border border-white/10 px-4 text-sm text-gray-400 transition-colors hover:border-gold-light/30 hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
               >
                 <RefreshCw
                   size={16}
@@ -500,7 +500,7 @@ export default function AdminNumbers() {
           </div>
 
           {error && (
-            <div className="mx-5 mt-5 flex items-start gap-2 rounded-lg border border-red-light/20 bg-red-light/10 p-4 text-sm text-red-light">
+            <div className="mx-5 mt-5 flex items-start gap-2 rounded-lg border border-gold-light/20 bg-gold-light/10 p-4 text-sm text-gold-light">
               <AlertCircle size={16} className="mt-0.5 shrink-0" />
               <span>{error}</span>
             </div>
@@ -508,7 +508,7 @@ export default function AdminNumbers() {
 
           {loadingCatalog ? (
             <div className="flex items-center justify-center py-16 text-gray-400">
-              <Loader2 className="h-8 w-8 animate-spin text-red-light" />
+              <Loader2 className="h-8 w-8 animate-spin text-gold-light" />
             </div>
           ) : totalListings === 0 ? (
             <div className="px-5 py-14 text-center">
@@ -543,7 +543,7 @@ export default function AdminNumbers() {
                       className="bg-black/10 transition-colors hover:bg-white/[0.03]"
                     >
                       <td className="px-5 py-4">
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-red-light/10 px-2.5 py-1 text-xs font-semibold text-red-light">
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-gold-light/10 px-2.5 py-1 text-xs font-semibold text-gold-light">
                           <Smartphone size={12} />
                           {item.serviceName}
                         </span>
@@ -583,7 +583,7 @@ export default function AdminNumbers() {
                             placeholder="Auto price"
                             type="number"
                             min="0"
-                            className="h-9 w-32 rounded-lg border border-white/10 bg-black/40 px-3 text-sm text-white outline-none transition-all placeholder:text-gray-600 focus:border-red-light/50 focus:ring-1 focus:ring-red-light/50"
+                            className="h-9 w-32 rounded-lg border border-white/10 bg-black/40 px-3 text-sm text-white outline-none transition-all placeholder:text-gray-600 focus:border-gold-light/50 focus:ring-1 focus:ring-gold-light/50"
                           />
                         ) : (
                           <span className="text-gray-300">
@@ -633,7 +633,7 @@ export default function AdminNumbers() {
                           <button
                             type="button"
                             onClick={() => startEditingPrice(item)}
-                            className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-gray-400 transition-colors hover:border-red-light/30 hover:bg-white/10 hover:text-white"
+                            className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-gray-400 transition-colors hover:border-gold-light/30 hover:bg-white/10 hover:text-white"
                             title="Edit custom price"
                           >
                             <Pencil size={15} />
@@ -655,7 +655,7 @@ export default function AdminNumbers() {
                     type="button"
                     onClick={() => setCurrentPage((page) => Math.max(page - 1, 1))}
                     disabled={visiblePage === 1}
-                    className="h-9 rounded-lg border border-white/10 px-3 text-xs font-semibold text-gray-300 transition-colors hover:border-red-light/30 hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+                    className="h-9 rounded-lg border border-white/10 px-3 text-xs font-semibold text-gray-300 transition-colors hover:border-gold-light/30 hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
                   >
                     Previous
                   </button>
@@ -668,7 +668,7 @@ export default function AdminNumbers() {
                       setCurrentPage((page) => Math.min(page + 1, totalPages))
                     }
                     disabled={visiblePage === totalPages}
-                    className="h-9 rounded-lg border border-white/10 px-3 text-xs font-semibold text-gray-300 transition-colors hover:border-red-light/30 hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+                    className="h-9 rounded-lg border border-white/10 px-3 text-xs font-semibold text-gray-300 transition-colors hover:border-gold-light/30 hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
                   >
                     Next
                   </button>

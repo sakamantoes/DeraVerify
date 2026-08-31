@@ -52,7 +52,7 @@ const FloatingChat = () => {
             repeat: Infinity,
             ease: "easeInOut",
           }}
-          className="absolute inset-0 rounded-full bg-gradient-to-r from-red-light to-orange-500 blur-xl"
+          className="absolute inset-0 rounded-full bg-gradient-to-r from-gold-light to-orange-500 blur-xl"
         />
 
         {/* Main Button */}
@@ -72,10 +72,10 @@ const FloatingChat = () => {
             h-16
             rounded-full
             bg-gradient-to-br
-            from-red-light
+            from-gold-light
             to-orange-500
             shadow-2xl
-            shadow-red-light/40
+            shadow-gold-light/40
             border
             border-white/20
             backdrop-blur-md
@@ -86,7 +86,7 @@ const FloatingChat = () => {
           
           {/* Customer Support Badge */}
           <div className="absolute -top-2 -right-2 bg-white rounded-full px-2 py-0.5 shadow-lg">
-            <span className="text-xs font-bold text-red-light">CS</span>
+            <span className="text-xs font-bold text-gold-light">CS</span>
           </div>
         </motion.button>
       </motion.div>
@@ -129,7 +129,7 @@ const FloatingChat = () => {
                 rounded-3xl
                 overflow-hidden
                 border
-                border-red-light/20
+                border-gold-light/20
                 bg-gradient-to-br
                 from-gray-900
                 to-black
@@ -137,10 +137,10 @@ const FloatingChat = () => {
               "
             >
               {/* Header */}
-              <div className="bg-gradient-to-r from-red-light to-orange-500 p-5 flex items-center gap-3">
+              <div className="bg-gradient-to-r from-gold-light to-orange-500 p-5 flex items-center gap-3">
                 <div className="relative">
                   <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-lg">
-                    <FaHeadset className="text-red-light text-3xl" />
+                    <FaHeadset className="text-gold-light text-3xl" />
                   </div>
                   <span className="absolute bottom-1 right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-white animate-pulse" />
                 </div>
@@ -294,11 +294,11 @@ const FloatingChat = () => {
               initial={{ opacity: 0, scale: 0.8, y: 40 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.8, y: 40 }}
-              className="fixed bottom-28 right-6 z-50 w-[90vw] max-w-md rounded-3xl overflow-hidden border border-red-light/20 bg-gradient-to-br from-gray-900 to-black shadow-2xl"
+              className="fixed bottom-28 right-6 z-50 w-[90vw] max-w-md rounded-3xl overflow-hidden border border-gold-light/20 bg-gradient-to-br from-gray-900 to-black shadow-2xl"
             >
-              <div className="bg-gradient-to-r from-red-light to-orange-500 p-5 flex items-center gap-3">
+              <div className="bg-gradient-to-r from-gold-light to-orange-500 p-5 flex items-center gap-3">
                 <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center">
-                  <FaHeadset className="text-red-light text-2xl" />
+                  <FaHeadset className="text-gold-light text-2xl" />
                 </div>
                 <div>
                   <h3 className="text-white font-bold">Connecting...</h3>
@@ -306,7 +306,7 @@ const FloatingChat = () => {
                 </div>
               </div>
               <div className="p-6 text-center">
-                <div className="w-12 h-12 border-4 border-red-light/30 border-t-red-light rounded-full animate-spin mx-auto mb-4" />
+                <div className="w-12 h-12 border-4 border-gold-light/30 border-t-gold-light rounded-full animate-spin mx-auto mb-4" />
                 <p className="text-gray-300">Redirecting to chat...</p>
               </div>
             </motion.div>

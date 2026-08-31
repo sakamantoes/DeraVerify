@@ -49,6 +49,13 @@ export const formatTransactionDate = (transaction) => {
   return date.toLocaleString();
 };
 
+export const DATE_FILTER_OPTIONS = [
+  { label: "All time", value: "ALL" },
+  { label: "Today", value: "TODAY" },
+  { label: "Last 7 days", value: "7D" },
+  { label: "Last 30 days", value: "30D" },
+];
+
 export const normalizeStatus = (status) =>
   String(status || "PENDING").toUpperCase();
 
@@ -66,7 +73,7 @@ export const getTransactionStatusBadge = (status) => {
       return {
         label: "Failed",
         value: "FAILED",
-        className: "border-red-light/20 bg-red-light/15 text-red",
+        className: "border-gold-light/20 bg-gold-light/15 text-gold",
         icon: XCircle,
       };
     default:

@@ -40,7 +40,7 @@ export default function GoogleButton() {
   return (
     <>
       {isLoading ? (
-        <Loader className="w-7 h-7 text-red animate-spin" />
+        <Loader className="w-7 h-7 text-gold animate-spin" />
       ) : (
         <GoogleLogin
           onSuccess={(credentialResponse) => successfull(credentialResponse)}

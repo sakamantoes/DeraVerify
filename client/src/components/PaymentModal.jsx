@@ -48,7 +48,7 @@ export default function PaymentModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 py-6 backdrop-blur-sm overflow-y-auto">
-      <div className="w-full max-w-lg overflow-hidden rounded-2xl border border-red-light/20 bg-[#111] shadow-2xl">
+      <div className="w-full max-w-lg overflow-hidden rounded-2xl border border-gold-light/20 bg-[#111] shadow-2xl">
         <div className="flex items-start justify-between border-b border-white/10 px-5 py-4">
           <div className="flex items-start gap-3">
             {showBackButton && (
@@ -56,7 +56,7 @@ export default function PaymentModal({
                 type="button"
                 onClick={onClose}
                 aria-label="Go back"
-                className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/10 text-gray-400 transition-colors hover:border-red-light/40 hover:text-white"
+                className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/10 text-gray-400 transition-colors hover:border-gold-light/40 hover:text-white"
               >
                 <ArrowLeft size={18} />
               </button>
@@ -73,7 +73,7 @@ export default function PaymentModal({
               type="button"
               onClick={onClose}
               aria-label="Close payment modal"
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/10 text-gray-400 transition-colors hover:border-red-light/40 hover:text-white"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/10 text-gray-400 transition-colors hover:border-gold-light/40 hover:text-white"
             >
               <X size={18} />
             </button>
@@ -89,7 +89,7 @@ export default function PaymentModal({
               value={amount}
               onChange={(event) => setAmount(event.target.value)}
               placeholder="Enter amount"
-              className="mt-2 h-12 w-full rounded-xl border border-white/10 bg-black/40 px-4 text-white outline-none transition-colors placeholder:text-gray-600 focus:border-red-light/60"
+              className="mt-2 h-12 w-full rounded-xl border border-white/10 bg-black/40 px-4 text-white outline-none transition-colors placeholder:text-gray-600 focus:border-gold-light/60"
             />
           </label>
 
@@ -105,14 +105,14 @@ export default function PaymentModal({
                   onClick={() => setSelectedMethod(option.id)}
                   className={`flex items-center gap-3 rounded-xl border p-4 text-left transition-all ${
                     isSelected
-                      ? "border-red-light/60 bg-red-light/10"
-                      : "border-white/10 bg-black/30 hover:border-red-light/30 hover:bg-white/5"
+                      ? "border-gold-light/60 bg-gold-light/10"
+                      : "border-white/10 bg-black/30 hover:border-gold-light/30 hover:bg-white/5"
                   }`}
                 >
                   <span
                     className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg ${
                       isSelected
-                        ? "bg-red-light text-white"
+                        ? "bg-gold-light text-white"
                         : "bg-white/10 text-gray-300"
                     }`}
                   >
@@ -128,7 +128,7 @@ export default function PaymentModal({
                   </span>
                   <ArrowRight
                     size={18}
-                    className={isSelected ? "text-red-light" : "text-gray-600"}
+                    className={isSelected ? "text-gold-light" : "text-gray-600"}
                   />
                 </button>
               );
@@ -140,7 +140,7 @@ export default function PaymentModal({
             type="button"
             onClick={handleProceed}
             disabled={!amount || Number(amount) <= 0}
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-red-dark px-4 text-sm font-bold text-white transition-colors hover:bg-red disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-gray-500"
+            className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gold-dark px-4 text-sm font-bold text-white transition-colors hover:bg-gold disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-gray-500"
           >
             Continue with {selectedOption?.title.replace("Pay with ", "")}
             <ArrowRight size={17} />

@@ -12,8 +12,8 @@ const Hero = () => {
       className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20"
     >
       {/* Background Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-black via-red-900/10 to-black" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-red-light/10 via-transparent to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-br from-black via-gold-900/10 to-black" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-gold-light/10 via-transparent to-transparent" />
 
       <div className="relative max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 py-20">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -34,9 +34,9 @@ const Hero = () => {
               <span
                 className="
   bg-gradient-to-r
-  from-red-light
-  via-red-dark
-  to-red-dark
+  from-gold-light
+  via-gold-dark
+  to-gold-dark
   bg-clip-text
   text-transparent
   drop-shadow-[0_0_35px_rgba(255,0,0,1)]
@@ -67,7 +67,7 @@ const Hero = () => {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-8 py-4 bg-gradient-to-r from-red-light to-red-dark rounded-lg font-semibold text-white border-white border shadow-lg shadow-red-light/30 flex items-center gap-2"
+                  className="px-8 py-4 bg-gradient-to-r from-gold-light to-gold-dark rounded-lg font-semibold text-white border-white border shadow-lg shadow-gold-light/30 flex items-center gap-2"
                 >
                   Get Started <ArrowRight size={20} />
                 </motion.button>{" "}
@@ -77,7 +77,7 @@ const Hero = () => {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-8 py-4 glass-card rounded-lg font-semibold text-white border border-red-light/30 flex items-center gap-2"
+                  className="px-8 py-4 glass-card rounded-lg font-semibold text-white border border-gold-light/30 flex items-center gap-2"
                 >
                   <Play size={20} /> View Services
                 </motion.button>
@@ -92,15 +92,15 @@ const Hero = () => {
               className="mt-12 flex gap-8"
             >
               <div>
-                <span className="text-3xl font-bold text-red-light">99.9%</span>
+                <span className="text-3xl font-bold text-gold-light">99.9%</span>
                 <p className="text-gray-400">Uptime</p>
               </div>
               <div>
-                <span className="text-3xl font-bold text-red-light">24/7</span>
+                <span className="text-3xl font-bold text-gold-light">24/7</span>
                 <p className="text-gray-400">Support</p>
               </div>
               <div>
-                <span className="text-3xl font-bold text-red-light">150+</span>
+                <span className="text-3xl font-bold text-gold-light">150+</span>
                 <p className="text-gray-400">Countries</p>
               </div>
             </motion.div>
