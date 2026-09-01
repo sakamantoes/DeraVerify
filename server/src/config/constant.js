@@ -18,6 +18,6 @@ export const env = {
   resend_api: process.env.RESEND_API_KEY,
   client_url: process.env.CLIENT_URL,
   sms_pool_api_key: process.env.SMS_POOL_API_KEY,
-  quest_api_secret: process.env.QUEST_API_SECRET,
+  quest_api_secret: process.env.QUEST_API_SECRET, 
   internal_api_secret: process.env.INTERNAL_API_SECRET
 };
