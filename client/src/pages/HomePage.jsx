@@ -815,7 +815,7 @@ const HomePage = () => {
              <img 
                src={imageObject.Logo2} 
                alt="Wave Verify Logo" 
-               className="w-[130px] h-[70px] border border-[#C9A24B]/25 rounded-lg drop-shadow-[0_0_8px_rgba(201,162,75,0.3)] brightness-110 contrast-125" 
+               className="w-[110px] h-[70px] border border-[#C9A24B]/25 rounded-lg drop-shadow-[0_0_8px_rgba(201,162,75,0.3)] brightness-110 contrast-125" 
              />
             </div>
           </div>
