@@ -51,7 +51,7 @@ export default function Sidebar({
         />
         <div>
           <p className="bg-gradient-to-r from-gold-light to-gold-dark bg-clip-text text-lg font-bold text-transparent">
-            Smswinners
+            Wave Verify
           </p>
           <p className="text-xs font-medium text-gray-400">{workspaceLabel}</p>
         </div>
