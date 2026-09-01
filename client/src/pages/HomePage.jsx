@@ -34,6 +34,7 @@ import {
   Minus,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import imageObject from "../utils/image";
 
 /* ------------------------------------------------------------------ */
 /*  Data                                                               */
@@ -806,16 +807,16 @@ const HomePage = () => {
         }
       `}</style>
 
-      {/* Nav */}
+   {/* Nav */}
       <header className="sticky top-0 z-50 border-b border-[#C9A24B]/25 bg-[#0A0908]/85 backdrop-blur-lg">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-2">
-              <div
-                className="h-6 w-8 rounded-[3px]"
-                style={{ background: "linear-gradient(135deg, #F0CB6E, #C9A24B 55%, #7A6530)" }}
-              />
-              <span className="header-font text-lg tracking-wide" style={{ fontSize: '20px', lineHeight: '24px' }}>Wave Verify</span>
+             <img 
+               src={imageObject.Logo2} 
+               alt="Wave Verify Logo" 
+               className="w-[130px] h-[70px] border border-[#C9A24B]/25 rounded-lg drop-shadow-[0_0_8px_rgba(201,162,75,0.3)] brightness-110 contrast-125" 
+             />
             </div>
           </div>
 
