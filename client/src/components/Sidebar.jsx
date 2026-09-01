@@ -45,7 +45,7 @@ export default function Sidebar({
     <aside className="flex h-full w-72 shrink flex-col border-r border-gold-light/30 bg-black backdrop-blur-xl">
       <div className="flex h-20 items-center gap-3 border-b border-gold-light/30 px-5">
         <img
-          src={imageObject.Logo}
+          src={imageObject.Logo2}
           alt="Smswinners"
           className="h-10 w-10 rounded-full object-cover"
         />
