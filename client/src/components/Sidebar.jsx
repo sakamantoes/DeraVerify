@@ -47,7 +47,7 @@ export default function Sidebar({
         <img
           src={imageObject.Logo2}
           alt="Smswinners"
-          className="h-10 w-10 rounded-full object-cover"
+          className="h-15 w-20 rounded-full object-cover"
         />
         <div>
           <p className="bg-gradient-to-r from-gold-light to-gold-dark bg-clip-text text-lg font-bold text-transparent">
