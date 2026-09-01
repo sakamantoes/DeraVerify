@@ -45,7 +45,7 @@ export default function ProtectedRoute({ role, children }) {
     return (
       <div className="flex h-screen items-center justify-center">
         <div className="flex flex-col items-center justify-center">
-          <Loader2 className="animate-spin" /> <p>Getting you set up...</p>
+          <Loader2 className="animate-spin" /> <p className="font-bold">Getting System Ready...</p>
         </div>
       </div>
     );
