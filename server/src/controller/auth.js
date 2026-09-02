@@ -7,6 +7,9 @@ import { env } from "../config/constant.js";
 import mongoose from "mongoose";
 import crypto from "crypto";
 import { sendMail } from "../services/resend.js";
+import PurchaseReceipt from "../model/PurchaseReceipt.js";
+import WalletTransaction from "../model/WalletTransactions.js";
+import recieptNumberGenerator from "../utils/recieptNo.generator.js";
 
 const googleSetup = async (req, res, next) => {
   const { token } = req.body;
@@ -465,10 +468,9 @@ const resetPassword = async (req, res, next) => {
 
 // EDIT USER WALLET BALANCE
 const editUserWallet = async (req, res, next) => {
+  const { id } = req.params;
+  const { walletBalance } = req.body;
   try {
-    const { id } = req.params;
-    const { walletBalance } = req.body;
-
     // Validate user ID
     if (!id || !mongoose.Types.ObjectId.isValid(id)) {
       res.statusCode = 400;
@@ -481,7 +483,7 @@ const editUserWallet = async (req, res, next) => {
       throw new Error("Wallet balance is required");
     }
 
-    if (typeof walletBalance !== 'number' || walletBalance < 0) {
+    if (typeof walletBalance !== "number" || walletBalance < 0) {
       res.statusCode = 400;
       throw new Error("Wallet balance must be a positive number");
     }
@@ -507,7 +509,6 @@ const editUserWallet = async (req, res, next) => {
         email: user.email,
         walletBalance: user.walletBalance,
         isActive: user.isActive,
-        role: user.role,
       },
     });
   } catch (error) {
