@@ -30,6 +30,14 @@ import AdminPriceSetting from "../../components/AdminPriceSetting.jsx";
 
 const LISTINGS_PER_PAGE = 25;
 
+// providerPrice is stored in USD (the provider's raw cost), unlike every
+// other price on this page which is converted to NGN.
+const formatUsd = (value) =>
+  `$${new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(Number(value || 0))}`;
+
 const normalizeCatalog = (response) => {
   const services = Array.isArray(response?.data) ? response.data : [];
 
@@ -49,6 +57,7 @@ const normalizeCatalog = (response) => {
         service: serviceCode,
         serviceName: formatServiceName(serviceCode),
         country: countryCode,
+        providerPrice: Number(item.providerPrice || 0),
         costPrice: Number(item.costPrice || 0),
         countryName: item.countryName || countryCode,
         provider: item.provider || "Auto",
@@ -548,6 +557,7 @@ export default function AdminNumbers() {
                     <th className="px-5 py-3 font-semibold">Country</th>
                     <th className="px-5 py-3 font-semibold">Provider</th>
                     <th className="px-5 py-3 font-semibold">Availability</th>
+                    <th className="px-5 py-3 font-semibold">Provider Price (USD)</th>
                     <th className="px-5 py-3 font-semibold">Cost Price</th>
                     <th className="px-5 py-3 font-semibold">Selling Price</th>
                     <th className="px-5 py-3 font-semibold">Custom Price</th>
@@ -588,6 +598,9 @@ export default function AdminNumbers() {
                             {item.availabilityDetail}
                           </span>
                         </div>
+                      </td>
+                      <td className="px-5 py-4 text-gray-300">
+                        {formatUsd(item.providerPrice)}
                       </td>
                       <td className="px-5 py-4 text-gray-300">
                         {formatCurrency(item.costPrice)}
