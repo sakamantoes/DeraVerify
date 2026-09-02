@@ -170,7 +170,7 @@ const UserLayout = () => {
       <div className="relative min-h-screen lg:pl-72">
         {/* Header */}
         <header className="sticky top-0 z-30 border-b border-white/10 bg-black backdrop-blur-xl">
-          <div className="flex h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+          <div className="flex py-6 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
             {/* Left: mobile toggle + current page title */}
             <div className="flex min-w-0 items-center gap-3">
               <button
@@ -200,10 +200,10 @@ const UserLayout = () => {
                   {initial}
                 </div>
                 <div className="w-32 lg:w-40">
-                  <p className="truncate text-sm font-semibold leading-tight text-white">
+                  <p className="truncate text-xs font-semibold leading-tight text-white">
                     {displayName}
                   </p>
-                  <p className="truncate text-xs leading-tight text-gray-400">
+                  <p className="truncate text-[9px] leading-tight text-gray-400">
                     {displayEmail}
                   </p>
                 </div>

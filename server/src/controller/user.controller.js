@@ -387,7 +387,14 @@ const getServicesAvailableName = async (req, res, next) => {
 };
 
 const getPlatformServices = async (req, res, next) => {
-  const { page = 1, limit = 12, service = "", search = "", country = "" } = req.query;
+  const {
+    page = 1,
+    limit = 12,
+    service = "",
+    search = "",
+    country = "",
+    sort = "price_asc",
+  } = req.query;
 
   try {
     const pageNumber = Math.max(Number(page) || 1, 1);
@@ -427,9 +434,14 @@ const getPlatformServices = async (req, res, next) => {
       ];
     }
 
+    // Selling price is a monotonic function of providerPrice (a uniform
+    // markup applied after the query), so sorting on providerPrice here
+    // produces the same low-to-high/high-to-low order the user sees.
+    const priceDirection = sort === "price_desc" ? -1 : 1;
+
     const [availableServices, total, services] = await Promise.all([
       AvailableService.find(query)
-        .sort({ internalService: 1, internalCountry: 1, providerPrice: 1 })
+        .sort({ providerPrice: priceDirection })
         .skip((pageNumber - 1) * limitNumber)
         .limit(limitNumber)
         .lean(),

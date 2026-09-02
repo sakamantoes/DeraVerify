@@ -121,7 +121,7 @@ const NotificationBell = () => {
       {/* Dropdown */}
       {isOpen && (
         <div className="absolute right-[-45px] mt-2 z-[9999] w-[380px] max-w-[calc(100vw-2rem)] animate-in fade-in slide-in-from-top-2 duration-200">
-          <div className="overflow-hidden rounded-xl border border-white/10 bg-gradient-to-br from-gray-900 to-black shadow-2xl backdrop-blur-sm">
+          <div className="overflow-hidden rounded-xl border border-white/10 bg-black shadow-2xl backdrop-blur-sm">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-white/10 bg-black/50 px-4 py-3">
               <div className="flex items-center gap-2">

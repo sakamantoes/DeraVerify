@@ -85,7 +85,6 @@ const PhoneNumber = () => {
   const [catalog, setCatalog] = useState([]);
   const [selectedService, setSelectedService] = useState("");
   const [selectedListingId, setSelectedListingId] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
   const [loadingCatalog, setLoadingCatalog] = useState(false);
   const [buying, setBuying] = useState(false);
   const [purchaseData, setPurchaseData] = useState(null);
@@ -135,7 +134,6 @@ const PhoneNumber = () => {
         limit: ROUTES_PER_PAGE,
         country: selectedCountry,
         service: selectedService || undefined,
-        search: searchTerm.trim() || undefined,
       });
       const nextCatalog = normalizeCatalog(response);
       setCatalog(nextCatalog);
@@ -180,7 +178,7 @@ const PhoneNumber = () => {
       window.clearTimeout(timeoutId);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCountry, currentPage, searchTerm, selectedService]);
+  }, [selectedCountry, currentPage, selectedService]);
 
   // The service dropdown's own options come from an unfiltered (aside from
   // the selected country), always-full aggregate returned alongside the
@@ -251,11 +249,24 @@ const PhoneNumber = () => {
     [catalog, selectedListingId],
   );
 
-  const hasActiveFilter = Boolean(selectedService || searchTerm.trim());
+  // Lowest/highest price among the routes currently shown on this page —
+  // a read-out, not a sort control.
+  const priceRange = useMemo(() => {
+    if (catalog.length === 0) return null;
+
+    return catalog.reduce(
+      (range, item) => ({
+        lowest: Math.min(range.lowest, item.price),
+        highest: Math.max(range.highest, item.price),
+      }),
+      { lowest: catalog[0].price, highest: catalog[0].price },
+    );
+  }, [catalog]);
+
+  const hasActiveFilter = Boolean(selectedService);
 
   const clearFilters = () => {
     setSelectedService("");
-    setSearchTerm("");
     setCurrentPage(1);
   };
 
@@ -330,7 +341,7 @@ const PhoneNumber = () => {
   return (
     <div className="mx-auto max-w-7xl space-y-4 sm:space-y-5">
       {/* Slim header strip — wallet balance + one action, no decoration */}
-      <section className="flex items-center justify-end gap-4 rounded-xl border border-white/10 bg-black/30 px-4 py-3 shadow-md sm:px-5">
+      <section className="flex items-center justify-end gap-4 rounded-xl  bg-black/30 px-4 py-3 shadow-md sm:px-5">
         <div className="flex shrink-0 items-center gap-2">
           <div className="hidden items-center gap-2 rounded-lg border border-white/10 bg-black/30 px-3 py-2 sm:flex">
             <Wallet size={14} className="text-gold-light" />
@@ -615,19 +626,19 @@ const PhoneNumber = () => {
         <div className="flex flex-col gap-4 border-b border-white/10 bg-black/20 px-4 py-4 sm:px-5 lg:flex-row lg:items-center lg:justify-between">
           <h2 className="text-sm font-semibold text-white">Available Routes</h2>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <div className="relative sm:w-64">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
-              <input
-                value={searchTerm}
-                onChange={(event) => {
-                  setSearchTerm(event.target.value);
-                  setCurrentPage(1);
-                }}
-                disabled={!selectedCountry}
-                placeholder="Search provider"
-                className="h-11 w-full rounded-lg border border-white/10 bg-black/40 py-2 pl-10 pr-4 text-sm text-white transition-all placeholder:text-gray-600 focus:border-gold-light/50 focus:outline-none focus:ring-1 focus:ring-gold-light/50 disabled:cursor-not-allowed disabled:opacity-60"
-              />
-            </div>
+            {priceRange && (
+              <div className="flex h-11 items-center gap-2 rounded-lg border border-white/10 bg-black/40 px-4 text-sm">
+                <span className="text-gray-500">Lowest</span>
+                <span className="font-semibold text-white">
+                  {formatCurrency(priceRange.lowest)}
+                </span>
+                <span className="text-gray-700">—</span>
+                <span className="text-gray-500">Highest</span>
+                <span className="font-semibold text-white">
+                  {formatCurrency(priceRange.highest)}
+                </span>
+              </div>
+            )}
 
             <button
               type="button"
@@ -672,7 +683,7 @@ const PhoneNumber = () => {
                 <EmptyState
                   icon={Search}
                   title="No routes match your filters"
-                  description="No live routes for this service or search term. Try a different service or clear your filters."
+                  description="No live routes for this service. Try a different service or clear your filters."
                   actionLabel="Clear filters"
                   onAction={clearFilters}
                 />
