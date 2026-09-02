@@ -53,6 +53,10 @@ const CronJob = async () => {
                 continue;
               }
 
+               if (Number(details.count) <= 60) {
+                continue;
+              }
+
               arr.push({
                 updateOne: {
                   filter: {
