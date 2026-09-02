@@ -3,11 +3,13 @@ import {
   priceSettingController,
   getPlatformDeposits,
   getUserWaitingForOtp,
+  getAllOtpOrders,
   updateDepositsStatus,
   getAdminServices,
   getServicesAvailableName,
   updateServiceActiveStatus,
   updateServiceCustomPrice,
+  updateServiceVisibility,
   getSmsPoolBalance,
 } from "../controller/admin.controller.js";
 import authMiddleware, {
@@ -50,6 +52,13 @@ router.get(
 );
 
 router.get(
+  "/otp/orders",
+  authMiddleware,
+  validateAdminRole,
+  getAllOtpOrders,
+);
+
+router.get(
   "/all/platform/services",
   authMiddleware,
   validateAdminRole,
@@ -77,6 +86,13 @@ router.patch(
   customPriceSchema,
   validateData,
   updateServiceCustomPrice,
+);
+
+router.patch(
+  "/platform/service/:id/visibility",
+  authMiddleware,
+  validateAdminRole,
+  updateServiceVisibility,
 );
 
 router.get(

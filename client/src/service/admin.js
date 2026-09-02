@@ -29,6 +29,12 @@ export const getOtpOrder = async () => {
   return res.data;
 };
 
+export const getAllOtpOrders = async (params = {}) => {
+  const res = await api.get("/api/admin/otp/orders", { params });
+
+  return res.data;
+};
+
 export const getAllPlatformServices = async (params = {}) => {
   const res = await api.get("/api/admin/all/platform/services", { params });
 
@@ -61,6 +67,14 @@ export const updatePlatformServiceActiveStatus = async (service, active) => {
 export const updatePlatformServiceCustomPrice = async (id, customPrice) => {
   const res = await api.patch(`/api/admin/platform/service/${id}/custom-price`, {
     customPrice,
+  });
+
+  return res.data;
+};
+
+export const updatePlatformServiceVisibility = async (id, isVisible) => {
+  const res = await api.patch(`/api/admin/platform/service/${id}/visibility`, {
+    isVisible,
   });
 
   return res.data;

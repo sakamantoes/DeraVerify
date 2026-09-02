@@ -9,6 +9,7 @@ import {
   checkUserOtpOrderStatus,
   getUserWalletBalance,
   getPlatformServices,
+  getServicesAvailableName,
   buyNumberService,
   cancelOtpAndRefund,
 } from "../controller/user.controller.js";
@@ -64,4 +65,11 @@ router.post(
 );
 
 router.get("/platform/services", authMiddleware, getPlatformServices);
+
+router.get(
+  "/platform/countries",
+  authMiddleware,
+  getServicesAvailableName,
+);
+
 export default router;

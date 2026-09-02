@@ -1,17 +1,14 @@
 import { useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   Bell,
   CreditCard,
   Gauge,
   Inbox,
-  LogOut,
   Menu,
   Phone,
   ReceiptText,
-  Search,
   Settings,
-  ShieldCheck,
   Wallet,
   X,
 } from "lucide-react";
@@ -29,13 +26,22 @@ const userNavItems = [
   { label: "Settings", to: "/f/settings", icon: Settings },
 ];
 
+// The top nav shows the current page's title instead of each page
+// repeating it — one source of truth, updates on navigation.
+const userPageTitles = {
+  dashboard: "Dashboard",
+  "fund-account": "Fund Account",
+  numbers: "Buy Number",
+  "otp-box": "OTP Inbox",
+  deposits: "Deposits History",
+  receipts: "View Receipts",
+  settings: "Settings",
+  support: "Support",
+};
+
 const userSidebarConfig = {
   navItems: userNavItems,
   workspaceLabel: "User workspace",
-  statusTitle: "Verification ready",
-  statusDescription:
-    "Buy numbers, receive OTP codes, and keep every activation organized.",
-  StatusIcon: ShieldCheck,
 };
 
 const userFallback = {
@@ -48,6 +54,10 @@ const UserLayout = () => {
   const { user, clearAuth } = useAuth();
   const profile = user?.data || user || userFallback;
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const pathSegment = location.pathname.split("/").filter(Boolean)[1] || "dashboard";
+  const pageTitle = userPageTitles[pathSegment] || "Dashboard";
 
   const initial = (profile.name || profile.email || "U")
     .slice(0, 1)
@@ -131,6 +141,7 @@ const UserLayout = () => {
           userRole="user"
           supportLabel="Support"
           onNavigate={() => {}} // Desktop navigation doesn't need to close anything
+          onLogout={handleLogout}
         />
       </div>
 
@@ -150,6 +161,7 @@ const UserLayout = () => {
               userRole="user"
               supportLabel="Support"
               onNavigate={closeMobileNav} // Close when any nav item is clicked
+              onLogout={handleLogout}
             />
           </div>
         </div>
@@ -157,10 +169,10 @@ const UserLayout = () => {
 
       <div className="relative min-h-screen lg:pl-72">
         {/* Header */}
-        <header className="sticky top-0 z-30 border-b border-white/30 bg-black backdrop-blur-xl">
+        <header className="sticky top-0 z-30 border-b border-white/10 bg-black backdrop-blur-xl">
           <div className="flex h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-            {/* Left: mobile toggle + search */}
-            <div className="flex items-center gap-3">
+            {/* Left: mobile toggle + current page title */}
+            <div className="flex min-w-0 items-center gap-3">
               <button
                 type="button"
                 aria-label={mobileOpen ? "Close menu" : "Open menu"}
@@ -171,17 +183,9 @@ const UserLayout = () => {
                 {mobileOpen ? <X size={20} /> : <Menu size={20} />}
               </button>
 
-              <div
-                role="search"
-                className="hidden h-10 w-full max-w-lg items-center gap-2 rounded-lg border border-white/30 bg-black/40 px-3 text-gray-400 transition-colors hover:border-gold-light/30 md:flex"
-              >
-                <Search size={16} className="shrink-0" aria-hidden="true" />
-                <input
-                  type="text"
-                  placeholder="Search numbers, emails, countries, OTP codes"
-                  className="w-full select-none truncate bg-transparent text-sm text-white placeholder:text-gray-500 focus:outline-none"
-                />
-              </div>
+              <h1 className="truncate text-base font-bold text-white sm:text-lg">
+                {pageTitle}
+              </h1>
             </div>
 
             {/* Right: notifications + user + logout */}
@@ -204,20 +208,11 @@ const UserLayout = () => {
                   </p>
                 </div>
               </div>
-
-              <button
-                type="button"
-                aria-label="Log out"
-                onClick={handleLogout}
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-white/10 hover:text-white"
-              >
-                <LogOut size={18} aria-hidden="true" />
-              </button>
             </div>
           </div>
         </header>
 
-        <main className="min-h-[calc(100vh-4rem)] px-4 py-6 sm:px-6 lg:px-8">
+        <main className="min-h-[calc(100vh-4rem)] px-4 pb-6 pt-[30px] sm:px-6 lg:px-8">
           <Outlet />
         </main>
       </div>

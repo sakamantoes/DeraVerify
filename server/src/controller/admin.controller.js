@@ -173,8 +173,74 @@ const getUserWaitingForOtp = async (req, res, next) => {
   }
 };
 
+const getAllOtpOrders = async (req, res, next) => {
+  const { page = 1, limit = 25, status = "", search = "" } = req.query;
+
+  try {
+    const pageNumber = Math.max(Number(page) || 1, 1);
+    const limitNumber = Math.min(Math.max(Number(limit) || 25, 1), 100);
+
+    const query = {};
+    const normalizedStatus = String(status).trim();
+    const normalizedSearch = String(search).trim();
+
+    if (normalizedStatus && normalizedStatus !== "ALL") {
+      query.status = normalizedStatus;
+    }
+
+    if (normalizedSearch) {
+      const regex = new RegExp(
+        normalizedSearch.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+        "i",
+      );
+      query.$or = [
+        { phoneNumber: regex },
+        { service: regex },
+        { country: regex },
+        { provider: regex },
+      ];
+    }
+
+    // Debugging view for admin — every order, any user, but never the raw
+    // activationId or otpMessage (provider-facing internals), just the
+    // fields useful for support/debugging plus the owning user's identity.
+    const [otpOrders, total] = await Promise.all([
+      otporder
+        .find(query)
+        .select("-activationId -otpMessage")
+        .populate("userId", "username email")
+        .sort({ _id: -1 })
+        .skip((pageNumber - 1) * limitNumber)
+        .limit(limitNumber)
+        .lean(),
+      otporder.countDocuments(query),
+    ]);
+
+    res.status(200).json({
+      status: 200,
+      success: true,
+      message: "success",
+      data: otpOrders,
+      pagination: {
+        page: pageNumber,
+        limit: limitNumber,
+        total,
+        totalPages: Math.max(1, Math.ceil(total / limitNumber)),
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const getAdminServices = async (req, res, next) => {
-  const { page = 1, limit = 25, service = "", search = "" } = req.query;
+  const {
+    page = 1,
+    limit = 25,
+    service = "",
+    search = "",
+    country = "",
+  } = req.query;
 
   try {
     const pageNumber = Math.max(Number(page) || 1, 1);
@@ -187,12 +253,19 @@ const getAdminServices = async (req, res, next) => {
       throw new Error("error fetching price");
     }
 
+    // No `active: true` here — admin manages the catalog, so listings the
+    // admin has deactivated must still be visible (and filterable).
     const query = {};
     const normalizedService = String(service).trim();
     const normalizedSearch = String(search).trim();
+    const normalizedCountry = String(country).trim();
 
     if (normalizedService) {
       query.internalService = normalizedService;
+    }
+
+    if (normalizedCountry) {
+      query.internalCountry = normalizedCountry;
     }
 
     if (normalizedSearch) {
@@ -204,16 +277,51 @@ const getAdminServices = async (req, res, next) => {
       ];
     }
 
-    const [availableServices, total] = await Promise.all([
+    const [availableServices, total, services] = await Promise.all([
       AvailableService.find(query)
         .sort({ internalService: 1, internalCountry: 1, providerPrice: 1 })
         .skip((pageNumber - 1) * limitNumber)
         .limit(limitNumber)
         .lean(),
       AvailableService.countDocuments(query),
+      // Service dropdown summary — scoped to the selected country (if any),
+      // but never to `active`, mirroring getAdminServices' own query.
+      AvailableService.aggregate([
+        {
+          $match: normalizedCountry
+            ? { internalCountry: normalizedCountry }
+            : {},
+        },
+        {
+          $group: {
+            _id: "$internalService",
+            totalCountries: { $addToSet: "$internalCountry" },
+            totalStock: { $sum: "$stock" },
+            liveRoutes: {
+              $sum: {
+                $cond: [
+                  { $and: ["$availability", { $gt: ["$stock", 0] }] },
+                  1,
+                  0,
+                ],
+              },
+            },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            internalService: "$_id",
+            totalCountries: { $size: "$totalCountries" },
+            totalStock: 1,
+            liveRoutes: 1,
+          },
+        },
+        { $sort: { internalService: 1 } },
+      ]),
     ]);
 
-    const services = availableServices.map((item) => {
+    const finalServices = availableServices.map((item) => {
       return {
         ...item,
         costPrice: Number(item.providerPrice * priceSetting.usdToNgnRate),
@@ -225,7 +333,8 @@ const getAdminServices = async (req, res, next) => {
       status: 200,
       success: true,
       message: "services has been fetched",
-      data: services,
+      data: finalServices,
+      services,
       pagination: {
         page: pageNumber,
         limit: limitNumber,
@@ -240,6 +349,10 @@ const getAdminServices = async (req, res, next) => {
 
 const getServicesAvailableName = async (req, res, next) => {
   try {
+    // Grouped by service (admin manages the catalog per-service), and
+    // unlike the user-facing version, nothing here is filtered by
+    // `active` — admin sees every country and every service regardless
+    // of activation status.
     const servicesName = await AvailableService.aggregate([
       {
         $group: {
@@ -269,7 +382,7 @@ const getServicesAvailableName = async (req, res, next) => {
       },
       {
         $sort: {
-          service: 1,
+          internalService: 1,
         },
       },
     ]);
@@ -377,6 +490,49 @@ const updateServiceCustomPrice = async (req, res, next) => {
   }
 };
 
+const updateServiceVisibility = async (req, res, next) => {
+  const { id } = req.params;
+  const { isVisible } = req.body;
+
+  try {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.statusCode = 400;
+      throw new Error("Invalid service ID");
+    }
+
+    if (typeof isVisible !== "boolean") {
+      res.statusCode = 400;
+      throw new Error("isVisible should be true or false");
+    }
+
+    const service = await AvailableService.findByIdAndUpdate(
+      id,
+      {
+        $set: {
+          isVisible,
+        },
+      },
+      {
+        new: true,
+      },
+    );
+
+    if (!service) {
+      res.statusCode = 404;
+      throw new Error("service not found");
+    }
+
+    res.status(200).json({
+      status: 200,
+      success: true,
+      message: "service visibility updated successfully",
+      data: service,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const getSmsPoolBalance = async (req, res, next) => {
   try {
     const response = await smspool_api.get("/request/balance");
@@ -411,9 +567,11 @@ export {
   updateDepositsStatus,
   priceSettingController,
   getUserWaitingForOtp,
+  getAllOtpOrders,
   getAdminServices,
   getServicesAvailableName,
   updateServiceActiveStatus,
   updateServiceCustomPrice,
+  updateServiceVisibility,
   getSmsPoolBalance,
 };

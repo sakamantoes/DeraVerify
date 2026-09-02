@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   AlertCircle,
-  AlertTriangle,
   CheckCircle2,
+  ChevronRight,
   Clock3,
   Copy,
   Inbox,
@@ -23,6 +23,12 @@ import { formatCurrency } from "../../utils/transaction.js";
 import { formatServiceName } from "../../utils/serviceCode.js";
 
 const TERMINAL_STATUSES = ["OTP_RECEIVED", "COMPLETED", "CANCELLED", "FAILED"];
+
+const OTP_STEPS = [
+  "Buy a number",
+  "Link it to the service you're verifying",
+  "Click Get OTP to receive the code",
+];
 
 const OtpBox = () => {
   const navigate = useNavigate();
@@ -232,64 +238,32 @@ const OtpBox = () => {
 
   return (
     <div className="mx-auto max-w-7xl space-y-4 sm:space-y-5">
-      {/* Compact hero — headline + one-line subtext + Refresh action */}
-      <section className="relative overflow-hidden rounded-xl border border-white/10 bg-gradient-to-br from-gold-950/40 via-black to-black px-4 py-4 shadow-md sm:rounded-2xl sm:px-6 sm:py-5">
-        <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-gold-dark/10 blur-3xl sm:h-56 sm:w-56" />
-        <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="min-w-0">
-            <div className="inline-flex items-center gap-2 rounded-full border border-gold-light/40 bg-gold-light/10 px-3 py-1 text-[10px] font-semibold text-gold-300 sm:text-xs">
-              <Inbox size={12} />
-              OTP Inbox
-            </div>
-            <h1 className="mt-2 text-lg font-bold leading-tight tracking-tight text-white sm:text-xl md:text-2xl">
-              Track your purchased numbers and OTP messages.
-            </h1>
-            <p className="mt-1 text-xs leading-5 text-gray-400 sm:text-sm">
-              Every activation on your account — number, status, OTP code,
-              and provider message.
-            </p>
+      {/* How to get your OTP — quick reference, not an alarming warning */}
+      <div className="flex flex-col gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3 shadow-md sm:flex-row sm:items-center sm:gap-4 sm:px-5">
+        {OTP_STEPS.map((step, index) => (
+          <div key={step} className="flex flex-1 items-center gap-2">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gold-light/10 text-xs font-bold text-gold-light">
+              {index + 1}
+            </span>
+            <span className="text-xs text-gray-400">{step}</span>
+            {index < OTP_STEPS.length - 1 && (
+              <ChevronRight
+                size={14}
+                className="hidden shrink-0 text-gray-700 sm:block"
+              />
+            )}
           </div>
-          <button
-            type="button"
-            onClick={() => {
-              void fetchOrders();
-            }}
-            disabled={loading}
-            className="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-gold-light to-gold-dark px-5 text-sm font-semibold text-white shadow-lg shadow-gold-light/20 transition-transform hover:scale-[1.02] active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100 sm:h-11"
-          >
-            <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
-            Refresh Orders
-          </button>
-        </div>
-      </section>
-
-      {/* Warning content — kept fully intact and legible, just relocated
-          out of the hero into its own notice so it doesn't dominate the
-          first screen. */}
-      <div className="flex items-start gap-3 rounded-xl border border-gold-light/30 bg-gold-light/10 px-4 py-3 shadow-md sm:px-5 sm:py-4">
-        <AlertTriangle size={18} className="mt-0.5 shrink-0 text-gold-light" />
-        <div className="text-sm leading-6">
-          <p className="font-semibold text-gold-300">
-            Before you request an OTP
-          </p>
-          <p className="mt-1 text-gold-light/90">
-            Make sure you have assigned or linked the purchased number to the
-            service you bought it for. After the assigned expiry time,
-            cancel the order — you will be refunded immediately. Do not
-            proceed to request the OTP after it has expired, to avoid losing
-            funds.
-          </p>
-        </div>
+        ))}
       </div>
 
       {/* Unified workspace — filters directly above the list they control */}
       <section className="overflow-hidden rounded-xl border border-white/10 bg-white/5 shadow-md">
         <div className="flex flex-col gap-4 border-b border-white/10 bg-black/20 px-4 py-4 sm:px-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <h2 className="text-sm font-semibold uppercase tracking-widest text-gray-400">
+            <h2 className="text-sm font-semibold text-white">
               OTP Orders
             </h2>
-            <p className="mt-1 text-xs text-gray-500 sm:text-sm">
+            <p className="mt-1 text-xs text-gray-500">
               {orders.length} result
               {orders.length === 1 ? "" : "s"} — search by phone,
               service, country, or activation ID.
@@ -306,6 +280,18 @@ const OtpBox = () => {
                 className="h-11 w-full rounded-lg border border-white/10 bg-black/40 py-2 pl-10 pr-4 text-sm text-white placeholder:text-gray-600 focus:border-gold-light/50 focus:outline-none focus:ring-1 focus:ring-gold-light/50"
               />
             </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                void fetchOrders();
+              }}
+              disabled={loading}
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-white/10 text-gray-400 transition-colors hover:border-gold-light/30 hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+              aria-label="Refresh orders"
+            >
+              <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
+            </button>
 
             <select
               value={statusFilter}

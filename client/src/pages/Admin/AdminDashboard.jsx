@@ -260,15 +260,6 @@ export default function AdminDashboard() {
               <ShieldCheck size={11} className="sm:w-[13px] sm:h-[13px]" />
               Admin Control Panel
             </div>
-            <h1 className="mt-3 sm:mt-4 text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold leading-tight tracking-tight">
-              Monitor users, transactions,
-              <br className="hidden xs:block sm:block" /> and system
-              performance.
-            </h1>
-            <p className="mt-2 sm:mt-3 max-w-xl text-xs sm:text-sm leading-5 sm:leading-6 text-gray-400">
-              Manage user accounts, track revenue, oversee number/email stock,
-              and monitor system health metrics in real-time.
-            </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
             <button

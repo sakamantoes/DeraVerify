@@ -11,7 +11,6 @@ import {
   Settings,
   ShieldCheck,
   Smartphone,
-  Wallet,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -167,36 +166,6 @@ export default function Dashboard() {
 
   return (
     <div className="mx-auto max-w-7xl space-y-4 px-3 sm:space-y-5 sm:px-4 md:px-6">
-      {/* Section 1: Compact hero — single primary CTA (Fund Account) */}
-      <section className="relative overflow-hidden rounded-xl border border-white/10 bg-gradient-to-br from-gold-950/40 via-black to-black px-4 py-4 shadow-md sm:rounded-2xl sm:px-6 sm:py-5">
-        <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-gold-dark/10 blur-3xl sm:h-56 sm:w-56" />
-        <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="min-w-0">
-            <div className="inline-flex items-center gap-2 rounded-full border border-gold-light/40 bg-gold-light/10 px-3 py-1 text-[10px] font-semibold text-gold-300 sm:text-xs">
-              <ShieldCheck size={12} />
-              Verification workspace
-            </div>
-            <h1 className="mt-2 text-lg font-bold leading-tight tracking-tight text-white sm:text-xl md:text-2xl">
-              Buy virtual numbers, receive OTP codes instantly.
-            </h1>
-            <p className="mt-1 max-w-xl text-xs leading-5 text-gray-400 sm:text-sm">
-              Fund your account, pick a service, and track verification codes
-              as they arrive.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() =>
-              navigate("/f/fund-account", { state: { from: "/f/dashboard" } })
-            }
-            className="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-gold-light to-gold-dark px-5 text-sm font-semibold text-white shadow-lg shadow-gold-light/20 transition-transform hover:scale-[1.02] active:scale-95 sm:h-11"
-          >
-            <Wallet size={16} />
-            Fund Account
-          </button>
-        </div>
-      </section>
-
       {/* Section 2: Stats row — Wallet Balance, Active Orders, OTP Received */}
       <section className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <WalletBalanceCard />
@@ -268,7 +237,7 @@ export default function Dashboard() {
 
       {/* Section 4: Recent activity — full width */}
       <section className="rounded-xl border border-gold-light/10 bg-white/5 p-4 shadow-md sm:p-5">
-        <h2 className="font-semibold text-white">Recent Deposit</h2>
+        <h2 className="text-sm font-semibold text-white">Recent Deposit</h2>
         <div className="mt-4 space-y-1">
           {loadingNotifications ? (
             <div className="flex items-center justify-center py-8">

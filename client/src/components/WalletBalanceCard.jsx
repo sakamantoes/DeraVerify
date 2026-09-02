@@ -1,12 +1,13 @@
 import { Eye, EyeOff, Loader2, RefreshCw, Wallet } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import useWallet from "../hooks/useWallet.js";
 
 export default function WalletBalanceCard({
   label = "Wallet Balance",
-  statusText = "Ready to spend",
   className = "",
 }) {
+  const navigate = useNavigate();
   const [showBalance, setShowBalance] = useState(false);
   const { balance, isLoading, isError, refetch } = useWallet();
 
@@ -68,9 +69,14 @@ export default function WalletBalanceCard({
           </p>
         )}
       </div>
-      <span className="mt-3 inline-flex rounded-full border border-white/10 bg-gold/10 px-2.5 py-0.5 text-xs font-medium text-gold shadow-md">
-        {statusText}
-      </span>
+      <button
+        type="button"
+        onClick={() => navigate("/f/fund-account")}
+        className="mt-4 flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-gold-light to-gold-dark text-sm font-semibold text-white shadow-md transition-transform hover:scale-[1.02] active:scale-95"
+      >
+        <Wallet size={15} />
+        Top Up Wallet
+      </button>
     </div>
   );
 }

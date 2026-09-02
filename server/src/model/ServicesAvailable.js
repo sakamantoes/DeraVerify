@@ -51,6 +51,10 @@ const AvailableServiceSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
+    isVisible: {
+      type: Boolean,
+      default: false,
+    },
     lastFetchedAt: {
       type: Date,
       default: Date.now,

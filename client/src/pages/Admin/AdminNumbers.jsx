@@ -21,6 +21,7 @@ import {
   getPlatformServiceNames,
   updatePlatformServiceActiveStatus,
   updatePlatformServiceCustomPrice,
+  updatePlatformServiceVisibility,
 } from "../../service/admin.js";
 import { formatCurrency } from "../../utils/transaction.js";
 import { formatServiceName } from "../../utils/serviceCode.js";
@@ -64,6 +65,7 @@ const normalizeCatalog = (response) => {
             ? null
             : Number(item.customPrice),
         active: Boolean(item.active),
+        isVisible: Boolean(item.isVisible),
         updatedAt: item.lastFetchedAt || item.updatedAt,
       };
     })
@@ -85,6 +87,7 @@ export default function AdminNumbers() {
   const [editingId, setEditingId] = useState("");
   const [priceDraft, setPriceDraft] = useState("");
   const [savingPriceId, setSavingPriceId] = useState("");
+  const [updatingVisibilityId, setUpdatingVisibilityId] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pagination, setPagination] = useState({
     page: 1,
@@ -267,6 +270,29 @@ export default function AdminNumbers() {
     }
   };
 
+  const handleVisibilityToggle = async (item) => {
+    const nextVisible = !item.isVisible;
+
+    try {
+      setUpdatingVisibilityId(item.id);
+      setError("");
+      await updatePlatformServiceVisibility(item.id, nextVisible);
+
+      setCatalog((prev) =>
+        prev.map((service) =>
+          service.id === item.id
+            ? { ...service, isVisible: nextVisible }
+            : service,
+        ),
+      );
+    } catch (err) {
+      console.error("Failed to update service visibility:", err);
+      setError(err?.response?.data?.message || "Failed to update visibility");
+    } finally {
+      setUpdatingVisibilityId("");
+    }
+  };
+
   const liveListings = catalog.filter((item) => item.availabilityScore > 0).length;
   const activeCountries = new Set(catalog.map((item) => item.country)).size;
   const totalServices = serviceOptions.length;
@@ -313,13 +339,6 @@ export default function AdminNumbers() {
             <Smartphone size={13} />
             Number Inventory Management
           </div>
-          <h1 className="mt-4 text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
-            Admin Numbers
-          </h1>
-          <p className="mt-3 max-w-xl text-sm leading-6 text-gray-400">
-            View and manage all available number routes across different
-            services and countries.
-          </p>
         </div>
       </section>
 
@@ -361,7 +380,7 @@ export default function AdminNumbers() {
         <div className="min-w-0 max-h-screen overflow-y-auto rounded-xl border border-white/10 bg-white/5 shadow-md">
           <div className="flex items-center justify-between border-b border-white/10 bg-black/20 px-5 py-4">
             <div>
-              <h2 className="font-semibold text-white">Service Names</h2>
+              <h2 className="text-sm font-semibold text-white">Service Names</h2>
               <p className="mt-0.5 text-xs text-gray-500">
                 {serviceOptions.length} service
                 {serviceOptions.length === 1 ? "" : "s"} available
@@ -461,7 +480,7 @@ export default function AdminNumbers() {
         <div className="min-w-0 max-h-screen overflow-y-auto rounded-xl border border-white/10 bg-white/5 shadow-md">
           <div className="flex min-w-0 flex-col gap-4 border-b border-white/10 bg-black/20 px-5 py-4 md:flex-row md:items-center md:justify-between">
             <div className="min-w-0">
-              <h2 className="font-semibold text-white">
+              <h2 className="text-sm font-semibold text-white">
                 {selectedServiceLabel}
               </h2>
               <p className="mt-0.5 text-xs text-gray-500">
@@ -533,6 +552,7 @@ export default function AdminNumbers() {
                     <th className="px-5 py-3 font-semibold">Selling Price</th>
                     <th className="px-5 py-3 font-semibold">Custom Price</th>
                     <th className="px-5 py-3 font-semibold">Status</th>
+                    <th className="px-5 py-3 font-semibold">Visible</th>
                     <th className="px-5 py-3 font-semibold">Action</th>
                   </tr>
                 </thead>
@@ -603,6 +623,32 @@ export default function AdminNumbers() {
                         >
                           {item.active ? "Active" : "Inactive"}
                         </span>
+                      </td>
+                      <td className="px-5 py-4">
+                        <button
+                          type="button"
+                          onClick={() => handleVisibilityToggle(item)}
+                          disabled={updatingVisibilityId === item.id}
+                          title={
+                            item.isVisible
+                              ? "Hide from users"
+                              : "Show to users"
+                          }
+                          className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-1 text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
+                            item.isVisible
+                              ? "border-emerald-500/20 bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/25"
+                              : "border-gray-500/20 bg-white/10 text-gray-400 hover:bg-white/15"
+                          }`}
+                        >
+                          {updatingVisibilityId === item.id ? (
+                            <Loader2 size={13} className="animate-spin" />
+                          ) : item.isVisible ? (
+                            <ToggleRight size={13} />
+                          ) : (
+                            <ToggleLeft size={13} />
+                          )}
+                          {item.isVisible ? "Visible" : "Hidden"}
+                        </button>
                       </td>
                       <td className="px-5 py-4">
                         {editingId === item.id ? (

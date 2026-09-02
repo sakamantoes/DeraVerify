@@ -181,12 +181,6 @@ export default function Setting() {
             <User size={13} />
             Account Settings
           </div>
-          <h1 className="mt-4 text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
-            Settings
-          </h1>
-          <p className="mt-3 max-w-xl text-sm leading-6 text-gray-400">
-            Manage your profile, security, and preferences.
-          </p>
         </div>
       </section>
 

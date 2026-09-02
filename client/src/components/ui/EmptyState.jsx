@@ -12,12 +12,12 @@ export default function EmptyState({
     >
       {Icon ? <Icon size={26} className="mx-auto text-gray-600" /> : null}
       {title ? (
-        <h3 className="mt-3 text-sm font-semibold text-white sm:text-base">
+        <h3 className="mt-3 text-sm font-semibold text-white">
           {title}
         </h3>
       ) : null}
       {description ? (
-        <p className="mx-auto mt-1 max-w-xs text-xs text-gray-500 sm:text-sm">
+        <p className="mx-auto mt-1 max-w-xs text-xs text-gray-500">
           {description}
         </p>
       ) : null}
@@ -25,7 +25,7 @@ export default function EmptyState({
         <button
           type="button"
           onClick={onAction}
-          className="mt-4 inline-flex h-9 items-center gap-2 rounded-lg border border-gold-light/30 bg-gold-light/10 px-4 text-xs font-semibold text-gold-300 transition-colors hover:bg-gold-light/20 hover:text-white sm:text-sm"
+          className="mt-4 inline-flex h-9 items-center gap-2 rounded-lg border border-gold-light/30 bg-gold-light/10 px-4 text-xs font-semibold text-gold-300 transition-colors hover:bg-gold-light/20 hover:text-white"
         >
           {actionLabel}
         </button>

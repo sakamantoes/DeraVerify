@@ -1,6 +1,6 @@
 // components/Sidebar.jsx
 import { NavLink, useNavigate } from "react-router-dom";
-import { LifeBuoy, ShieldCheck } from "lucide-react";
+import { LifeBuoy, LogOut } from "lucide-react";
 import imageObject from "../utils/image";
 import useAuth from "../store/useAuth";
 
@@ -8,11 +8,9 @@ export default function Sidebar({
   navItems,
   onNavigate,
   workspaceLabel = "Workspace",
-  statusTitle = "Verification ready",
-  statusDescription = "Manage your workspace and keep activity organized.",
-  StatusIcon = ShieldCheck,
   supportLabel = "Support",
   userRole = "user",
+  onLogout,
 }) {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -78,15 +76,6 @@ export default function Sidebar({
       </nav>
 
       <div className="space-y-3 border-t border-gold-light/30 p-4">
-        <div className="rounded-lg border border-gold-light/30 bg-white/5 p-4 backdrop-blur">
-          <div className="flex items-center gap-2 text-sm font-bold text-gold-400">
-            <StatusIcon size={18} />
-            {statusTitle}
-          </div>
-          <p className="mt-2 text-xs leading-5 text-gray-400">
-            {statusDescription}
-          </p>
-        </div>
         <button
           onClick={handleSupportClick}
           className="flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-gold-light/30 text-sm font-semibold text-gray-200 transition-all hover:bg-gold-light/10 hover:text-white active:scale-95"
@@ -94,6 +83,15 @@ export default function Sidebar({
           <LifeBuoy size={17} />
           {supportLabel}
         </button>
+        {onLogout && (
+          <button
+            onClick={onLogout}
+            className="flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-white/10 text-sm font-semibold text-gray-400 transition-all hover:bg-white/10 hover:text-white active:scale-95"
+          >
+            <LogOut size={17} />
+            Sign Out
+          </button>
+        )}
       </div>
     </aside>
   );

@@ -1,12 +1,10 @@
 import { useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   Gauge,
-  LogOut,
+  Inbox,
   Menu,
   Phone,
-  Search,
-  ShieldCheck,
   Wallet,
   X,
   Users,
@@ -20,16 +18,24 @@ const adminNavItems = [
   { label: "Dashboard", to: "/a/dashboard", icon: Gauge },
   { label: "Users Management", to: "/a/users", icon: Users },
   { label: "Services & Price Control", to: "/a/numbers", icon: Phone },
+  { label: "OTP Orders", to: "/a/otp-orders", icon: Inbox },
   { label: "Payment Tracking", to: "/a/deposits", icon: Wallet },
 ];
+
+// The top nav shows the current page's title instead of each page
+// repeating it — one source of truth, updates on navigation.
+const adminPageTitles = {
+  dashboard: "Dashboard",
+  users: "Users Management",
+  numbers: "Services & Price Control",
+  "otp-orders": "OTP Orders",
+  deposits: "Payment Tracking",
+  support: "Support",
+};
 
 const adminSidebarConfig = {
   navItems: adminNavItems,
   workspaceLabel: "Admin workspace",
-  statusTitle: "Admin access",
-  statusDescription:
-    "Manage users, monitor transactions, and oversee system operations.",
-  StatusIcon: ShieldCheck,
 };
 
 const adminFallback = {
@@ -41,6 +47,10 @@ const AdminLayout = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { user, clearAuth } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const pathSegment = location.pathname.split("/").filter(Boolean)[1] || "dashboard";
+  const pageTitle = adminPageTitles[pathSegment] || "Dashboard";
 
   const profile = user?.data || user || adminFallback;
 
@@ -116,6 +126,7 @@ const AdminLayout = () => {
           {...adminSidebarConfig}
           onNavigate={() => {}} // Desktop navigation doesn't need to close anything
           userRole="admin"
+          onLogout={handleLogout}
         />
       </div>
 
@@ -134,6 +145,7 @@ const AdminLayout = () => {
               {...adminSidebarConfig}
               onNavigate={closeMobileNav} // Close when any nav item is clicked
               userRole="admin"
+              onLogout={handleLogout}
             />
           </div>
         </div>
@@ -141,31 +153,23 @@ const AdminLayout = () => {
 
       <div className="relative min-h-screen min-w-0 overflow-x-hidden text-slate-950 lg:pl-72">
         {/* Header */}
-        <header className="sticky top-0 z-30 border-b border-white/30 bg-black backdrop-blur-xl">
+        <header className="sticky top-0 z-30 border-b border-white/10 bg-black backdrop-blur-xl">
           <div className="flex h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-            {/* Left: mobile toggle + search */}
-            <div className="flex items-center gap-3">
+            {/* Left: mobile toggle + current page title */}
+            <div className="flex min-w-0 items-center gap-3">
               <button
                 type="button"
                 aria-label={mobileOpen ? "Close menu" : "Open menu"}
                 aria-expanded={mobileOpen}
                 onClick={() => setMobileOpen((v) => !v)}
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border text-slate-800 border-white/30 transition-colors hover:bg-slate-100 lg:hidden"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border text-white border-white/30 transition-colors hover:bg-white/10 lg:hidden"
               >
                 {mobileOpen ? <X size={20} /> : <Menu size={20} />}
               </button>
 
-              <div
-                role="search"
-                className="hidden h-10 w-full max-w-lg items-center gap-2 rounded-lg border border-white/30 bg-slate-50 px-3 text-slate-500 transition-colors hover:border-gold-light/30 hover:bg-white md:flex"
-              >
-                <Search size={16} className="shrink-0" aria-hidden="true" />
-                <input
-                  type="text"
-                  placeholder="Search users, transactions, numbers..."
-                  className="w-full select-none truncate text-sm bg-transparent border-none focus:outline-none"
-                />
-              </div>
+              <h1 className="truncate text-base font-bold text-white sm:text-lg">
+                {pageTitle}
+              </h1>
             </div>
 
             {/* Right: notifications + user + logout */}
@@ -198,20 +202,11 @@ const AdminLayout = () => {
                   </p>
                 </div>
               </div>
-
-              <button
-                type="button"
-                aria-label="Log out"
-                onClick={handleLogout}
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-950"
-              >
-                <LogOut size={18} aria-hidden="true" />
-              </button>
             </div>
           </div>
         </header>
 
-        <main className="min-h-[calc(100vh-4rem)] w-full min-w-0 overflow-x-hidden px-4 py-6 sm:px-6 lg:px-8">
+        <main className="min-h-[calc(100vh-4rem)] w-full min-w-0 overflow-x-hidden px-4 pb-6 pt-[30px] sm:px-6 lg:px-8">
           <Outlet />
         </main>
       </div>

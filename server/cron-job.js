@@ -5,7 +5,7 @@ import { countries, services } from "./src/utils/neededCountries.js";
 import AvailableService from "./src/model/ServicesAvailable.js";
 import { formatServiceName } from "./src/utils/serviceCode.js";
 
-const MAX_ALLOWED_PRICE = 10;
+const MAX_ALLOWED_PRICE = 5;
 
 const CronJob = async () => {
   console.log("Starting up SMSBOWER-CRON-JOB");

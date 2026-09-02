@@ -4,19 +4,25 @@ import {
   AlertCircle,
   CheckCircle2,
   Copy,
-  CreditCard,
+  Eye,
+  EyeOff,
+  Globe,
+  LayoutGrid,
   Loader2,
   RefreshCw,
   Search,
   Server,
-  ShieldCheck,
   Smartphone,
   Wallet,
 } from "lucide-react";
-import WalletBalanceCard from "../../components/WalletBalanceCard.jsx";
 import EmptyState from "../../components/ui/EmptyState.jsx";
 import Pagination from "../../components/ui/Pagination.jsx";
-import { buyNumber, getAvailableServices } from "../../service/number.js";
+import useWallet from "../../hooks/useWallet.js";
+import {
+  buyNumber,
+  getAvailableCountries,
+  getAvailableServices,
+} from "../../service/number.js";
 import { formatCurrency } from "../../utils/transaction.js";
 import { toast } from "react-toastify";
 import { formatServiceName } from "../../utils/serviceCode.js";
@@ -65,12 +71,22 @@ const normalizeCatalog = (response) => {
 
 const PhoneNumber = () => {
   const navigate = useNavigate();
+  const { balance, isLoading: isWalletLoading, isError: isWalletError } = useWallet();
+  const [showBalance, setShowBalance] = useState(false);
 
+  const [countries, setCountries] = useState([]);
+  const [loadingCountries, setLoadingCountries] = useState(true);
+  const [selectedCountry, setSelectedCountry] = useState("");
+  const [countryQuery, setCountryQuery] = useState("");
+  const [serviceQuery, setServiceQuery] = useState("");
+  // Mobile-only: the country/service pickers are two separate panels on
+  // desktop but collapse into a single tab-switched panel on small screens.
+  const [mobilePanel, setMobilePanel] = useState("country");
   const [catalog, setCatalog] = useState([]);
   const [selectedService, setSelectedService] = useState("");
   const [selectedListingId, setSelectedListingId] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [loadingCatalog, setLoadingCatalog] = useState(true);
+  const [loadingCatalog, setLoadingCatalog] = useState(false);
   const [buying, setBuying] = useState(false);
   const [purchaseData, setPurchaseData] = useState(null);
   // Two distinct error channels: a catalog/fetch error belongs to the
@@ -87,7 +103,29 @@ const PhoneNumber = () => {
     totalPages: 1,
   });
 
+  // The country list is fetched once, independent of any selection — it's
+  // the first, required step: pick a country, THEN services in that
+  // country become visible.
+  const fetchCountries = async () => {
+    try {
+      setLoadingCountries(true);
+
+      const response = await getAvailableCountries();
+      setCountries(Array.isArray(response?.data) ? response.data : []);
+    } catch (err) {
+      console.error("Failed to fetch countries:", err);
+    } finally {
+      setLoadingCountries(false);
+    }
+  };
+
+  useEffect(() => {
+    void fetchCountries();
+  }, []);
+
   const fetchServices = async () => {
+    if (!selectedCountry) return;
+
     try {
       setLoadingCatalog(true);
       setCatalogError("");
@@ -95,6 +133,7 @@ const PhoneNumber = () => {
       const response = await getAvailableServices({
         page: currentPage,
         limit: ROUTES_PER_PAGE,
+        country: selectedCountry,
         service: selectedService || undefined,
         search: searchTerm.trim() || undefined,
       });
@@ -123,7 +162,16 @@ const PhoneNumber = () => {
     }
   };
 
+  // Gated behind selectedCountry: nothing is fetched, and the service
+  // dropdown stays empty, until a country has been chosen.
   useEffect(() => {
+    if (!selectedCountry) {
+      setCatalog([]);
+      setServiceSummaries([]);
+      setPagination({ page: 1, limit: ROUTES_PER_PAGE, total: 0, totalPages: 1 });
+      return;
+    }
+
     const timeoutId = window.setTimeout(() => {
       void fetchServices();
     }, 0);
@@ -131,11 +179,13 @@ const PhoneNumber = () => {
     return () => {
       window.clearTimeout(timeoutId);
     };
-  }, [currentPage, searchTerm, selectedService]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCountry, currentPage, searchTerm, selectedService]);
 
-  // The service dropdown's own options come from an unfiltered, always-full
-  // aggregate returned alongside the (filtered) route list — so the dropdown
-  // never empties itself out based on the current search/service filter.
+  // The service dropdown's own options come from an unfiltered (aside from
+  // the selected country), always-full aggregate returned alongside the
+  // route list — so the dropdown never empties itself out based on the
+  // current search/service filter, only based on which country is picked.
   const serviceOptions = useMemo(() => {
     if (serviceSummaries.length > 0) {
       return serviceSummaries
@@ -170,6 +220,27 @@ const PhoneNumber = () => {
     }));
   }, [catalog, serviceSummaries]);
 
+  // Both list panels filter purely client-side over the already-loaded
+  // arrays — no network round trip for typing into "Find country"/"Find a
+  // service".
+  const filteredCountries = useMemo(() => {
+    const query = countryQuery.trim().toLowerCase();
+    if (!query) return countries;
+    return countries.filter((item) =>
+      item.internalCountry.toLowerCase().includes(query),
+    );
+  }, [countries, countryQuery]);
+
+  const filteredServiceOptions = useMemo(() => {
+    const query = serviceQuery.trim().toLowerCase();
+    if (!query) return serviceOptions;
+    return serviceOptions.filter(
+      (item) =>
+        item.name.toLowerCase().includes(query) ||
+        item.code.toLowerCase().includes(query),
+    );
+  }, [serviceOptions, serviceQuery]);
+
   const totalPages = Math.max(Number(pagination.totalPages || 1), 1);
   const totalListings = Number(pagination.total || 0);
   const visiblePage = Math.min(currentPage, totalPages);
@@ -180,42 +251,6 @@ const PhoneNumber = () => {
     [catalog, selectedListingId],
   );
 
-  const lowestPrice = catalog.reduce(
-    (lowest, item) =>
-      lowest === null || item.price < lowest ? item.price : lowest,
-    null,
-  );
-
-  const liveListings = catalog.filter((item) => item.availabilityScore > 0).length;
-  const activeCountries = new Set(catalog.map((item) => item.country)).size;
-
-  // Contextual stats — kept as compact inline chips rather than full stat
-  // cards, since they're supporting context for the workspace below, not
-  // primary actions in their own right.
-  const statChips = [
-    {
-      label: "services",
-      value: serviceOptions.length,
-      icon: Server,
-      iconBg: "bg-gold/15",
-      iconColor: "text-gold",
-    },
-    {
-      label: "countries live",
-      value: activeCountries,
-      icon: ShieldCheck,
-      iconBg: "bg-emerald-500/15",
-      iconColor: "text-emerald-400",
-    },
-    {
-      label: "from",
-      value: lowestPrice === null ? "N/A" : formatCurrency(lowestPrice),
-      icon: CreditCard,
-      iconBg: "bg-blue-500/15",
-      iconColor: "text-blue-400",
-    },
-  ];
-
   const hasActiveFilter = Boolean(selectedService || searchTerm.trim());
 
   const clearFilters = () => {
@@ -224,8 +259,18 @@ const PhoneNumber = () => {
     setCurrentPage(1);
   };
 
-  const handleServiceChange = (event) => {
-    setSelectedService(event.target.value);
+  const handleCountrySelect = (countryCode) => {
+    setSelectedCountry((current) => (current === countryCode ? current : countryCode));
+    setSelectedService("");
+    setSearchTerm("");
+    setServiceQuery("");
+    setSelectedListingId("");
+    setCurrentPage(1);
+    setMobilePanel("service");
+  };
+
+  const handleServiceSelect = (code) => {
+    setSelectedService(code);
     setSelectedListingId("");
     setCurrentPage(1);
   };
@@ -284,22 +329,28 @@ const PhoneNumber = () => {
 
   return (
     <div className="mx-auto max-w-7xl space-y-4 sm:space-y-5">
-      {/* Compact hero — one line, one CTA */}
-      <section className="relative overflow-hidden rounded-xl border border-white/10 bg-gradient-to-br from-gold-950/40 via-black to-black px-4 py-4 shadow-md sm:rounded-2xl sm:px-6 sm:py-5">
-        <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-gold-dark/10 blur-3xl sm:h-56 sm:w-56" />
-        <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="min-w-0">
-            <div className="inline-flex items-center gap-2 rounded-full border border-gold-light/40 bg-gold-light/10 px-3 py-1 text-[10px] font-semibold text-gold-light sm:text-xs">
-              <Smartphone size={12} />
-              Virtual Numbers
-            </div>
-            <h1 className="mt-2 text-lg font-bold leading-tight tracking-tight text-white sm:text-xl md:text-2xl">
-              Buy a live number, then request your OTP.
-            </h1>
-            <p className="mt-1 max-w-xl text-xs leading-5 text-gray-400 sm:text-sm">
-              Filter the routes below, pick one, and purchase — the cost comes
-              straight out of your wallet balance.
-            </p>
+      {/* Slim header strip — wallet balance + one action, no decoration */}
+      <section className="flex items-center justify-end gap-4 rounded-xl border border-white/10 bg-black/30 px-4 py-3 shadow-md sm:px-5">
+        <div className="flex shrink-0 items-center gap-2">
+          <div className="hidden items-center gap-2 rounded-lg border border-white/10 bg-black/30 px-3 py-2 sm:flex">
+            <Wallet size={14} className="text-gold-light" />
+            <span className="text-xs font-semibold text-white sm:text-sm">
+              {isWalletLoading
+                ? "..."
+                : isWalletError
+                  ? "N/A"
+                  : showBalance
+                    ? formatCurrency(balance)
+                    : "NGN ******"}
+            </span>
+            <button
+              type="button"
+              onClick={() => setShowBalance((prev) => !prev)}
+              className="text-gray-500 transition-colors hover:text-white"
+              aria-label={showBalance ? "Hide wallet balance" : "Show wallet balance"}
+            >
+              {showBalance ? <EyeOff size={13} /> : <Eye size={13} />}
+            </button>
           </div>
           <button
             type="button"
@@ -308,59 +359,262 @@ const PhoneNumber = () => {
                 state: { from: "/f/numbers" },
               })
             }
-            className="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-gold-light to-gold-dark px-5 text-sm font-semibold text-white shadow-lg shadow-gold-light/20 transition-transform hover:scale-[1.02] active:scale-95 sm:h-11"
+            className="inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-gold-light to-gold-dark px-4 text-xs font-semibold text-white shadow-md transition-transform hover:scale-[1.02] active:scale-95 sm:h-10 sm:px-5 sm:text-sm"
           >
-            <Wallet size={16} />
+            <Wallet size={14} />
             Fund Wallet
           </button>
         </div>
       </section>
 
-      {/* Contextual stat chips — supporting info, not primary actions */}
-      <div className="flex flex-wrap items-center gap-2">
-        {statChips.map((chip) => (
-          <span
-            key={chip.label}
-            className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 py-1.5 pl-1.5 pr-3 text-xs shadow-md"
-          >
-            <span
-              className={`flex h-6 w-6 items-center justify-center rounded-full ${chip.iconBg} ${chip.iconColor}`}
-            >
-              <chip.icon size={12} />
-            </span>
-            <span className="font-semibold text-white">{chip.value}</span>
-            <span className="text-gray-500">{chip.label}</span>
-          </span>
-        ))}
-      </div>
-
       {/* Unified workspace — one container, toolbar drives the grid,
           the grid feeds the purchase sidebar. */}
       <section className="overflow-hidden rounded-xl border border-white/10 bg-white/5 shadow-md">
-        <div className="flex flex-col gap-4 border-b border-white/10 bg-black/20 px-4 py-4 sm:px-5 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <h2 className="text-sm font-semibold uppercase tracking-widest text-gray-400">
-              Buy a Number
-            </h2>
-            <p className="mt-1 text-xs text-gray-500 sm:text-sm">
-              Filter live routes, pick one from the list, then confirm on the
-              right.
-            </p>
-          </div>
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <select
-              value={selectedService}
-              onChange={handleServiceChange}
-              className="h-11 w-full rounded-lg border border-white/10 bg-black/40 px-4 text-sm text-white transition-all focus:border-gold-light/50 focus:outline-none focus:ring-1 focus:ring-gold-light/50 sm:w-56"
+        <div className="px-4 py-4 sm:px-5">
+          {/* Mobile tab switcher — the two panels below collapse into one
+              tab-switched view under the lg breakpoint. */}
+          <div className="flex rounded-full border border-white/10 bg-black/30 p-1 lg:hidden">
+            <button
+              type="button"
+              onClick={() => setMobilePanel("country")}
+              className={`flex-1 rounded-full py-2 text-xs font-semibold uppercase tracking-wide transition-colors ${
+                mobilePanel === "country"
+                  ? "bg-gold-light text-ink"
+                  : "text-gray-400 hover:text-white"
+              }`}
             >
-              <option value="">All services</option>
-              {serviceOptions.map((service) => (
-                <option key={service.code} value={service.code}>
-                  {service.name} - {service.countries} countries
-                </option>
-              ))}
-            </select>
+              Countries
+            </button>
+            <button
+              type="button"
+              onClick={() => setMobilePanel("service")}
+              disabled={!selectedCountry}
+              className={`flex-1 rounded-full py-2 text-xs font-semibold uppercase tracking-wide transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
+                mobilePanel === "service"
+                  ? "bg-gold-light text-ink"
+                  : "text-gray-400 hover:text-white"
+              }`}
+            >
+              Services
+            </button>
+          </div>
 
+          <div className="mt-4 grid gap-4 lg:grid-cols-2">
+            {/* Country panel */}
+            <div
+              className={`overflow-hidden rounded-xl border border-white/10 bg-black/20 ${
+                mobilePanel === "country" ? "block" : "hidden"
+              } lg:block`}
+            >
+              <div className="flex items-center justify-between gap-2 border-b border-white/10 px-4 py-3">
+                <div className="flex items-center gap-2">
+                  <Globe size={15} className="text-gold-light" />
+                  <h3 className="text-sm font-semibold text-white">
+                    Select Country
+                  </h3>
+                </div>
+                <span className="shrink-0 rounded-full border border-gold-light/20 bg-gold-light/10 px-2.5 py-0.5 text-[11px] font-medium text-gold-light">
+                  {countries.length} Countries
+                </span>
+              </div>
+
+              <div className="p-3">
+                <div className="relative">
+                  <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-500" />
+                  <input
+                    value={countryQuery}
+                    onChange={(event) => setCountryQuery(event.target.value)}
+                    placeholder="Find country"
+                    className="h-10 w-full rounded-lg border border-white/10 bg-black/40 pl-9 pr-3 text-sm text-white placeholder:text-gray-600 focus:border-gold-light/50 focus:outline-none focus:ring-1 focus:ring-gold-light/50"
+                  />
+                </div>
+              </div>
+
+              <div className="max-h-72 overflow-y-auto px-2 pb-2">
+                {loadingCountries ? (
+                  <div className="flex items-center justify-center gap-2 py-8 text-sm text-gray-500">
+                    <Loader2 size={16} className="animate-spin" />
+                    Loading countries...
+                  </div>
+                ) : filteredCountries.length === 0 ? (
+                  <p className="px-2 py-8 text-center text-sm text-gray-500">
+                    No countries match your search.
+                  </p>
+                ) : (
+                  filteredCountries.map((item) => {
+                    const isSelected = item.internalCountry === selectedCountry;
+
+                    return (
+                      <button
+                        key={item.internalCountry}
+                        type="button"
+                        onClick={() => handleCountrySelect(item.internalCountry)}
+                        className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-colors ${
+                          isSelected
+                            ? "bg-gold-light/15 text-white"
+                            : "text-gray-300 hover:bg-white/5"
+                        }`}
+                      >
+                        <span
+                          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${
+                            isSelected
+                              ? "bg-gold-light/20 text-gold-light"
+                              : "bg-white/5 text-gray-500"
+                          }`}
+                        >
+                          <Globe size={14} />
+                        </span>
+                        <span className="min-w-0 flex-1 truncate font-medium">
+                          {item.internalCountry}
+                        </span>
+                        {isSelected && (
+                          <CheckCircle2
+                            size={16}
+                            className="shrink-0 text-gold-light"
+                          />
+                        )}
+                      </button>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+
+            {/* Service panel — gated behind selectedCountry */}
+            <div
+              className={`overflow-hidden rounded-xl border border-white/10 bg-black/20 ${
+                mobilePanel === "service" ? "block" : "hidden"
+              } lg:block`}
+            >
+              <div className="flex items-center justify-between gap-2 border-b border-white/10 px-4 py-3">
+                <div className="flex items-center gap-2">
+                  <LayoutGrid size={15} className="text-gold-light" />
+                  <h3 className="text-sm font-semibold text-white">
+                    Select Service
+                  </h3>
+                </div>
+                <span className="shrink-0 rounded-full border border-gold-light/20 bg-gold-light/10 px-2.5 py-0.5 text-[11px] font-medium text-gold-light">
+                  {serviceOptions.length} Services
+                </span>
+              </div>
+
+              {!selectedCountry ? (
+                <div className="flex flex-col items-center justify-center px-4 py-14 text-center">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/5 text-gray-600">
+                    <Globe size={22} />
+                  </div>
+                  <p className="mt-3 text-sm font-semibold text-white">
+                    Step 1: Select Country
+                  </p>
+                  <p className="mt-1 max-w-[220px] text-xs text-gray-500">
+                    Please select a country to see the services available
+                    there.
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <div className="p-3">
+                    <div className="relative">
+                      <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-500" />
+                      <input
+                        value={serviceQuery}
+                        onChange={(event) => setServiceQuery(event.target.value)}
+                        placeholder="Find a service"
+                        className="h-10 w-full rounded-lg border border-white/10 bg-black/40 pl-9 pr-3 text-sm text-white placeholder:text-gray-600 focus:border-gold-light/50 focus:outline-none focus:ring-1 focus:ring-gold-light/50"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="max-h-72 overflow-y-auto px-2 pb-2">
+                    {loadingCatalog ? (
+                      <div className="flex items-center justify-center gap-2 py-8 text-sm text-gray-500">
+                        <Loader2 size={16} className="animate-spin" />
+                        Loading services...
+                      </div>
+                    ) : (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => handleServiceSelect("")}
+                          className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-colors ${
+                            selectedService === ""
+                              ? "bg-gold-light/15 text-white"
+                              : "text-gray-300 hover:bg-white/5"
+                          }`}
+                        >
+                          <span
+                            className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${
+                              selectedService === ""
+                                ? "bg-gold-light/20 text-gold-light"
+                                : "bg-white/5 text-gray-500"
+                            }`}
+                          >
+                            <LayoutGrid size={14} />
+                          </span>
+                          <span className="min-w-0 flex-1 truncate font-medium">
+                            All services
+                          </span>
+                          {selectedService === "" && (
+                            <CheckCircle2
+                              size={16}
+                              className="shrink-0 text-gold-light"
+                            />
+                          )}
+                        </button>
+
+                        {filteredServiceOptions.length === 0 ? (
+                          <p className="px-2 py-8 text-center text-sm text-gray-500">
+                            No services match your search.
+                          </p>
+                        ) : (
+                          filteredServiceOptions.map((service) => {
+                            const isSelected = service.code === selectedService;
+
+                            return (
+                              <button
+                                key={service.code}
+                                type="button"
+                                onClick={() => handleServiceSelect(service.code)}
+                                className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-colors ${
+                                  isSelected
+                                    ? "bg-gold-light/15 text-white"
+                                    : "text-gray-300 hover:bg-white/5"
+                                }`}
+                              >
+                                <span
+                                  className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${
+                                    isSelected
+                                      ? "bg-gold-light/20 text-gold-light"
+                                      : "bg-white/5 text-gray-500"
+                                  }`}
+                                >
+                                  <Server size={14} />
+                                </span>
+                                <span className="min-w-0 flex-1 truncate font-medium">
+                                  {service.name}
+                                </span>
+                                {isSelected && (
+                                  <CheckCircle2
+                                    size={16}
+                                    className="shrink-0 text-gold-light"
+                                  />
+                                )}
+                              </button>
+                            );
+                          })
+                        )}
+                      </>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-4 border-b border-white/10 bg-black/20 px-4 py-4 sm:px-5 lg:flex-row lg:items-center lg:justify-between">
+          <h2 className="text-sm font-semibold text-white">Available Routes</h2>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <div className="relative sm:w-64">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
               <input
@@ -369,8 +623,9 @@ const PhoneNumber = () => {
                   setSearchTerm(event.target.value);
                   setCurrentPage(1);
                 }}
-                placeholder="Search country or provider"
-                className="h-11 w-full rounded-lg border border-white/10 bg-black/40 py-2 pl-10 pr-4 text-sm text-white transition-all placeholder:text-gray-600 focus:border-gold-light/50 focus:outline-none focus:ring-1 focus:ring-gold-light/50"
+                disabled={!selectedCountry}
+                placeholder="Search provider"
+                className="h-11 w-full rounded-lg border border-white/10 bg-black/40 py-2 pl-10 pr-4 text-sm text-white transition-all placeholder:text-gray-600 focus:border-gold-light/50 focus:outline-none focus:ring-1 focus:ring-gold-light/50 disabled:cursor-not-allowed disabled:opacity-60"
               />
             </div>
 
@@ -379,7 +634,7 @@ const PhoneNumber = () => {
               onClick={() => {
                 void fetchServices();
               }}
-              disabled={loadingCatalog}
+              disabled={loadingCatalog || !selectedCountry}
               className="flex h-11 w-11 shrink-0 items-center justify-center self-end rounded-lg border border-white/10 text-gray-400 transition-colors hover:border-gold-light/30 hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-60 sm:self-auto"
               aria-label="Refresh available services"
             >
@@ -402,7 +657,13 @@ const PhoneNumber = () => {
           {/* Routes grid — output of the toolbar filters, input to the
               purchase sidebar. */}
           <div className="border-b border-white/10 p-4 lg:border-b-0 lg:border-r sm:p-5">
-            {loadingCatalog ? (
+            {!selectedCountry ? (
+              <EmptyState
+                icon={Globe}
+                title="Pick a country to begin"
+                description="Choose a country above to see the services and routes available there."
+              />
+            ) : loadingCatalog ? (
               <div className="flex items-center justify-center py-16 text-gray-400">
                 <Loader2 className="h-8 w-8 animate-spin text-gold-light" />
               </div>
@@ -496,8 +757,6 @@ const PhoneNumber = () => {
 
           {/* Purchase sidebar — downstream of the grid selection. */}
           <div className="space-y-4 p-4 sm:p-5">
-            <WalletBalanceCard />
-
             {purchaseData ? (
               <div className="rounded-xl border border-gold-light/20 bg-black/30 p-4">
                 <div className="flex items-center gap-2">

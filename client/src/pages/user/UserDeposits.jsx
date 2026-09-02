@@ -14,7 +14,6 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Pagination from "../../components/ui/Pagination.jsx";
 import StatCard from "../../components/ui/StatCard.jsx";
@@ -47,7 +46,6 @@ const emptySummary = {
 };
 
 export default function UserDeposits() {
-  const navigate = useNavigate();
   const [deposits, setDeposits] = useState([]);
   const [summary, setSummary] = useState(emptySummary);
   const [totalPages, setTotalPages] = useState(1);
@@ -197,29 +195,6 @@ export default function UserDeposits() {
 
   return (
     <div className="mx-auto max-w-7xl space-y-5">
-      {/* Compact page header */}
-      <section className="flex flex-col gap-4 rounded-xl border border-white/10 bg-white/5 px-5 py-4 shadow-md sm:flex-row sm:items-center sm:justify-between sm:px-6">
-        <div>
-          <div className="inline-flex items-center gap-2 rounded-full border border-gold-light/40 bg-gold-light/10 px-3 py-1 text-xs font-semibold text-gold-300">
-            <CreditCard size={13} />
-            Wallet
-          </div>
-          <h1 className="mt-2 text-xl font-bold tracking-tight text-white sm:text-2xl">
-            Deposit History
-          </h1>
-          <p className="mt-1 text-sm text-gray-500">
-            Track every wallet funding request and its approval status.
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={() => navigate("/f/fund-account")}
-          className="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-gold-light to-gold-dark px-5 text-sm font-semibold text-white shadow-lg shadow-gold-light/20 transition-transform hover:scale-[1.02] active:scale-95"
-        >
-          <Wallet size={16} />
-          Fund Wallet
-        </button>
-      </section>
 
       {/* Deposit summary */}
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -232,7 +207,7 @@ export default function UserDeposits() {
       <section className="overflow-hidden rounded-xl border border-white/10 bg-white/5 shadow-md">
         <div className="flex flex-col gap-3 border-b border-white/10 bg-black/20 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="font-semibold text-white">Deposit Records</h2>
+            <h2 className="text-sm font-semibold text-white">Deposit Records</h2>
             <p className="mt-0.5 text-xs text-gray-500">
               {totalResults} result
               {totalResults === 1 ? "" : "s"}

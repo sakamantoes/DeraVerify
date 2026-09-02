@@ -317,8 +317,77 @@ const checkUserOtpOrderStatus = async (req, res, next) => {
   }
 };
 
+const getServicesAvailableName = async (req, res, next) => {
+  try {
+    // A country/service only counts here if the admin has both activated
+    // AND made it visible — same two-flag rule as getPlatformServices.
+    const servicesName = await AvailableService.aggregate([
+      {
+        $group: {
+          _id: "$internalCountry",
+          totalServices: {
+            $addToSet: {
+              $cond: [
+                { $and: ["$active", "$isVisible"] },
+                "$internalService",
+                false,
+              ],
+            },
+          },
+          totalStock: {
+            $sum: {
+              $cond: [{ $and: ["$active", "$isVisible"] }, "$stock", 0],
+            },
+          },
+          activeCount: {
+            $sum: {
+              $cond: ["$active", 1, 0],
+            },
+          },
+          totalListings: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          internalCountry: "$_id",
+          totalServices: {
+            $size: {
+              $filter: {
+                input: "$totalServices",
+                as: "service",
+                cond: { $ne: ["$$service", false] },
+              },
+            },
+          },
+          totalStock: 1,
+          activeCount: 1,
+          totalListings: 1,
+          active: {
+            $eq: ["$activeCount", "$totalListings"],
+          },
+        },
+      },
+      {
+        $sort: {
+          internalCountry: 1,
+        },
+      },
+    ]);
+
+    res.status(200).json({
+      status: 200,
+      success: true,
+      message: "successfull",
+      data: servicesName,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const getPlatformServices = async (req, res, next) => {
-  const { page = 1, limit = 12, service = "", search = "" } = req.query;
+  const { page = 1, limit = 12, service = "", search = "", country = "" } = req.query;
 
   try {
     const pageNumber = Math.max(Number(page) || 1, 1);
@@ -331,14 +400,22 @@ const getPlatformServices = async (req, res, next) => {
       throw new Error("error fetching price");
     }
 
+    // Users only ever see listings the admin has both activated AND made
+    // visible — two independent toggles admin controls separately.
     const query = {
       active: true,
+      isVisible: true,
     };
     const normalizedService = String(service).trim();
     const normalizedSearch = String(search).trim();
+    const normalizedCountry = String(country).trim();
 
     if (normalizedService) {
       query.internalService = normalizedService;
+    }
+
+    if (normalizedCountry) {
+      query.internalCountry = normalizedCountry;
     }
 
     if (normalizedSearch) {
@@ -358,7 +435,11 @@ const getPlatformServices = async (req, res, next) => {
         .lean(),
       AvailableService.countDocuments(query),
       AvailableService.aggregate([
-        { $match: { active: true } },
+        {
+          $match: normalizedCountry
+            ? { active: true, isVisible: true, internalCountry: normalizedCountry }
+            : { active: true, isVisible: true },
+        },
         {
           $group: {
             _id: "$internalService",
@@ -518,7 +599,7 @@ const buyNumberService = async (req, res, next) => {
     const activationTime = new Date(response.activationTime);
     boughtService = response;
 
-    const expiresAt = new Date(activationTime.getTime() + 10 * 60 * 1000);
+    const expiresAt = new Date(activationTime.getTime() + 6 * 60 * 1000);
     await session.withTransaction(async () => {
       const updatedUser = await User.findOneAndUpdate(
         { _id: isUser._id, walletBalance: { $gte: price } },
@@ -757,6 +838,7 @@ export {
   getUserOtpOrders,
   checkUserOtpOrderStatus,
   getPlatformServices,
+  getServicesAvailableName,
   buyNumberService,
   cancelOtpAndRefund,
 };

@@ -13,7 +13,6 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import CronJob from "../cron-job.js"
 import compression from "compression";
-import SMSPOOLCRON from "../smspool-cron.js";
 
 const app = express();
 
@@ -51,10 +50,7 @@ app.get("/cron-jobs", (req, res) => {
   CronJob();
   res.status(200).send("SMSBOWER Cron Job Ran");
 });
-app.get("/smspool-cron-jobs", (req, res) => {
-  SMSPOOLCRON();
-  res.status(200).send("SMSPOOL Cron Job Ran");
-});
+
 // database connection
 connectDB();
 

@@ -14,6 +14,11 @@ export const getAvailableServices = async (params = {}) => {
   return res.data;
 };
 
+export const getAvailableCountries = async () => {
+  const res = await api.get("/api/user/platform/countries");
+  return res.data;
+};
+
 // ================= BUY NUMBER =================
 export const buyNumber = async (payload) => {
   const res = await api.post("/api/user/buy/services", payload);

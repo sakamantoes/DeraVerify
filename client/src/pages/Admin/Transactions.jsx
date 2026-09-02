@@ -275,14 +275,6 @@ export default function Transactions() {
               <Banknote size={13} />
               Admin Deposits
             </div>
-            <h1 className="mt-4 text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
-              Review wallet funding requests
-              <br className="hidden sm:block" /> and update their status.
-            </h1>
-            <p className="mt-3 max-w-xl text-sm leading-6 text-gray-400">
-              Inspect platform deposit records, view transaction details, and
-              mark pending payments as successful or failed after review.
-            </p>
           </div>
           <button
             type="button"
@@ -305,10 +297,10 @@ export default function Transactions() {
       <section className="rounded-xl border border-white/10 bg-white/5 p-4 shadow-md sm:p-5">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h2 className="text-sm font-semibold uppercase tracking-widest text-gray-400">
+            <h2 className="text-sm font-semibold text-white">
               Deposit Filters
             </h2>
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-xs text-gray-500">
               Search by depositor, reference, order, user, or payment method.
             </p>
           </div>
@@ -352,7 +344,7 @@ export default function Transactions() {
       <section className="overflow-hidden rounded-xl border border-white/10 bg-white/5 shadow-md">
         <div className="flex items-center justify-between border-b border-white/10 bg-black/20 px-5 py-4">
           <div>
-            <h2 className="font-semibold text-white">Deposit Records</h2>
+            <h2 className="text-sm font-semibold text-white">Deposit Records</h2>
             <p className="mt-0.5 text-xs text-gray-500">
               {filteredDeposits.length} result
               {filteredDeposits.length === 1 ? "" : "s"}

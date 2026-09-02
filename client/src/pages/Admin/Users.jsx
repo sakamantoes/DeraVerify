@@ -253,13 +253,6 @@ export default function Users() {
               <UsersIcon size={13} />
               User Management
             </div>
-            <h1 className="mt-4 text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
-              Manage platform users
-              <br className="hidden sm:block" /> control access & permissions.
-            </h1>
-            <p className="mt-3 max-w-xl text-sm leading-6 text-gray-400">
-              View all registered users, manage their account status, and monitor activity from a single dashboard.
-            </p>
           </div>
           <button
             onClick={fetchUsers}

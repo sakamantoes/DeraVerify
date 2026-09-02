@@ -20,6 +20,7 @@ import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 import Users from "./pages/Admin/Users.jsx";
 import Transactions from "./pages/Admin/Transactions.jsx";
 import AdminNumbers from "./pages/Admin/AdminNumbers.jsx";
+import AdminOtpOrders from "./pages/Admin/AdminOtpOrders.jsx";
 import Setting from "./pages/user/Setting.jsx";
 import UserSupport from "./pages/user/UserSupport.jsx";
 import AdminSupport from "./pages/Admin/AdminSupport.jsx";
@@ -75,6 +76,7 @@ const App = () => {
           <Route path="users" element={<Users />} />
           <Route path="deposits" element={<Transactions />} />
           <Route path="numbers" element={<AdminNumbers />} />
+          <Route path="otp-orders" element={<AdminOtpOrders />} />
           <Route path="support" element={<AdminSupport />} />
         </Route>
       </Routes>

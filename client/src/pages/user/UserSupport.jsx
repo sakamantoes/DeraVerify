@@ -162,13 +162,6 @@ const UserSupport = () => {
               <MessageSquare size={13} />
               Support Center
             </div>
-            <h1 className="mt-4 text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
-              Get help from our support team
-              <br className="hidden sm:block" /> we're here for you 24/7.
-            </h1>
-            <p className="mt-3 max-w-xl text-sm leading-6 text-gray-400">
-              Have a question or issue? Send us a message and our support team will get back to you as soon as possible.
-            </p>
           </div>
           <button
             onClick={() => setShowCreateForm(!showCreateForm)}

@@ -179,13 +179,6 @@ const AdminSupport = () => {
               <MessageSquare size={13} />
               Admin Support Panel
             </div>
-            <h1 className="mt-4 text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
-              Manage customer support tickets
-              <br className="hidden sm:block" /> respond and resolve issues.
-            </h1>
-            <p className="mt-3 max-w-xl text-sm leading-6 text-gray-400">
-              View all support tickets, respond to customer inquiries, and track resolution status.
-            </p>
           </div>
           <div className="flex gap-3">
             <div className="flex items-center gap-2 rounded-lg bg-white/10 px-3 py-2">

@@ -187,37 +187,6 @@ export default function UserReceipts() {
 
   return (
     <div className="mx-auto max-w-7xl space-y-6">
-      <section className="relative overflow-hidden rounded-2xl border border-white/10 shadow-md bg-gradient-to-br from-gold-950/40 via-black to-black p-6 text-white sm:p-8">
-        <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-gold-dark/10 blur-3xl" />
-        <div className="relative flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-gold-light/40 bg-gold-light/10 px-3 py-1 text-xs font-semibold text-gold-300">
-              <ReceiptText size={13} />
-              Purchase Receipts
-            </div>
-            <h1 className="mt-4 text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
-              View every purchase receipt
-              <br className="hidden sm:block" /> tied to your account.
-            </h1>
-            <p className="mt-3 max-w-xl text-sm leading-6 text-gray-400">
-              Search by receipt ID, review purchase details, and copy receipt
-              numbers whenever you need proof of payment.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() => {
-              void fetchReceipts();
-            }}
-            disabled={loading}
-            className="inline-flex h-11 shrink-0 items-center gap-2 rounded-xl bg-gold-dark/40 px-5 text-sm font-semibold text-white transition-colors hover:bg-gold-light active:bg-gold-700 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
-            Refresh Receipts
-          </button>
-        </div>
-      </section>
-
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
 
         {stats.map((stat) => (
@@ -250,10 +219,10 @@ export default function UserReceipts() {
       <section className="rounded-xl border border-white/10 shadow-md bg-white/5 p-4 sm:p-5">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div>
-            <h2 className="text-sm font-semibold uppercase tracking-widest text-gray-400">
+            <h2 className="text-sm font-semibold text-white">
               Find Receipt
             </h2>
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-xs text-gray-500">
               Search with a receipt ID or narrow the list by purchase type.
             </p>
           </div>
@@ -268,6 +237,18 @@ export default function UserReceipts() {
                 className="h-11 w-full min-w-0 rounded-lg border border-white/10 bg-black/40 py-2 pl-10 pr-4 text-sm text-white placeholder:text-gray-600 focus:border-gold-light/50 focus:outline-none focus:ring-1 focus:ring-gold-light/50 sm:min-w-72"
               />
             </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                void fetchReceipts();
+              }}
+              disabled={loading}
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-white/10 text-gray-400 transition-colors hover:border-gold-light/30 hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+              aria-label="Refresh receipts"
+            >
+              <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
+            </button>
 
             <div className="relative">
               <Filter className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
@@ -288,7 +269,7 @@ export default function UserReceipts() {
       <section className="rounded-xl border border-white/10 shadow-md bg-white/5 overflow-hidden">
         <div className="flex items-center justify-between border-b border-white/10 bg-black/20 px-5 py-4">
           <div>
-            <h2 className="font-semibold text-white">Receipt Records</h2>
+            <h2 className="text-sm font-semibold text-white">Receipt Records</h2>
             <p className="mt-0.5 text-xs text-gray-500">
               {filteredReceipts.length} result
               {filteredReceipts.length === 1 ? "" : "s"}
