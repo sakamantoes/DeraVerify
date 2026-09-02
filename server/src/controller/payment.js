@@ -318,7 +318,7 @@ const initializeQuestPayment = async (req, res, next) => {
   const { amount } = req.body;
   const user = req.user;
   const randomCode = crypto.randomBytes(6).toString("hex").toUpperCase();
-  const reference = `SMSWINNERS-${user._id}-${randomCode}`;
+  const reference = `WaveVerify-${user._id}-${randomCode}`;
   try {
     const data = {
       email: user.email,
@@ -326,7 +326,7 @@ const initializeQuestPayment = async (req, res, next) => {
       reference,
       amount: Number(amount),
       metadata: { userId: user._id },
-      return_url: "https://www.smswinners.online/payment/status",
+      return_url: "https://www.waveverify.com/payment/status",
     };
 
     const response = await axios.post(

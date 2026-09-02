@@ -25,8 +25,8 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://sms-winner.vercel.app",
-      "https://www.smswinners.online",
+      "https://dera-verify.vercel.app",
+      "https://www.waveverify.com",
     ],
     credentials: true,
   }),
@@ -34,7 +34,7 @@ app.use(
 app.use(cookieParser());
 
 app.get("/", (req, res) => {
-  res.send("Welcome to SMS Winners API");
+  res.send("Welcome to wave verify API");
 });
 
 // routes

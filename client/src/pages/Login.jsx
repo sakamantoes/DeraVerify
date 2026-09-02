@@ -99,13 +99,13 @@ const Login = () => {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ duration: 0.5 }}
-            className="mx-auto w-20 h-20 bg-gradient-to-br from-[#C9A24B] to-[#F0CB6E] rounded-2xl flex items-center justify-center mb-6 shadow-xl"
+            className="mx-auto w-40 h-20 bg-gradient-to-br from-[#000] to-[#000] rounded-2xl flex items-center justify-center mb-6 shadow-xl"
           >
-            {/* <img
-              src={imageObject.Logo}
+            <img
+              src={imageObject.Logo2}
               alt="Logo"
-              className="w-20 h-20 rounded-full"
-            /> */}
+              className="w-40 h-20"
+            />
           </motion.div>
           <h2 className="text-3xl font-bold text-white">Welcome Back</h2>
           <p className="mt-2 text-[#9B948A]">Sign in to your account</p>

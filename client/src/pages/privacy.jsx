@@ -1,222 +1,283 @@
-// src/pages/PrivacyPolicy.jsx
+// Privacy.jsx
 import React from 'react';
-import { motion } from 'framer-motion';
-import { ArrowLeft, Shield, Lock, Eye, Database, Mail, Bell, AlertTriangle, CheckCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { Shield, CheckCircle, ArrowRight, Home, Lock, User, Eye, Cookie } from 'lucide-react';
+import imageObject from '../utils/image';
 
-const PrivacyPolicy = () => {
+const Privacy = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black py-12 px-4 sm:px-6 lg:px-8">
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-radial from-gold-light/10 via-transparent to-transparent" />
-        <div className="absolute top-20 left-10 w-72 h-72 bg-gold-light/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-gold-600/10 rounded-full blur-3xl animate-pulse delay-1000" />
+    <div className="min-h-screen bg-[#0A0908] text-[#F5EFE0]">
+      {/* Background */}
+      <div className="fixed inset-0 z-0">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(201,162,75,0.06)_0%,_transparent_70%)]" />
+        <div className="absolute inset-0 opacity-[0.06]" style={{
+          backgroundImage: `
+            linear-gradient(rgba(201,162,75,0.3) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(201,162,75,0.3) 1px, transparent 1px)
+          `,
+          backgroundSize: "60px 60px",
+        }} />
       </div>
 
-      <div className="max-w-4xl mx-auto relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <Link to="/" className="inline-flex items-center text-gray-400 hover:text-gold-light transition-colors mb-6">
-            <ArrowLeft size={20} className="mr-2" />
+      {/* Navigation */}
+      <header className="sticky top-0 z-50 border-b border-[#C9A24B]/25 bg-[#0A0908]/85 backdrop-blur-lg">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+          <Link to="/" className="flex items-center gap-2">
+          <img src={imageObject.Logo2} alt="wave verify" className='w-[70px]' />
+            <span className="font-bold text-lg tracking-wide text-[#F5EFE0]" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+              Wave Verify
+            </span>
+          </Link>
+          <Link to="/" className="text-[#9B948A] hover:text-[#F0CB6E] transition-colors text-sm flex items-center gap-2">
+            <Home className="h-4 w-4" />
             Back to Home
           </Link>
+        </div>
+      </header>
 
-          <div className="glass-card rounded-2xl p-8 md:p-10">
-            <div className="flex items-center gap-3 mb-6">
-              <Shield className="text-gold-light w-8 h-8" />
-              <h1 className="text-3xl font-bold text-white">Privacy Policy</h1>
-            </div>
-            <p className="text-gray-400 text-sm mb-8">Last updated: August 2026</p>
-
-            <div className="space-y-8 text-gray-300">
-              {/* Introduction */}
-              <section>
-                <div className="flex items-center gap-2 mb-4">
-                  <Database className="text-blue-400 w-5 h-5" />
-                  <h2 className="text-xl font-bold text-white">Information We Collect</h2>
-                </div>
-                <p className="text-sm leading-relaxed">
-                  When you register on the Smswinners platform, we collect the following information:
-                </p>
-                <ul className="list-disc list-inside space-y-1 text-sm pl-4 mt-2">
-                  <li><strong>Email Address:</strong> Your Smswinners account is identified only by the email used during registration. This is your primary identifier and is required for account recovery and communication.</li>
-                  <li><strong>Username:</strong> A unique identifier you choose for your profile on the platform.</li>
-                  <li><strong>Password:</strong> Encrypted and stored securely to protect your account access.</li>
-                  <li><strong>Transaction Data:</strong> Information related to your purchases, deposits, and usage of our services.</li>
-                </ul>
-              </section>
-
-              {/* How We Use Information */}
-              <section>
-                <div className="flex items-center gap-2 mb-4">
-                  <Eye className="text-green-400 w-5 h-5" />
-                  <h2 className="text-xl font-bold text-white">How We Use Your Information</h2>
-                </div>
-                <ul className="list-disc list-inside space-y-1 text-sm pl-4">
-                  <li>To provide, maintain, and improve our virtual number and SMS verification services.</li>
-                  <li>To process transactions and manage your account balance.</li>
-                  <li>To send you important notifications about your account, including technical messages (password changes, security alerts) via email.</li>
-                  <li>To send you marketing materials and promotional content about new services, rule changes, and other events (you may unsubscribe at any time).</li>
-                  <li>To detect and prevent fraudulent activity, unauthorized access, and security vulnerabilities.</li>
-                  <li>To monitor user activity and enforce platform rules and guidelines.</li>
-                </ul>
-              </section>
-
-              {/* Notifications */}
-              <section>
-                <div className="flex items-center gap-2 mb-4">
-                  <Bell className="text-yellow-400 w-5 h-5" />
-                  <h2 className="text-xl font-bold text-white">Notifications</h2>
-                </div>
-                <ol className="list-decimal list-inside space-y-2 text-sm leading-relaxed">
-                  <li>Important news about rule changes, new services, and other events is published in Telegram channels.</li>
-                  <li>As for personal notifications, Smswinners may use the contact info you provided.</li>
-                  <li>Technical messages (password change, security alerts, etc.) are sent via email. If you do not receive the expected email, check your Spam folder. If the email was marked as spam, please indicate that it is not spam to receive important messages in the future.</li>
-                  <li>By registering on the website, you agree to receive marketing materials via email. You may unsubscribe at any time.</li>
-                </ol>
-              </section>
-
-              {/* Data Security */}
-              <section>
-                <div className="flex items-center gap-2 mb-4">
-                  <Lock className="text-gold-light w-5 h-5" />
-                  <h2 className="text-xl font-bold text-white">Data Security</h2>
-                </div>
-                <p className="text-sm leading-relaxed">
-                  We take the security of your personal information seriously. Here's how we protect your data:
-                </p>
-                <ul className="list-disc list-inside space-y-1 text-sm pl-4 mt-2">
-                  <li>All password data is encrypted using industry-standard encryption protocols.</li>
-                  <li>When paying for an order with a bank card, the payment is processed (including card number entry) on a secure page of a certified payment processing system. Your confidential data (such as card details, registration information, etc.) is not sent to our platform.</li>
-                  <li>The entire payment process is protected, and no one, including our platform, can access your personal or banking data.</li>
-                  <li>When handling card data, the system complies with the Payment Card Industry Data Security Standard (PCI DSS), a global security standard developed by major payment systems such as Visa and MasterCard.</li>
-                  <li>The data transmission technology ensures the safety of card transactions using Secure Sockets Layer (SSL) encryption, Verified by Visa, SecureCode, and closed banking networks with the highest level of protection.</li>
-                </ul>
-              </section>
-
-              {/* Account Security */}
-              <section>
-                <div className="flex items-center gap-2 mb-4">
-                  <AlertTriangle className="text-orange-400 w-5 h-5" />
-                  <h2 className="text-xl font-bold text-white">Account Security</h2>
-                </div>
-                <p className="text-sm leading-relaxed">
-                  For security reasons, your account may be frozen in the following cases:
-                </p>
-                <ul className="list-disc list-inside space-y-1 text-sm pl-4 mt-2">
-                  <li>No activity for 3 months.</li>
-                  <li>Suspicious or third-party access detected.</li>
-                </ul>
-                <p className="text-sm mt-2">
-                  Account recovery is possible only with the original email that you specified during registration. We do not store any identifiable information beyond what is necessary for platform functionality.
-                </p>
-              </section>
-
-              {/* Reseller Privacy */}
-              <section>
-                <div className="flex items-center gap-2 mb-4">
-                  <CheckCircle className="text-purple-400 w-5 h-5" />
-                  <h2 className="text-xl font-bold text-white">Reseller Privacy</h2>
-                </div>
-                <ul className="list-disc list-inside space-y-1 text-sm pl-4">
-                  <li>Resellers can develop their own brand, conduct promotions, and perform any actions to attract customers without coordinating this activity with Smswinners (with the exception of knowingly illegal actions or use for hosting illegal platforms).</li>
-                  <li>Technical support for users purchasing numbers from a Reseller is the responsibility of the Reseller.</li>
-                  <li>Resellers are prohibited from creating services that copy or resemble Smswinners identity: name, logo, color palette, and other brand book elements.</li>
-                  <li>Resellers are prohibited from directing buyers to Smswinners technical support or referring to Smswinners in the event of disputed situations.</li>
-                </ul>
-              </section>
-
-              {/* Your Rights */}
-              <section>
-                <div className="flex items-center gap-2 mb-4">
-                  <Mail className="text-pink-400 w-5 h-5" />
-                  <h2 className="text-xl font-bold text-white">Your Rights</h2>
-                </div>
-                <p className="text-sm leading-relaxed">You have the following rights regarding your personal data:</p>
-                <ul className="list-disc list-inside space-y-1 text-sm pl-4 mt-2">
-                  <li><strong>Access:</strong> You can request access to the personal data we hold about you.</li>
-                  <li><strong>Correction:</strong> You can update your account information at any time through your account settings.</li>
-                  <li><strong>Unsubscribe:</strong> You may opt out of marketing communications at any time.</li>
-                  <li><strong>Account Closure:</strong> You may close your account by contacting us at <a href="mailto:Smswinner19@gmail.com" className="text-gold-light hover:underline">Smswinner19@gmail.com</a>.</li>
-                </ul>
-              </section>
-
-              {/* Data Retention */}
-              <section>
-                <div className="flex items-center gap-2 mb-4">
-                  <Database className="text-teal-400 w-5 h-5" />
-                  <h2 className="text-xl font-bold text-white">Data Retention</h2>
-                </div>
-                <p className="text-sm leading-relaxed">
-                  We retain your personal data for as long as your account is active or as needed to provide you with our services. If you wish to cancel your account or request that we no longer use your data to provide you with services, contact us at <a href="mailto:Smswinner19@gmail.com" className="text-gold-light hover:underline">Smswinner19@gmail.com</a>. We will retain and use your information as necessary to comply with our legal obligations, resolve disputes, and enforce our agreements.
-                </p>
-              </section>
-
-              {/* Cookies and Tracking */}
-              <section>
-                <div className="flex items-center gap-2 mb-4">
-                  <Eye className="text-cyan-400 w-5 h-5" />
-                  <h2 className="text-xl font-bold text-white">Cookies and Tracking</h2>
-                </div>
-                <p className="text-sm leading-relaxed">
-                  We use cookies and similar tracking technologies to:
-                </p>
-                <ul className="list-disc list-inside space-y-1 text-sm pl-4 mt-2">
-                  <li>Maintain your session and keep you logged in.</li>
-                  <li>Remember your preferences and settings.</li>
-                  <li>Understand how you interact with our platform to improve user experience.</li>
-                  <li>Prevent fraud and enhance security.</li>
-                </ul>
-              </section>
-
-              {/* Prohibited Use */}
-              <section>
-                <div className="flex items-center gap-2 mb-4">
-                  <AlertTriangle className="text-gold-400 w-5 h-5" />
-                  <h2 className="text-xl font-bold text-white">Prohibited Use</h2>
-                </div>
-                <p className="text-sm leading-relaxed">
-                  Using Smswinners for any unlawful purpose is strictly forbidden. The platform must not be used for:
-                </p>
-                <ul className="list-disc list-inside space-y-1 text-sm pl-4 mt-2">
-                  <li>Paid subscription services.</li>
-                  <li>Activations of Webmoney.</li>
-                  <li>Banking services.</li>
-                  <li>Any illegal activity or purpose.</li>
-                </ul>
-                <p className="text-sm mt-2">
-                  Any exploitation of bugs or security vulnerabilities is strictly forbidden by law.
-                </p>
-              </section>
-
-              {/* Changes to Privacy Policy */}
-              <section>
-                <h2 className="text-xl font-bold text-white mb-2">Changes to This Privacy Policy</h2>
-                <p className="text-sm leading-relaxed">
-                  We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last updated" date at the top. You are advised to review this Privacy Policy periodically for any changes.
-                </p>
-              </section>
-
-              {/* Contact Information */}
-              <section className="border-t border-gold-light/20 pt-6">
-                <h2 className="text-xl font-bold text-white mb-2">Contact Us</h2>
-                <p className="text-sm leading-relaxed">
-                  If you have any questions about this Privacy Policy, please contact us:
-                </p>
-                <ul className="list-disc list-inside space-y-1 text-sm pl-4 mt-2">
-                  <li>Email: <a href="mailto:Smswinner19@gmail.com" className="text-gold-light hover:underline">Smswinner19@gmail.com</a></li>
-                  <li>Telegram: <span className="text-gold-light">@@smswinnerssupport</span></li>
-                </ul>
-              </section>
-            </div>
+      {/* Main Content */}
+      <main className="relative z-10 max-w-4xl mx-auto px-6 py-16 md:py-24">
+        <div className="mb-12 text-center">
+          <div className="inline-flex items-center gap-2 rounded-full border border-[#C9A24B]/35 px-4 py-1.5 text-xs text-[#F0CB6E] mb-4">
+            <Lock className="h-3.5 w-3.5" />
+            Privacy Policy
           </div>
-        </motion.div>
-      </div>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+            Privacy <span className="text-[#F0CB6E]">Policy</span>
+          </h1>
+          <p className="text-[#9B948A] text-sm">Last Updated: September 1, 2026</p>
+        </div>
+
+        <div className="space-y-8">
+          {/* Introduction */}
+          <section className="bg-[#131110]/80 backdrop-blur-sm rounded-2xl border border-[#C9A24B]/20 p-6 md:p-8">
+            <h2 className="text-xl font-bold mb-4 flex items-center gap-3" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+              <Shield className="h-5 w-5 text-[#6FCF97]" />
+              Our Commitment to Privacy
+            </h2>
+            <p className="text-[#9B948A] leading-relaxed text-sm md:text-base">
+              Your privacy is a priority for us. This Privacy Policy explains how we collect, use, disclose, and 
+              safeguard your information when you use our services. Please read this policy carefully. By using 
+              our services, you consent to the practices described herein.
+            </p>
+          </section>
+
+          {/* Information We Collect */}
+          <section className="bg-[#131110]/80 backdrop-blur-sm rounded-2xl border border-[#C9A24B]/20 p-6 md:p-8">
+            <h2 className="text-xl font-bold mb-4 flex items-center gap-3" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+              <User className="h-5 w-5 text-[#F0CB6E]" />
+              Information We Collect
+            </h2>
+            <p className="text-[#9B948A] leading-relaxed text-sm md:text-base mb-4">
+              We collect the following types of information:
+            </p>
+            <ul className="space-y-3 text-[#9B948A] text-sm md:text-base">
+              <li className="flex items-start gap-3">
+                <CheckCircle className="h-4 w-4 text-[#6FCF97] mt-1 flex-shrink-0" />
+                <span><strong className="text-[#F5EFE0]">Personal Information:</strong> Name, email address, phone number, and payment information when you create an account or make a purchase.</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <CheckCircle className="h-4 w-4 text-[#6FCF97] mt-1 flex-shrink-0" />
+                <span><strong className="text-[#F5EFE0]">Usage Data:</strong> Information about how you interact with our platform, including pages visited, features used, and time spent.</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <CheckCircle className="h-4 w-4 text-[#6FCF97] mt-1 flex-shrink-0" />
+                <span><strong className="text-[#F5EFE0]">Device Information:</strong> IP address, browser type, operating system, and device identifiers.</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <CheckCircle className="h-4 w-4 text-[#6FCF97] mt-1 flex-shrink-0" />
+                <span><strong className="text-[#F5EFE0]">Cookies:</strong> We use cookies and similar tracking technologies to enhance your experience and analyze usage patterns.</span>
+              </li>
+            </ul>
+          </section>
+
+          {/* How We Use Information */}
+          <section className="bg-[#131110]/80 backdrop-blur-sm rounded-2xl border border-[#C9A24B]/20 p-6 md:p-8">
+            <h2 className="text-xl font-bold mb-4 flex items-center gap-3" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+              <Eye className="h-5 w-5 text-[#F0CB6E]" />
+              How We Use Your Information
+            </h2>
+            <p className="text-[#9B948A] leading-relaxed text-sm md:text-base mb-4">
+              We use the information we collect for the following purposes:
+            </p>
+            <ul className="space-y-3 text-[#9B948A] text-sm md:text-base">
+              <li className="flex items-start gap-3">
+                <CheckCircle className="h-4 w-4 text-[#6FCF97] mt-1 flex-shrink-0" />
+                <span>To provide, maintain, and improve our services</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <CheckCircle className="h-4 w-4 text-[#6FCF97] mt-1 flex-shrink-0" />
+                <span>To process transactions and send related confirmations</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <CheckCircle className="h-4 w-4 text-[#6FCF97] mt-1 flex-shrink-0" />
+                <span>To send you updates, security alerts, and support messages</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <CheckCircle className="h-4 w-4 text-[#6FCF97] mt-1 flex-shrink-0" />
+                <span>To monitor and analyze usage trends and improve user experience</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <CheckCircle className="h-4 w-4 text-[#6FCF97] mt-1 flex-shrink-0" />
+                <span>To detect, prevent, and address technical issues or security breaches</span>
+              </li>
+            </ul>
+          </section>
+
+          {/* Data Sharing */}
+          <section className="bg-[#131110]/80 backdrop-blur-sm rounded-2xl border border-[#C9A24B]/20 p-6 md:p-8">
+            <h2 className="text-xl font-bold mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+              Data Sharing and Disclosure
+            </h2>
+            <p className="text-[#9B948A] leading-relaxed text-sm md:text-base">
+              We do not sell, trade, or rent your personal information to third parties. We may share your information:
+            </p>
+            <ul className="mt-4 space-y-3 text-[#9B948A] text-sm md:text-base">
+              <li className="flex items-start gap-3">
+                <CheckCircle className="h-4 w-4 text-[#6FCF97] mt-1 flex-shrink-0" />
+                <span>With trusted third-party service providers who assist in operating our platform (payment processors, hosting services, etc.)</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <CheckCircle className="h-4 w-4 text-[#6FCF97] mt-1 flex-shrink-0" />
+                <span>When required by law, regulation, or legal process</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <CheckCircle className="h-4 w-4 text-[#6FCF97] mt-1 flex-shrink-0" />
+                <span>To protect the rights, property, or safety of our users or the public</span>
+              </li>
+            </ul>
+          </section>
+
+          {/* Data Security */}
+          <section className="bg-[#131110]/80 backdrop-blur-sm rounded-2xl border border-[#C9A24B]/20 p-6 md:p-8">
+            <h2 className="text-xl font-bold mb-4 flex items-center gap-3" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+              <Lock className="h-5 w-5 text-[#6FCF97]" />
+              Data Security
+            </h2>
+            <p className="text-[#9B948A] leading-relaxed text-sm md:text-base">
+              We implement appropriate technical and organizational measures to protect your personal information 
+              against unauthorized access, alteration, disclosure, or destruction. This includes encryption, secure 
+              data storage, and regular security audits. However, no method of transmission over the internet is 
+              100% secure, and we cannot guarantee absolute security.
+            </p>
+          </section>
+
+          {/* Cookies */}
+          <section className="bg-[#131110]/80 backdrop-blur-sm rounded-2xl border border-[#C9A24B]/20 p-6 md:p-8">
+            <h2 className="text-xl font-bold mb-4 flex items-center gap-3" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+              <Cookie className="h-5 w-5 text-[#F0CB6E]" />
+              Cookies and Tracking
+            </h2>
+            <p className="text-[#9B948A] leading-relaxed text-sm md:text-base">
+              We use cookies and similar tracking technologies to enhance your experience, personalize content, 
+              and analyze our traffic. You can control cookie preferences in your browser settings. Please note 
+              that disabling cookies may affect the functionality of our platform.
+            </p>
+          </section>
+
+          {/* User Rights */}
+          <section className="bg-[#131110]/80 backdrop-blur-sm rounded-2xl border border-[#C9A24B]/20 p-6 md:p-8">
+            <h2 className="text-xl font-bold mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+              Your Rights and Choices
+            </h2>
+            <p className="text-[#9B948A] leading-relaxed text-sm md:text-base">
+              You have the right to:
+            </p>
+            <ul className="mt-4 space-y-3 text-[#9B948A] text-sm md:text-base">
+              <li className="flex items-start gap-3">
+                <CheckCircle className="h-4 w-4 text-[#6FCF97] mt-1 flex-shrink-0" />
+                <span>Access, update, or delete your personal information</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <CheckCircle className="h-4 w-4 text-[#6FCF97] mt-1 flex-shrink-0" />
+                <span>Opt-out of marketing communications</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <CheckCircle className="h-4 w-4 text-[#6FCF97] mt-1 flex-shrink-0" />
+                <span>Request a copy of your data in a portable format</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <CheckCircle className="h-4 w-4 text-[#6FCF97] mt-1 flex-shrink-0" />
+                <span>Withdraw consent at any time where we rely on your consent</span>
+              </li>
+            </ul>
+            <p className="mt-4 text-[#9B948A] text-sm md:text-base">
+              To exercise these rights, please contact us using the information provided below.
+            </p>
+          </section>
+
+          {/* Data Retention */}
+          <section className="bg-[#131110]/80 backdrop-blur-sm rounded-2xl border border-[#C9A24B]/20 p-6 md:p-8">
+            <h2 className="text-xl font-bold mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+              Data Retention
+            </h2>
+            <p className="text-[#9B948A] leading-relaxed text-sm md:text-base">
+              We retain your personal information only for as long as necessary to fulfill the purposes outlined in 
+              this policy, unless a longer retention period is required by law. We will securely delete or anonymize 
+              your information when it is no longer needed.
+            </p>
+          </section>
+
+          {/* Children's Privacy */}
+          <section className="bg-[#131110]/80 backdrop-blur-sm rounded-2xl border border-[#C9A24B]/20 p-6 md:p-8">
+            <h2 className="text-xl font-bold mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+              Children's Privacy
+            </h2>
+            <p className="text-[#9B948A] leading-relaxed text-sm md:text-base">
+              Our services are not intended for individuals under the age of 18. We do not knowingly collect personal 
+              information from children. If you are a parent or guardian and believe your child has provided us with 
+              personal information, please contact us immediately.
+            </p>
+          </section>
+
+          {/* Changes */}
+          <section className="bg-[#131110]/80 backdrop-blur-sm rounded-2xl border border-[#C9A24B]/20 p-6 md:p-8">
+            <h2 className="text-xl font-bold mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+              Changes to This Policy
+            </h2>
+            <p className="text-[#9B948A] leading-relaxed text-sm md:text-base">
+              We may update this Privacy Policy from time to time to reflect changes in our practices or legal 
+              requirements. We will notify you of any significant changes by posting the new policy on this page 
+              and updating the "Last Updated" date. We encourage you to review this policy periodically.
+            </p>
+          </section>
+
+          {/* Contact */}
+          <section className="bg-[#131110]/80 backdrop-blur-sm rounded-2xl border border-[#C9A24B]/20 p-6 md:p-8">
+            <h2 className="text-xl font-bold mb-4" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+              Contact Us
+            </h2>
+            <p className="text-[#9B948A] leading-relaxed text-sm md:text-base">
+              If you have any questions, concerns, or requests regarding this Privacy Policy, please contact us at:
+            </p>
+            <div className="mt-4 p-4 rounded-lg border border-[#C9A24B]/20 bg-[#0A0908]/50">
+              <p className="text-[#F5EFE0] font-mono text-sm">📧 privacy@waveverify.com</p>
+              <p className="text-[#F5EFE0] font-mono text-sm mt-1">🌐 www.waveverify.com</p>
+            </div>
+          </section>
+
+          {/* CTA */}
+          <div className="text-center pt-4">
+            <Link to="/" className="inline-flex items-center gap-2 bg-[#C9A24B] text-[#0A0908] px-8 py-3 rounded-lg font-medium hover:scale-105 transition-transform text-sm">
+              Return to Home
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="relative z-10 border-t border-[#C9A24B]/15 bg-[#131110] px-6 py-8 mt-8">
+        <div className="mx-auto max-w-4xl text-center text-xs text-[#9B948A]">
+          © {new Date().getFullYear()} Wave Verify. All rights reserved.
+          <div className="flex justify-center gap-6 mt-2">
+            <Link to="/terms" className="hover:text-[#F0CB6E] transition-colors">Terms</Link>
+            <Link to="/privacy" className="hover:text-[#F0CB6E] transition-colors">Privacy</Link>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
 
-export default PrivacyPolicy;
+export default Privacy;

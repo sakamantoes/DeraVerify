@@ -177,16 +177,16 @@ const Register = () => {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ duration: 0.5 }}
-            className="mx-auto w-20 h-20 bg-gradient-to-br from-[#C9A24B] to-[#F0CB6E] rounded-2xl flex items-center justify-center mb-6 shadow-xl"
+            className="mx-auto w-40 h-20 bg-gradient-to-br from-[#000] to-[#000] rounded-2xl flex items-center justify-center mb-6 shadow-xl"
           >
-            {/* <img
-              src={imageObject.Logo}
+            <img
+              src={imageObject.Logo2}
               alt="Logo"
-              className="w-20 h-20 rounded-full"
-            /> */}
+              className="w-40 h-20"
+            />
           </motion.div>
           <h2 className="text-3xl font-bold text-white">Create Account</h2>
-          <p className="mt-2 text-[#9B948A]">Join Smswinners today</p>
+          <p className="mt-2 text-[#9B948A]">Join Wave Verify today</p>
         </div>
 
         {/* Registration Form */}
@@ -562,14 +562,14 @@ const Register = () => {
                 <section>
                   <h3 className="font-bold text-[#C9A24B] text-base mb-2">Payment for Services and Purchase Procedure</h3>
                   <ol className="list-decimal list-inside space-y-1 pl-2 text-[#9B948A]">
-                    <li>Before using the Smswinners platform, you must top up your balance;</li>
+                    <li>Before using the Wave Verify platform, you must top up your balance;</li>
                     <li>All available top-up methods can be found by clicking the "Top up" button;</li>
                     <li>The commission and minimum top-up amount depend on the selected payment method;</li>
                     <li>Please note: funds may take up to 3 hours to be credited to your balance;</li>
                     <li>Funds are deducted from the balance upon completion of the purchase;</li>
                     <li>A purchase is considered completed if an OTP code has been received and displayed to the user;</li>
                     <li>If an OTP code does not arrive for any reason, the funds are returned to the balance;</li>
-                    <li>If a code does not arrive after multiple numbers purchase, Smswinners may apply sanctions to the account;</li>
+                    <li>If a code does not arrive after multiple numbers purchase, Wave Verify may apply sanctions to the account;</li>
                     <li>To withdraw funds from your balance, send a request to smswinner19@gmail.com from the email address that was used to register your account. Requests are reviewed within 3 business days. The standard withdrawal period is 7 days. In some cases, the review period for a withdrawal request may take up to 4 weeks.</li>
                     <li>Refunds are made to the same wallet which the deposit was made with.</li>
                     <li>A 5% fee is charged for withdrawals. If one year or more has passed since the last top-up, the fee is 15%; after 2 years – 25%; after 3 years – 35%.</li>
@@ -591,8 +591,8 @@ const Register = () => {
                   <h4 className="font-semibold text-[#C9A24B]">User Agreement</h4>
                   <ul className="list-disc list-inside space-y-1 pl-4 text-[#9B948A]">
                     <li>Users can purchase virtual numbers directly from suppliers through the P2P deal system.</li>
-                    <li>By registering on the site, you agree to receive promotional messages from Smswinners. You can unsubscribe at any time.</li>
-                    <li>Using Smswinners for any unlawful purpose is strictly forbidden.</li>
+                    <li>By registering on the site, you agree to receive promotional messages from Wave Verify. You can unsubscribe at any time.</li>
+                    <li>Using Wave Verify for any unlawful purpose is strictly forbidden.</li>
                     <li>We are not responsible for created accounts. All actions and potential blocks are the buyer's own risk.</li>
                   </ul>
                 </section>

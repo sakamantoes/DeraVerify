@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import {
   motion,
   useMotionValue,
@@ -13,7 +13,6 @@ import {
   Globe2,
   Clock,
   Lock,
-  Code2,
   CheckCircle2,
   ChevronRight,
   ArrowRight,
@@ -28,31 +27,14 @@ import {
   Sparkles,
   Award,
   Users,
-  TrendingUp,
-  BarChart3,
   Network,
   Cloud,
-  Server,
   Database,
-  Cpu,
-  Activity,
-  Gauge,
-  Timer,
-  Repeat,
-  Send,
   Smartphone,
-  Monitor,
-  Layers,
-  Rocket,
-  Target,
-  Compass,
-  CircleDot,
-  Square,
-  Diamond,
-  Hexagon,
-  Triangle,
+  Minus,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import imageObject from "../utils/image";
 
 /* ------------------------------------------------------------------ */
 /*  Data                                                               */
@@ -177,29 +159,29 @@ const TESTIMONIALS = [
   {
     quote:
       "We switched our onboarding flow over in an afternoon. Delivery times dropped and support tickets about missing codes basically disappeared.",
-    name: "Amaka O.",
+    name: "Emeka O.",
     role: "Founder, Kestrel Pay",
-    avatar: "https://i.pravatar.cc/150?img=1",
+    avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvuGrhsm3CrHq7jQM7Xz35arAmit1kGULZj-Aa2WhsOQ&s=10",
   },
   {
     quote:
       "The service is exactly what we needed — predictable, reliable, and we shipped a working integration quickly.",
-    name: "Daniel R.",
+    name: "Daniella R.",
     role: "Backend lead, Nimbus",
-    avatar: "https://i.pravatar.cc/150?img=2",
+    avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSWnl4i0tynHjqzvejcNOXxEaByysStVgAlAvBe4HDv7Q&s=10",
   },
   {
     quote:
       "Coverage in markets our old provider barely touched. That alone paid for the switch inside the first month.",
     name: "Priya M.",
     role: "Growth, Lumen Labs",
-    avatar: "https://i.pravatar.cc/150?img=3",
+    avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTAN0xAM41rWk_jFp5AjN9Y8x-NpucLRr60sdqK8oPFrA&s=10",
   },
   {
     quote: "Their delivery desk caught a routing issue on a Sunday night before we even noticed it ourselves.",
     name: "Tomiwa A.",
     role: "CTO, Anchorpoint",
-    avatar: "https://i.pravatar.cc/150?img=4",
+    avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSjPFEukcpbsOe9IVZr57HqcDIme0wFDlYnFXt4ZQtDag&s=10",
   },
 ];
 
@@ -277,10 +259,11 @@ const COMPARISON = [
 ];
 
 /* ------------------------------------------------------------------ */
-/*  Small building blocks                                              */
+/*  Optimized Small building blocks                                    */
 /* ------------------------------------------------------------------ */
 
-function DigitSlot({ target, delay }) {
+// Memoized DigitSlot to prevent unnecessary re-renders
+const DigitSlot = React.memo(({ target, delay }) => {
   const [display, setDisplay] = useState("0");
 
   useEffect(() => {
@@ -298,37 +281,37 @@ function DigitSlot({ target, delay }) {
   }, [target]);
 
   return (
-    <motion.span
-      initial={{ opacity: 0, y: -8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay, duration: 0.3 }}
-      className="flex h-11 w-8 items-center justify-center rounded-md border border-[#C9A24B]/35 bg-[#1C1917] font-mono text-lg text-[#F0CB6E] shadow-inner md:h-12 md:w-9 md:text-xl"
-    >
+    <span className="flex h-11 w-8 items-center justify-center rounded-md border border-[#C9A24B]/35 bg-[#1C1917] font-mono text-lg text-[#F0CB6E] shadow-inner md:h-12 md:w-9 md:text-xl">
       {display}
-    </motion.span>
+    </span>
   );
-}
+});
 
-function OtpReveal({ code = "574192", interval = 4200 }) {
+// Optimized OtpReveal with will-change for better performance
+const OtpReveal = React.memo(({ code = "574192", interval = 4200 }) => {
   const [cycle, setCycle] = useState(0);
+  
   useEffect(() => {
     const id = setInterval(() => setCycle((c) => c + 1), interval);
     return () => clearInterval(id);
   }, [interval]);
 
+  const digits = useMemo(() => code.split(""), [code, cycle]);
+
   return (
-    <div className="flex gap-1.5" key={cycle}>
-      {code.split("").map((d, i) => (
+    <div className="flex gap-1.5 will-change-transform" key={cycle}>
+      {digits.map((d, i) => (
         <DigitSlot key={i} target={d} delay={i * 0.05} />
       ))}
     </div>
   );
-}
+});
 
-function LedgerTicker() {
+// Optimized LedgerTicker with reduced animation complexity
+const LedgerTicker = React.memo(() => {
   const items = [...LEDGER, ...LEDGER];
   return (
-    <div className="relative h-[400px] overflow-hidden rounded-2xl border border-[#C9A24B]/25 bg-[#131110] shadow-xl">
+    <div className="relative h-[400px] overflow-hidden rounded-2xl border border-[#C9A24B]/25 bg-[#131110] shadow-xl will-change-transform">
       <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between border-b border-[#C9A24B]/15 bg-[#131110]/80 px-6 py-3 backdrop-blur-sm">
         <span className="text-xs font-medium uppercase tracking-widest text-[#9B948A]">Live Activity Feed</span>
         <span className="flex items-center gap-2 text-xs text-[#6FCF97]">
@@ -339,11 +322,7 @@ function LedgerTicker() {
           {LEDGER.length} active numbers
         </span>
       </div>
-      <motion.div
-        className="mt-12 flex flex-col"
-        animate={{ y: ["0%", "-50%"] }}
-        transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-      >
+      <div className="mt-12 flex flex-col animate-scroll will-change-transform">
         {items.map((it, i) => (
           <div key={i} className="flex items-center justify-between gap-4 border-b border-white/5 px-6 py-3.5 hover:bg-white/5">
             <div className="flex items-center gap-3">
@@ -365,29 +344,30 @@ function LedgerTicker() {
             </div>
           </div>
         ))}
-      </motion.div>
+      </div>
       <div className="pointer-events-none absolute inset-x-0 top-12 h-12 bg-gradient-to-b from-[#131110] to-transparent" />
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#131110] to-transparent" />
     </div>
   );
-}
+});
 
-function LedgerCode() {
+const LedgerCode = React.memo(() => {
   const [code] = useState(() => String(Math.floor(100000 + Math.random() * 900000)));
   return <span className="font-mono text-sm tracking-widest text-[#F0CB6E]">{code}</span>;
-}
+});
 
-function Magnetic({ children, className = "" }) {
+// Optimized Magnetic with reduced spring complexity
+const Magnetic = React.memo(({ children, className = "" }) => {
   const ref = useRef(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const springX = useSpring(x, { stiffness: 150, damping: 12 });
-  const springY = useSpring(y, { stiffness: 150, damping: 12 });
+  const springX = useSpring(x, { stiffness: 100, damping: 15 });
+  const springY = useSpring(y, { stiffness: 100, damping: 15 });
 
   function onMove(e) {
     const r = ref.current.getBoundingClientRect();
-    x.set((e.clientX - r.left - r.width / 2) * 0.3);
-    y.set((e.clientY - r.top - r.height / 2) * 0.3);
+    x.set((e.clientX - r.left - r.width / 2) * 0.2);
+    y.set((e.clientY - r.top - r.height / 2) * 0.2);
   }
   function onLeave() {
     x.set(0);
@@ -400,31 +380,20 @@ function Magnetic({ children, className = "" }) {
       onMouseMove={onMove}
       onMouseLeave={onLeave}
       style={{ x: springX, y: springY }}
-      className={`inline-block ${className}`}
+      className={`inline-block will-change-transform ${className}`}
     >
       {children}
     </motion.div>
   );
-}
+});
 
-function FloatBadge({ children, className = "", duration = 4, delay = 0 }) {
-  return (
-    <motion.div
-      animate={{ y: [0, -10, 0] }}
-      transition={{ duration, repeat: Infinity, ease: "easeInOut", delay }}
-      className={`absolute rounded-full border border-[#C9A24B]/35 bg-[#131110]/90 px-3 py-1.5 text-xs shadow-lg backdrop-blur-sm ${className}`}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
-function TiltHeroCard() {
+// Optimized TiltHeroCard with reduced motion complexity
+const TiltHeroCard = React.memo(() => {
   const ref = useRef(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const rotateX = useTransform(y, [-80, 80], [8, -8]);
-  const rotateY = useTransform(x, [-80, 80], [-8, 8]);
+  const rotateX = useTransform(y, [-60, 60], [5, -5]);
+  const rotateY = useTransform(x, [-60, 60], [-5, 5]);
 
   function onMove(e) {
     const rect = ref.current.getBoundingClientRect();
@@ -437,7 +406,7 @@ function TiltHeroCard() {
   }
 
   return (
-    <div style={{ perspective: 1200 }} className="relative mx-auto w-full max-w-md">
+    <div style={{ perspective: 1000 }} className="relative mx-auto w-full max-w-md will-change-transform">
       <div className="absolute inset-0 -rotate-6 translate-x-3 translate-y-4 rounded-2xl border border-[#C9A24B]/15 bg-[#131110]" />
       <div className="absolute inset-0 rotate-3 translate-x-6 translate-y-8 rounded-2xl border border-[#C9A24B]/10 bg-[#131110] opacity-70" />
 
@@ -457,14 +426,14 @@ function TiltHeroCard() {
         onMouseMove={onMove}
         onMouseLeave={onLeave}
         style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-        className="relative rounded-2xl border border-[#C9A24B]/35 p-6 shadow-2xl md:p-7"
+        className="relative rounded-2xl border border-[#C9A24B]/35 p-6 shadow-2xl md:p-7 will-change-transform"
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, delay: 0.15 }}
+        transition={{ duration: 0.6, delay: 0.15 }}
       >
         <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#C9A24B]/14 via-[#C9A24B]/5 to-transparent" />
         <div className="absolute inset-0 rounded-2xl border border-[#C9A24B]/35" />
-        <div className="rounded-2xl bg-[#131110] p-5 md:p-6" style={{ transform: "translateZ(30px)" }}>
+        <div className="rounded-2xl bg-[#131110] p-5 md:p-6" style={{ transform: "translateZ(20px)" }}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div
@@ -496,9 +465,20 @@ function TiltHeroCard() {
       </motion.div>
     </div>
   );
-}
+});
 
-function CountryCard({ c, index }) {
+const FloatBadge = React.memo(({ children, className = "", duration = 4, delay = 0 }) => {
+  return (
+    <div
+      className={`absolute rounded-full border border-[#C9A24B]/35 bg-[#131110]/90 px-3 py-1.5 text-xs shadow-lg backdrop-blur-sm animate-float ${className}`}
+      style={{ animationDelay: `${delay}s`, animationDuration: `${duration}s` }}
+    >
+      {children}
+    </div>
+  );
+});
+
+const CountryCard = React.memo(({ c, index }) => {
   const ref = useRef(null);
   const [style, setStyle] = useState({});
 
@@ -507,7 +487,7 @@ function CountryCard({ c, index }) {
     const px = (e.clientX - r.left) / r.width - 0.5;
     const py = (e.clientY - r.top) / r.height - 0.5;
     setStyle({
-      transform: `perspective(700px) rotateX(${py * -7}deg) rotateY(${px * 7}deg) translateZ(6px)`,
+      transform: `perspective(700px) rotateX(${py * -5}deg) rotateY(${px * 5}deg)`,
     });
   }
   function onLeave() {
@@ -515,17 +495,12 @@ function CountryCard({ c, index }) {
   }
 
   return (
-    <motion.div
+    <div
       ref={ref}
       onMouseMove={onMove}
       onMouseLeave={onLeave}
       style={style}
-      layout
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -8 }}
-      transition={{ duration: 0.35, delay: (index % 4) * 0.05 }}
-      className="group relative rounded-xl border border-[#C9A24B]/22 bg-[#131110] p-5 transition-[border-color,box-shadow] duration-300 hover:border-[#C9A24B]/60 hover:shadow-[0_20px_40px_-15px_rgba(201,162,75,0.3)]"
+      className="group relative rounded-xl border border-[#C9A24B]/22 bg-[#131110] p-5 transition-[border-color,box-shadow] duration-300 hover:border-[#C9A24B]/60 hover:shadow-[0_20px_40px_-15px_rgba(201,162,75,0.3)] will-change-transform"
     >
       <div className="flex items-center justify-between">
         <span className="text-2xl">{c.flag}</span>
@@ -533,7 +508,7 @@ function CountryCard({ c, index }) {
           Live
         </span>
       </div>
-      <p className="mt-4 font-display text-lg text-[#F5EFE0]">{c.name}</p>
+      <p className="mt-4 text-base text-[#F5EFE0] header-font" style={{ fontSize: '18px', lineHeight: '22px' }}>{c.name}</p>
       <p className="font-mono text-xs text-[#9B948A]">{c.dial}</p>
       <div className="mt-2 flex items-center gap-2">
         <span className="text-xs text-[#9B948A]">Carrier: {c.carrier || "Multiple"}</span>
@@ -543,88 +518,120 @@ function CountryCard({ c, index }) {
         <span className="font-mono text-[#F0CB6E]">{c.price}</span>
         <ChevronRight className="h-4 w-4 text-[#C9A24B] transition-transform group-hover:translate-x-1" />
       </div>
-    </motion.div>
+    </div>
   );
-}
+});
 
-function Reveal({ children, className = "", delay = 0 }) {
+// Optimized Reveal with Intersection Observer
+const Reveal = React.memo(({ children, className = "", delay = 0 }) => {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-100px", amount: 0.1 });
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    if (inView && !isVisible) {
+      const timer = setTimeout(() => setIsVisible(true), delay * 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [inView, delay, isVisible]);
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.5, delay }}
-      className={className}
+    <div
+      ref={ref}
+      className={`transition-all duration-700 ease-out ${className}`}
+      style={{
+        opacity: isVisible ? 1 : 0,
+        transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
+        transitionDelay: `${delay}s`,
+      }}
     >
       {children}
-    </motion.div>
+    </div>
   );
-}
+});
 
-function AnimatedCounter({ target, format, duration = 1600 }) {
+// Optimized AnimatedCounter with reduced updates
+const AnimatedCounter = React.memo(({ target, format, duration = 1600 }) => {
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const inView = useInView(ref, { once: true, margin: "-100px" });
   const [value, setValue] = useState(0);
+  const animationRef = useRef(null);
 
   useEffect(() => {
     if (!inView) return;
     let start = null;
-    let frame;
+    
     function step(ts) {
       if (start === null) start = ts;
       const progress = Math.min((ts - start) / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
       setValue(target * eased);
-      if (progress < 1) frame = requestAnimationFrame(step);
+      if (progress < 1) {
+        animationRef.current = requestAnimationFrame(step);
+      }
     }
-    frame = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(frame);
+    
+    animationRef.current = requestAnimationFrame(step);
+    return () => {
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
+    };
   }, [inView, target, duration]);
 
-  return <span ref={ref}>{format(value)}</span>;
-}
+  return <span ref={ref} className="will-change-transform">{format(value)}</span>;
+});
 
-function FaqItem({ q, a, isOpen, onClick }) {
+// Redesigned FAQ Item with modern look and responsive typography
+const FaqItem = React.memo(({ q, a, isOpen, onClick }) => {
   return (
-    <div className="border-b border-white/8 py-5 hover:bg-white/5 px-4 rounded-lg transition-colors">
-      <button onClick={onClick} className="flex w-full items-center justify-between gap-4 text-left">
-        <span className="font-display text-base text-[#F5EFE0] md:text-lg">{q}</span>
-        <motion.span
-          animate={{ rotate: isOpen ? 45 : 0 }}
-          transition={{ duration: 0.25 }}
-          className="shrink-0 text-[#C9A24B]"
-        >
-          <Plus className="h-5 w-5" />
-        </motion.span>
+    <motion.div 
+      className="border-b border-[#C9A24B]/10 last:border-b-0 hover:bg-[#C9A24B]/5 transition-colors duration-200"
+      initial={false}
+    >
+      <button
+        onClick={onClick}
+        className="flex w-full items-center justify-between gap-3 px-4 py-4 sm:px-5 sm:py-5 md:px-6 md:py-6 text-left group"
+      >
+        <span className=" text-[#F5EFE0] text-sm sm:text-base md:text-lg lg:text-xl leading-snug sm:leading-normal flex-1 pr-2">
+          {q}
+        </span>
+        <span className={`shrink-0 flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 rounded-full border border-[#C9A24B]/30 bg-[#C9A24B]/10 text-[#C9A24B] transition-all duration-300 group-hover:border-[#C9A24B] group-hover:bg-[#C9A24B]/20 ${isOpen ? 'rotate-45 border-[#C9A24B] bg-[#C9A24B]/20' : ''}`}>
+          <Plus className={`h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-4.5 md:w-4.5 transition-transform duration-300 ${isOpen ? 'rotate-0' : ''}`} />
+        </span>
       </button>
+      
       <AnimatePresence initial={false}>
         {isOpen && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
             className="overflow-hidden"
           >
-            <p className="pt-3 text-sm leading-relaxed text-[#9B948A]">{a}</p>
+            <div className="px-4 pb-4 sm:px-5 sm:pb-5 md:px-6 md:pb-6">
+              <div className="w-12 h-0.5 sm:w-16 md:w-20 bg-gradient-to-r from-[#C9A24B] to-transparent mb-3 sm:mb-4"></div>
+              <p className="text-[#9B948A] text-xs sm:text-sm md:text-base leading-relaxed sm:leading-relaxed md:leading-relaxed body-font">
+                {a}
+              </p>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
-}
+});
 
-function GlassCard({ children, className = "" }) {
+const GlassCard = React.memo(({ children, className = "" }) => {
   return (
     <div className={`relative overflow-hidden rounded-2xl border border-[#C9A24B]/20 bg-[#131110]/80 backdrop-blur-sm ${className}`}>
       <div className="absolute inset-0 bg-gradient-to-br from-[#C9A24B]/5 via-transparent to-transparent" />
       <div className="relative">{children}</div>
     </div>
   );
-}
+});
 
 /* ------------------------------------------------------------------ */
-/*  Page                                                                */
+/*  Page                                                               */
 /* ------------------------------------------------------------------ */
 
 const HomePage = () => {
@@ -632,18 +639,29 @@ const HomePage = () => {
   const [region, setRegion] = useState("All");
   const [faqOpen, setFaqOpen] = useState(0);
 
-  const filteredCountries = region === "All" ? COUNTRIES : COUNTRIES.filter((c) => c.region === region);
+  const filteredCountries = useMemo(() => {
+    return region === "All" ? COUNTRIES : COUNTRIES.filter((c) => c.region === region);
+  }, [region]);
+
+  // Memoize particles to prevent re-renders
+  const particles = useMemo(() => {
+    return [...Array(12)].map((_, i) => ({
+      id: i,
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      delay: Math.random() * 5,
+      duration: 10 + Math.random() * 10,
+    }));
+  }, []);
 
   return (
     <div className="relative min-h-screen w-full overflow-x-hidden bg-[#0A0908] font-sans text-[#F5EFE0]">
-      {/* Enhanced Background with multiple layers */}
+      {/* Optimized Background with fewer layers */}
       <div className="pointer-events-none fixed inset-0 z-0">
-        {/* Main gradient orb */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(201,162,75,0.08)_0%,_transparent_70%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(201,162,75,0.06)_0%,_transparent_70%)]" />
         
-        {/* Mesh grid */}
         <div
-          className="absolute inset-0 opacity-[0.08]"
+          className="absolute inset-0 opacity-[0.06]"
           style={{
             backgroundImage: `
               linear-gradient(rgba(201,162,75,0.3) 1px, transparent 1px),
@@ -653,147 +671,171 @@ const HomePage = () => {
           }}
         />
         
-        {/* Diamond pattern */}
         <div
-          className="absolute inset-0 opacity-[0.05]"
+          className="absolute inset-0 opacity-[0.04]"
           style={{
-            backgroundImage: `
-              repeating-linear-gradient(45deg, rgba(201,162,75,0.4) 0px, rgba(201,162,75,0.4) 1px, transparent 1px, transparent 20px),
-              repeating-linear-gradient(-45deg, rgba(201,162,75,0.4) 0px, rgba(201,162,75,0.4) 1px, transparent 1px, transparent 20px)
-            `,
-          }}
-        />
-        
-        {/* Dot pattern */}
-        <div
-          className="absolute inset-0 opacity-[0.06]"
-          style={{
-            backgroundImage: "radial-gradient(rgba(201,162,75,0.6) 1px, transparent 1px)",
+            backgroundImage: "radial-gradient(rgba(201,162,75,0.4) 1px, transparent 1px)",
             backgroundSize: "40px 40px",
           }}
         />
         
-        {/* Animated orbs */}
-        <motion.div
-          animate={{
-            x: [0, 100, 0],
-            y: [0, -50, 0],
-            scale: [1, 1.2, 1],
-          }}
-          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute left-1/4 top-1/4 h-96 w-96 rounded-full bg-[#C9A24B]/5 blur-3xl"
-        />
-        <motion.div
-          animate={{
-            x: [0, -80, 0],
-            y: [0, 60, 0],
-            scale: [1, 1.1, 1],
-          }}
-          transition={{ duration: 25, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-          className="absolute bottom-1/3 right-1/4 h-80 w-80 rounded-full bg-[#C9A24B]/5 blur-3xl"
-        />
-        <motion.div
-          animate={{
-            x: [0, 60, 0],
-            y: [0, -40, 0],
-            scale: [1, 1.3, 1],
-          }}
-          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut", delay: 4 }}
-          className="absolute left-1/2 top-2/3 h-64 w-64 rounded-full bg-[#C9A24B]/5 blur-3xl"
-        />
+        {/* Reduced animated orbs with transform3d for GPU acceleration */}
+        <div className="absolute left-1/4 top-1/4 h-96 w-96 rounded-full bg-[#C9A24B]/5 blur-3xl animate-orb-1" />
+        <div className="absolute bottom-1/3 right-1/4 h-80 w-80 rounded-full bg-[#C9A24B]/5 blur-3xl animate-orb-2" />
+        <div className="absolute left-1/2 top-2/3 h-64 w-64 rounded-full bg-[#C9A24B]/5 blur-3xl animate-orb-3" />
         
-        {/* Floating particles */}
-        {[...Array(20)].map((_, i) => (
-          <motion.div
-            key={i}
-            animate={{
-              y: [0, -100, 0],
-              x: [0, Math.random() * 50 - 25, 0],
-              opacity: [0, 0.3, 0],
-            }}
-            transition={{
-              duration: 10 + Math.random() * 10,
-              repeat: Infinity,
-              delay: Math.random() * 5,
-            }}
-            className="absolute h-1 w-1 rounded-full bg-[#C9A24B]"
+        {/* Reduced floating particles with CSS animations */}
+        {particles.map((p) => (
+          <div
+            key={p.id}
+            className="absolute h-1 w-1 rounded-full bg-[#C9A24B] animate-particle"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              left: `${p.left}%`,
+              top: `${p.top}%`,
+              animationDelay: `${p.delay}s`,
+              animationDuration: `${p.duration}s`,
             }}
           />
         ))}
       </div>
 
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
-        .font-display { font-family: 'Fraunces', serif; }
-        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=Inter:wght@400&display=swap');
+        
+        /* Header font - Space Grotesk 700 */
+        .header-font {
+          font-family: 'Space Grotesk', sans-serif;
+          font-weight: 700;
+          font-size: 72px;
+          line-height: 72px;
+        }
+        
+        /* Body font - Inter 400 */
+        .body-font {
+          font-family: 'Inter', system-ui, sans-serif;
+          font-weight: 400;
+          font-size: 18px;
+          line-height: 29px;
+        }
+        
+        /* Responsive header sizes */
+        .header-font-mobile {
+          font-family: 'Space Grotesk', sans-serif;
+          font-weight: 700;
+          font-size: 36px;
+          line-height: 40px;
+        }
+        
+        @media (min-width: 768px) {
+          .header-font-mobile {
+            font-size: 72px;
+            line-height: 72px;
+          }
+        }
+        
         .gradient-text {
           background: linear-gradient(135deg, #F0CB6E, #C9A24B);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
+          background-clip: text;
         }
-        .glow-border {
-          box-shadow: 0 0 30px rgba(201,162,75,0.1);
+        
+        /* Optimized CSS animations with GPU acceleration */
+        @keyframes float {
+          0%, 100% { transform: translateY(0) translateZ(0); }
+          50% { transform: translateY(-10px) translateZ(0); }
         }
-        @keyframes pulse-soft {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.05); }
+        
+        .animate-float {
+          animation: float ease-in-out infinite;
+          will-change: transform;
         }
-        .animate-pulse-soft {
-          animation: pulse-soft 3s ease-in-out infinite;
+        
+        @keyframes orb-1 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          50% { transform: translate(50px, -30px) scale(1.1); }
+        }
+        
+        @keyframes orb-2 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          50% { transform: translate(-40px, 30px) scale(1.05); }
+        }
+        
+        @keyframes orb-3 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          50% { transform: translate(30px, -20px) scale(1.15); }
+        }
+        
+        .animate-orb-1 {
+          animation: orb-1 20s ease-in-out infinite;
+          will-change: transform;
+        }
+        
+        .animate-orb-2 {
+          animation: orb-2 25s ease-in-out infinite 2s;
+          will-change: transform;
+        }
+        
+        .animate-orb-3 {
+          animation: orb-3 18s ease-in-out infinite 4s;
+          will-change: transform;
+        }
+        
+        @keyframes particle-float {
+          0% { transform: translateY(0) translateX(0) scale(0); opacity: 0; }
+          50% { transform: translateY(-80px) translateX(20px) scale(1); opacity: 0.3; }
+          100% { transform: translateY(-160px) translateX(-10px) scale(0); opacity: 0; }
+        }
+        
+        .animate-particle {
+          animation: particle-float ease-in-out infinite;
+          will-change: transform, opacity;
+        }
+        
+        @keyframes scroll {
+          0% { transform: translateY(0) translateZ(0); }
+          100% { transform: translateY(-50%) translateZ(0); }
+        }
+        
+        .animate-scroll {
+          animation: scroll 25s linear infinite;
+          will-change: transform;
+        }
+        
+        .animate-scroll:hover {
+          animation-play-state: paused;
         }
       `}</style>
 
-      {/* -------------------------------------------------- Nav */}
+   {/* Nav */}
       <header className="sticky top-0 z-50 border-b border-[#C9A24B]/25 bg-[#0A0908]/85 backdrop-blur-lg">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-2">
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              className="flex items-center gap-2"
-            >
-              <div
-                className="h-6 w-8 rounded-[3px]"
-                style={{ background: "linear-gradient(135deg, #F0CB6E, #C9A24B 55%, #7A6530)" }}
-              />
-              <span className="font-display text-lg tracking-wide">Wave Verify</span>
-            </motion.div>
+            <div className="flex items-center gap-2">
+             <img 
+               src={imageObject.Logo2} 
+               alt="Wave Verify Logo" 
+               className="w-[100px] h-[50px] border border-[#C9A24B]/25 rounded-lg drop-shadow-[0_0_8px_rgba(201,162,75,0.3)] brightness-110 contrast-125" 
+             />
+            </div>
           </div>
 
-          <nav className="hidden items-center gap-8 text-sm text-[#9B948A] md:flex">
-            <motion.a href="#countries" className="transition-colors hover:text-[#F0CB6E]" whileHover={{ y: -2 }}>
-              Numbers
-            </motion.a>
-            <motion.a href="#how" className="transition-colors hover:text-[#F0CB6E]" whileHover={{ y: -2 }}>
-              How it works
-            </motion.a>
-            <motion.a href="#features" className="transition-colors hover:text-[#F0CB6E]" whileHover={{ y: -2 }}>
-              Platform
-            </motion.a>
-            <motion.a href="#faq" className="transition-colors hover:text-[#F0CB6E]" whileHover={{ y: -2 }}>
-              FAQ
-            </motion.a>
+          <nav className="hidden items-center gap-8 text-sm text-[#9B948A] md:flex body-font" style={{ fontSize: '16px' }}>
+            <a href="#countries" className="transition-colors hover:text-[#F0CB6E]">Numbers</a>
+            <a href="#how" className="transition-colors hover:text-[#F0CB6E]">How it works</a>
+            <a href="#features" className="transition-colors hover:text-[#F0CB6E]">Platform</a>
+            <a href="#faq" className="transition-colors hover:text-[#F0CB6E]">FAQ</a>
           </nav>
 
-          <div className="hidden items-center gap-4 md:flex">
+          <div className="hidden items-center gap-4 md:flex body-font" style={{ fontSize: '16px' }}>
             <Link to="/login">
-              <motion.button 
-                className="text-sm text-[#9B948A] transition-colors hover:text-white"
-                whileHover={{ scale: 1.05 }}
-              >
-                Sign in
-              </motion.button>
+              <button className="text-sm text-[#9B948A] transition-colors hover:text-white">Sign in</button>
             </Link>
             <Magnetic>
               <Link to="/signup">
-                <motion.button 
-                  className="rounded-lg bg-[#C9A24B] px-4 py-2 text-sm font-medium text-[#0A0908]"
-                  whileHover={{ scale: 1.05 }}
-                >
+                <button className="rounded-lg bg-[#C9A24B] px-4 py-2 text-sm font-medium text-[#0A0908] transition-transform hover:scale-105">
                   Get a number
-                </motion.button>
+                </button>
               </Link>
             </Magnetic>
           </div>
@@ -809,9 +851,10 @@ const HomePage = () => {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
               className="overflow-hidden border-t border-[#C9A24B]/25 md:hidden"
             >
-              <div className="flex flex-col gap-4 px-6 py-4 text-sm text-[#9B948A]">
+              <div className="flex flex-col gap-4 px-6 py-4 text-sm text-[#9B948A] body-font">
                 <a href="#countries">Numbers</a>
                 <a href="#how">How it works</a>
                 <a href="#features">Platform</a>
@@ -827,137 +870,97 @@ const HomePage = () => {
         </AnimatePresence>
       </header>
 
-      {/* -------------------------------------------------- Hero */}
+      {/* Hero */}
       <section className="relative z-10 overflow-hidden px-6 pb-20 pt-20 md:pb-28 md:pt-28">
         <div className="pointer-events-none absolute -top-40 left-1/2 h-[600px] w-[1000px] -translate-x-1/2 rounded-full bg-[#C9A24B]/20 blur-3xl" />
         
-        {/* Hero decorative elements */}
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-          className="absolute right-10 top-1/4 h-32 w-32 rounded-full border border-[#C9A24B]/10"
-        />
-        <motion.div
-          animate={{ rotate: -360 }}
-          transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
-          className="absolute left-20 bottom-1/4 h-24 w-24 rounded-full border border-[#C9A24B]/10"
-        />
-        
         <div className="mx-auto grid max-w-7xl items-center gap-16 md:grid-cols-2">
           <div>
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#C9A24B]/35 px-4 py-1.5 text-xs text-[#F0CB6E]"
-            >
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#C9A24B]/35 px-4 py-1.5 text-xs text-[#F0CB6E] body-font" style={{ fontSize: '14px' }}>
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#6FCF97] opacity-75"></span>
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-[#6FCF97]"></span>
               </span>
               150+ countries · 99.9% delivery · live stock
-            </motion.div>
+            </div>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.05 }}
-              className="font-display text-5xl leading-[1.1] md:text-7xl"
-            >
+            <h1 className="header-font-mobile leading-[1.1]">
               Numbers the world <br />
               <span className="gradient-text">answers to.</span>
-            </motion.h1>
+            </h1>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.15 }}
-              className="mt-6 max-w-md text-base leading-relaxed text-[#9B948A] md:text-lg"
-            >
+            <p className="mt-6 max-w-md text-base leading-relaxed text-[#9B948A] md:text-lg body-font">
               Rent real, carrier-verified phone numbers from almost any country and receive OTP codes in seconds. 
               Built for teams who verify accounts at scale.
-            </motion.p>
+            </p>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.25 }}
-              className="mt-10 flex flex-wrap items-center gap-4"
-            >
+            <div className="mt-10 flex flex-wrap items-center gap-4">
               <Magnetic>
                 <Link to="/signup">
-                  <motion.button 
-                    className="flex items-center gap-2 rounded-lg bg-[#C9A24B] px-8 py-3.5 text-sm font-medium text-[#0A0908]"
-                    whileHover={{ scale: 1.05 }}
-                  >
+                  <button className="flex items-center gap-2 rounded-lg bg-[#C9A24B] px-8 py-3.5 text-sm font-medium text-[#0A0908] transition-transform hover:scale-105 body-font">
                     Get your first number
                     <ArrowRight className="h-4 w-4" />
-                  </motion.button>
+                  </button>
                 </Link>
               </Magnetic>
               <a
                 href="#features"
-                className="rounded-lg border border-[#C9A24B]/35 px-6 py-3.5 text-sm font-medium text-[#F5EFE0] transition-all hover:border-[#C9A24B] hover:bg-[#C9A24B]/10"
+                className="rounded-lg border border-[#C9A24B]/35 px-6 py-3.5 text-sm font-medium text-[#F5EFE0] transition-all hover:border-[#C9A24B] hover:bg-[#C9A24B]/10 body-font"
               >
                 Explore platform
               </a>
-            </motion.div>
+            </div>
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="mt-14 grid max-w-md grid-cols-3 gap-6 border-t border-white/5 pt-8"
-            >
+            <div className="mt-14 grid max-w-md grid-cols-3 gap-6 border-t border-white/5 pt-8">
               <div>
-                <p className="font-display text-3xl text-[#F0CB6E]">99.9%</p>
-                <p className="text-xs text-[#9B948A]">Delivery rate</p>
+                <p className="header-font text-3xl text-[#F0CB6E]" style={{ fontSize: '30px', lineHeight: '36px' }}>99.9%</p>
+                <p className="text-xs text-[#9B948A] body-font">Delivery rate</p>
               </div>
               <div>
-                <p className="font-display text-3xl text-[#F0CB6E]">&lt;10s</p>
-                <p className="text-xs text-[#9B948A]">Avg. delivery</p>
+                <p className="header-font text-3xl text-[#F0CB6E]" style={{ fontSize: '30px', lineHeight: '36px' }}>&lt;10s</p>
+                <p className="text-xs text-[#9B948A] body-font">Avg. delivery</p>
               </div>
               <div>
-                <p className="font-display text-3xl text-[#F0CB6E]">150+</p>
-                <p className="text-xs text-[#9B948A]">Countries</p>
+                <p className="header-font text-3xl text-[#F0CB6E]" style={{ fontSize: '30px', lineHeight: '36px' }}>150+</p>
+                <p className="text-xs text-[#9B948A] body-font">Countries</p>
               </div>
-            </motion.div>
+            </div>
           </div>
 
           <TiltHeroCard />
         </div>
       </section>
 
-      {/* -------------------------------------------------- Stats */}
+      {/* Stats */}
       <section className="relative z-10 px-6 py-20 md:py-28">
         <div className="mx-auto max-w-7xl">
           <Reveal className="mb-14 text-center">
-            <p className="text-xs uppercase tracking-[0.25em] text-[#C9A24B]">Platform metrics</p>
-            <h2 className="mt-3 font-display text-3xl md:text-4xl">Numbers that speak volumes</h2>
+            <p className="text-xs uppercase tracking-[0.25em] text-[#C9A24B] body-font">Platform metrics</p>
+            <h2 className="mt-3 header-font-mobile text-3xl md:text-4xl">Numbers that speak volumes</h2>
           </Reveal>
           <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
             {STATS.map((s, i) => (
-              <Reveal key={s.label} delay={i * 0.08} className="text-center">
+              <Reveal key={s.label} delay={i * 0.06} className="text-center">
                 <div className="relative">
                   <div className="absolute -inset-4 rounded-full bg-[#C9A24B]/5 blur-xl" />
-                  <p className="relative font-display text-4xl text-[#F0CB6E] md:text-5xl">
+                  <p className="relative header-font text-4xl text-[#F0CB6E] md:text-5xl" style={{ fontSize: '40px', lineHeight: '48px' }}>
                     <AnimatedCounter target={s.target} format={s.format} />
                   </p>
                 </div>
-                <p className="mt-2 text-xs uppercase tracking-widest text-[#9B948A]">{s.label}</p>
+                <p className="mt-2 text-xs uppercase tracking-widest text-[#9B948A] body-font">{s.label}</p>
               </Reveal>
             ))}
           </div>
         </div>
       </section>
 
-      {/* -------------------------------------------------- Live Activity */}
+      {/* Live Activity */}
       <section className="relative z-10 px-6 py-16 md:py-24">
         <div className="mx-auto max-w-7xl">
           <Reveal className="mx-auto mb-10 max-w-2xl text-center">
-            <p className="text-xs uppercase tracking-[0.25em] text-[#C9A24B]">Live activity</p>
-            <h2 className="mt-3 font-display text-3xl md:text-4xl">Verifications, as they happen.</h2>
-            <p className="mt-3 text-[#9B948A]">
+            <p className="text-xs uppercase tracking-[0.25em] text-[#C9A24B] body-font">Live activity</p>
+            <h2 className="mt-3 header-font-mobile text-3xl md:text-4xl">Verifications, as they happen.</h2>
+            <p className="mt-3 text-[#9B948A] body-font">
               A live feed of numbers being issued and codes delivered across our network right now.
             </p>
           </Reveal>
@@ -967,67 +970,61 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* -------------------------------------------------- How it works with enhanced steps */}
+      {/* How it works */}
       <section id="how" className="relative z-10 px-6 py-20 md:py-28">
         <div className="mx-auto max-w-7xl">
           <Reveal className="mb-16 max-w-xl">
-            <p className="text-xs uppercase tracking-[0.25em] text-[#C9A24B]">How it works</p>
-            <h2 className="mt-3 font-display text-3xl md:text-4xl">Four steps, no waiting room.</h2>
+            <p className="text-xs uppercase tracking-[0.25em] text-[#C9A24B] body-font">How it works</p>
+            <h2 className="mt-3 header-font-mobile text-3xl md:text-4xl">Four steps, no waiting room.</h2>
           </Reveal>
 
           <div className="relative grid gap-12 md:grid-cols-4 md:gap-8">
             <div className="absolute left-0 right-0 top-8 hidden h-px bg-[#C9A24B]/25 md:block" />
             {STEPS.map((s, i) => (
-              <Reveal key={s.n} delay={i * 0.1} className="relative group">
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full border border-[#C9A24B]/40 bg-[#131110] font-display text-xl text-[#F0CB6E] shadow-lg transition-all group-hover:border-[#C9A24B] group-hover:shadow-[0_0_30px_rgba(201,162,75,0.3)]"
-                >
+              <Reveal key={s.n} delay={i * 0.08} className="relative group">
+                <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full border border-[#C9A24B]/40 bg-[#131110] header-font text-xl text-[#F0CB6E] shadow-lg transition-all group-hover:border-[#C9A24B] group-hover:shadow-[0_0_30px_rgba(201,162,75,0.3)]">
                   {s.n}
-                </motion.div>
+                </div>
                 <s.icon className="mt-5 h-5 w-5 text-[#C9A24B]" />
-                <h3 className="mt-3 font-display text-xl group-hover:text-[#F0CB6E] transition-colors">{s.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-[#9B948A]">{s.body}</p>
-                <p className="mt-3 text-xs text-[#C9A24B]/70">{s.detail}</p>
+                <h3 className="mt-3 header-font text-xl group-hover:text-[#F0CB6E] transition-colors" style={{ fontSize: '24px', lineHeight: '28px' }}>{s.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-[#9B948A] body-font">{s.body}</p>
+                <p className="mt-3 text-xs text-[#C9A24B]/70 body-font">{s.detail}</p>
               </Reveal>
             ))}
           </div>
         </div>
       </section>
 
-      {/* -------------------------------------------------- Use Cases */}
+      {/* Use Cases */}
       <section className="relative z-10 px-6 py-16 md:py-24 bg-[#131110]/50">
         <div className="mx-auto max-w-7xl">
           <Reveal className="mb-14 text-center">
-            <p className="text-xs uppercase tracking-[0.25em] text-[#C9A24B]">Use cases</p>
-            <h2 className="mt-3 font-display text-3xl md:text-4xl">Built for every verification need</h2>
-            <p className="mt-3 text-[#9B948A]">From startups to enterprises, our platform adapts to your scale</p>
+            <p className="text-xs uppercase tracking-[0.25em] text-[#C9A24B] body-font">Use cases</p>
+            <h2 className="mt-3 header-font-mobile text-3xl md:text-4xl">Built for every verification need</h2>
+            <p className="mt-3 text-[#9B948A] body-font">From startups to enterprises, our platform adapts to your scale</p>
           </Reveal>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
             {USE_CASES.map((uc, i) => (
-              <Reveal key={uc.title} delay={i * 0.05}>
-                <motion.div
-                  whileHover={{ scale: 1.05, y: -5 }}
-                  className="flex flex-col items-center rounded-xl border border-[#C9A24B]/20 bg-[#131110] p-6 text-center transition-all hover:border-[#C9A24B]/60 hover:shadow-[0_10px_30px_-10px_rgba(201,162,75,0.3)]"
-                >
+              <Reveal key={uc.title} delay={i * 0.04}>
+                <div className="flex flex-col items-center rounded-xl border border-[#C9A24B]/20 bg-[#131110] p-6 text-center transition-all hover:border-[#C9A24B]/60 hover:shadow-[0_10px_30px_-10px_rgba(201,162,75,0.3)] hover:scale-105 hover:-translate-y-1">
                   <div className={`rounded-full p-3 ${uc.color}`}>
                     <uc.icon className="h-6 w-6" />
                   </div>
-                  <h3 className="mt-3 font-display text-sm">{uc.title}</h3>
-                  <p className="mt-1 text-xs text-[#9B948A]">{uc.desc}</p>
-                </motion.div>
+                  <h3 className="mt-3 header-font text-sm" style={{ fontSize: '16px', lineHeight: '20px' }}>{uc.title}</h3>
+                  <p className="mt-1 text-xs text-[#9B948A] body-font">{uc.desc}</p>
+                </div>
               </Reveal>
             ))}
           </div>
         </div>
       </section>
 
-      {/* -------------------------------------------------- Comparison Table */}
+      {/* Comparison Table */}
       <section className="relative z-10 px-6 py-16 md:py-24">
         <div className="mx-auto max-w-4xl">
           <Reveal className="mb-12 text-center">
-            <p className="text-xs uppercase tracking-[0.25em] text-[#C9A24B]">Why choose us</p>
-            <h2 className="mt-3 font-display text-3xl md:text-4xl">The smarter choice</h2>
+            <p className="text-xs uppercase tracking-[0.25em] text-[#C9A24B] body-font">Why choose us</p>
+            <h2 className="mt-3 header-font-mobile text-3xl md:text-4xl">The smarter choice</h2>
           </Reveal>
           <Reveal delay={0.1}>
             <GlassCard className="p-6">
@@ -1035,21 +1032,15 @@ const HomePage = () => {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-[#C9A24B]/20">
-                      <th className="py-4 text-left text-sm text-[#9B948A]">Feature</th>
-                      <th className="py-4 text-center text-sm text-[#F0CB6E]">Wave Verify</th>
-                      <th className="py-4 text-center text-sm text-[#9B948A]">Other providers</th>
+                      <th className="py-4 text-left text-sm text-[#9B948A] body-font">Feature</th>
+                      <th className="py-4 text-center text-sm text-[#F0CB6E] header-font" style={{ fontSize: '16px' }}>Wave Verify</th>
+                      <th className="py-4 text-center text-sm text-[#9B948A] body-font">Other providers</th>
                     </tr>
                   </thead>
                   <tbody>
                     {COMPARISON.map((item, i) => (
-                      <motion.tr
-                        key={item.feature}
-                        initial={{ opacity: 0, x: -20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        transition={{ delay: i * 0.05 }}
-                        className="border-b border-white/5 hover:bg-white/5 transition-colors"
-                      >
-                        <td className="py-4 text-sm text-[#F5EFE0]">{item.feature}</td>
+                      <tr key={item.feature} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                        <td className="py-4 text-sm text-[#F5EFE0] body-font">{item.feature}</td>
                         <td className="py-4 text-center">
                           {item.us ? (
                             <CheckCircle2 className="inline h-5 w-5 text-[#6FCF97]" />
@@ -1064,7 +1055,7 @@ const HomePage = () => {
                             <span className="text-[#9B948A]">—</span>
                           )}
                         </td>
-                      </motion.tr>
+                      </tr>
                     ))}
                   </tbody>
                 </table>
@@ -1074,101 +1065,95 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* -------------------------------------------------- Features with enhanced cards */}
+      {/* Features */}
       <section id="features" className="relative z-10 px-6 py-20 md:py-28 bg-[#131110]/50">
         <div className="mx-auto max-w-7xl">
           <Reveal className="mb-16 max-w-xl">
-            <p className="text-xs uppercase tracking-[0.25em] text-[#C9A24B]">Platform</p>
-            <h2 className="mt-3 font-display text-3xl md:text-4xl">Built like infrastructure, not a trick.</h2>
+            <p className="text-xs uppercase tracking-[0.25em] text-[#C9A24B] body-font">Platform</p>
+            <h2 className="mt-3 header-font-mobile text-3xl md:text-4xl">Built like infrastructure, not a trick.</h2>
           </Reveal>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {FEATURES.map((f, i) => (
-              <Reveal
-                key={f.title}
-                delay={(i % 3) * 0.08}
-              >
-                <motion.div 
-                  whileHover={{ scale: 1.02, y: -5 }}
-                  className="group relative rounded-xl border border-[#C9A24B]/22 bg-[#131110] p-6 transition-all hover:border-[#C9A24B]/60 hover:shadow-[0_20px_40px_-15px_rgba(201,162,75,0.2)]"
-                >
+              <Reveal key={f.title} delay={(i % 3) * 0.06}>
+                <div className="group relative rounded-xl border border-[#C9A24B]/22 bg-[#131110] p-6 transition-all hover:border-[#C9A24B]/60 hover:shadow-[0_20px_40px_-15px_rgba(201,162,75,0.2)] hover:scale-[1.02] hover:-translate-y-1">
                   <div className={`absolute inset-0 rounded-xl bg-gradient-to-br ${f.color} opacity-0 transition-opacity group-hover:opacity-100`} />
                   <div className="relative">
                     <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#C9A24B]/12 transition-colors group-hover:bg-[#C9A24B]/20">
                       <f.icon className="h-6 w-6 text-[#F0CB6E]" />
                     </div>
-                    <h3 className="mt-4 font-display text-lg">{f.title}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-[#9B948A]">{f.body}</p>
+                    <h3 className="mt-4 header-font text-lg" style={{ fontSize: '20px', lineHeight: '24px' }}>{f.title}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-[#9B948A] body-font">{f.body}</p>
                     <div className="mt-4 flex items-center gap-2">
-                      <span className="text-xs font-medium text-[#F0CB6E]">{f.metric}</span>
+                      <span className="text-xs font-medium text-[#F0CB6E] header-font" style={{ fontSize: '14px' }}>{f.metric}</span>
                       <span className="h-1 w-1 rounded-full bg-[#C9A24B]/30" />
-                      <span className="text-xs text-[#9B948A]">● Available</span>
+                      <span className="text-xs text-[#9B948A] body-font">● Available</span>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               </Reveal>
             ))}
           </div>
         </div>
       </section>
 
-      {/* -------------------------------------------------- Countries with more details */}
+      {/* Countries - Reduced font sizes */}
       <section id="countries" className="relative z-10 px-6 py-20 md:py-28 bg-[#131110]/50">
         <div className="mx-auto max-w-7xl">
           <Reveal className="mb-8 flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="text-xs uppercase tracking-[0.25em] text-[#C9A24B]">Global coverage</p>
-              <h2 className="mt-3 font-display text-3xl md:text-4xl">Popular numbers, ready now.</h2>
-              <p className="mt-2 text-[#9B948A]">Real-time availability across 150+ countries</p>
+              <p className="text-xs uppercase tracking-[0.25em] text-[#C9A24B] body-font">Global coverage</p>
+              <h2 className="mt-3 header-font-mobile text-3xl md:text-4xl" style={{ fontSize: '32px', lineHeight: '38px' }}>Popular numbers, ready now.</h2>
+              <p className="mt-2 text-sm text-[#9B948A] body-font" style={{ fontSize: '14px' }}>Real-time availability across 150+ countries</p>
             </div>
-            <Link to="/signup" className="flex items-center gap-1 text-sm text-[#F0CB6E] hover:text-[#F0CB6E]/80">
+            <Link to="/signup" className="flex items-center gap-1 text-sm text-[#F0CB6E] hover:text-[#F0CB6E]/80 body-font" style={{ fontSize: '14px' }}>
               View all countries <ChevronRight className="h-4 w-4" />
             </Link>
           </Reveal>
 
           <Reveal className="mb-8 flex flex-wrap gap-2">
             {REGIONS.map((r) => (
-              <motion.button
+              <button
                 key={r}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
                 onClick={() => setRegion(r)}
-                className={`rounded-full border px-4 py-1.5 text-sm transition-colors ${
+                className={`rounded-full border px-4 py-1.5 text-xs transition-colors body-font ${
                   region === r
                     ? "border-[#C9A24B] bg-[#C9A24B] text-[#0A0908]"
                     : "border-[#C9A24B]/25 text-[#9B948A] hover:border-[#C9A24B]/60"
                 }`}
+                style={{ fontSize: '13px' }}
               >
                 {r}
-              </motion.button>
+              </button>
             ))}
           </Reveal>
 
-          <motion.div layout className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             <AnimatePresence>
               {filteredCountries.map((c, i) => (
                 <CountryCard key={c.name} c={c} index={i} />
               ))}
             </AnimatePresence>
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* -------------------------------------------------- Testimonials with avatars */}
+      {/* Testimonials */}
       <section className="relative z-10 py-20 md:py-28">
         <Reveal className="mx-auto mb-14 max-w-xl px-6 text-center">
-          <p className="text-xs uppercase tracking-[0.25em] text-[#C9A24B]">Testimonials</p>
-          <h2 className="mt-3 font-display text-3xl md:text-4xl">Loved by teams shipping fast.</h2>
+          <p className="text-xs uppercase tracking-[0.25em] text-[#C9A24B] body-font">Testimonials</p>
+          <h2 className="mt-3 header-font-mobile text-3xl md:text-4xl">Loved by teams shipping fast.</h2>
         </Reveal>
         <div className="grid gap-6 px-6 md:grid-cols-2 lg:grid-cols-4 max-w-7xl mx-auto">
           {TESTIMONIALS.map((t, i) => (
-            <Reveal key={t.name} delay={i * 0.08}>
+            <Reveal key={t.name} delay={i * 0.06}>
               <GlassCard className="p-6 h-full">
                 <div className="flex items-start gap-4">
                   <img 
                     src={t.avatar} 
                     alt={t.name} 
                     className="h-12 w-12 rounded-full border-2 border-[#C9A24B]/30"
+                    loading="lazy"
                   />
                   <div>
                     <div className="flex gap-0.5">
@@ -1179,10 +1164,10 @@ const HomePage = () => {
                   </div>
                 </div>
                 <Quote className="mt-4 h-5 w-5 text-[#C9A24B]/60" />
-                <p className="mt-2 text-sm leading-relaxed text-[#F5EFE0]/90">{t.quote}</p>
+                <p className="mt-2 text-sm leading-relaxed text-[#F5EFE0]/90 body-font">{t.quote}</p>
                 <div className="mt-4 border-t border-white/5 pt-4">
-                  <p className="text-sm font-medium text-[#F5EFE0]">{t.name}</p>
-                  <p className="text-xs text-[#9B948A]">{t.role}</p>
+                  <p className="text-sm font-medium text-[#F5EFE0] header-font" style={{ fontSize: '16px' }}>{t.name}</p>
+                  <p className="text-xs text-[#9B948A] body-font">{t.role}</p>
                 </div>
               </GlassCard>
             </Reveal>
@@ -1190,15 +1175,33 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* -------------------------------------------------- FAQ */}
-      <section id="faq" className="relative z-10 px-6 py-20 md:py-28 bg-[#131110]/50">
-        <div className="mx-auto max-w-3xl">
-          <Reveal className="mb-12 text-center">
-            <p className="text-xs uppercase tracking-[0.25em] text-[#C9A24B]">FAQ</p>
-            <h2 className="mt-3 font-display text-3xl md:text-4xl">Common questions.</h2>
+      {/* FAQ - Redesigned with responsive typography */}
+      <section id="faq" className="relative z-10 px-4 sm:px-6 py-16 sm:py-20 md:py-28 bg-[#131110]/50">
+        <div className="mx-auto max-w-4xl">
+          <Reveal className="mb-8 sm:mb-10 md:mb-12 text-center">
+            <p className="text-xs uppercase tracking-[0.25em] text-[#C9A24B] body-font">FAQ</p>
+            <h2 className="mt-3 header-font-mobile text-2xl sm:text-3xl md:text-4xl" style={{ fontSize: 'clamp(28px, 5vw, 48px)', lineHeight: '1.2' }}>
+              Frequently asked <span className="gradient-text">questions</span>
+            </h2>
+            <p className="mt-3 text-xs sm:text-sm text-[#9B948A] body-font max-w-2xl mx-auto">
+              Everything you need to know about getting started with Wave Verify
+            </p>
           </Reveal>
+          
           <Reveal delay={0.1}>
-            <GlassCard className="p-4">
+            <div className="rounded-2xl border border-[#C9A24B]/15 bg-[#131110]/90 backdrop-blur-sm shadow-2xl shadow-[#C9A24B]/5 overflow-hidden">
+              {/* Decorative header */}
+              <div className="hidden sm:flex items-center gap-2 px-4 sm:px-6 md:px-8 py-3 sm:py-4 border-b border-[#C9A24B]/10 bg-[#C9A24B]/5">
+                <div className="flex gap-1.5">
+                  <div className="w-2.5 h-2.5 rounded-full bg-red-500/80"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/80"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-green-500/80"></div>
+                </div>
+                <span className="text-xs text-[#9B948A]/60 ml-2 font-mono">faq@waveverify</span>
+                <span className="ml-auto text-[10px] text-[#9B948A]/40 font-mono">~/questions</span>
+              </div>
+              
+              {/* FAQ Items */}
               {FAQS.map((f, i) => (
                 <FaqItem
                   key={f.q}
@@ -1208,49 +1211,45 @@ const HomePage = () => {
                   onClick={() => setFaqOpen(faqOpen === i ? -1 : i)}
                 />
               ))}
-            </GlassCard>
+            </div>
+          </Reveal>
+          
+          {/* Bottom CTA */}
+          <Reveal delay={0.2}>
+            <div className="mt-6 sm:mt-8 md:mt-10 text-center">
+              <p className="text-xs sm:text-sm text-[#9B948A] body-font">
+                Still have questions? <a href="#" className="text-[#F0CB6E] hover:text-[#F0CB6E]/80 transition-colors underline-offset-2 hover:underline">Contact our support team</a>
+              </p>
+            </div>
           </Reveal>
         </div>
       </section>
 
-      {/* -------------------------------------------------- CTA */}
+      {/* CTA */}
       <section className="relative z-10 px-6 py-20 md:py-28">
         <Reveal>
           <div className="relative mx-auto max-w-5xl overflow-hidden rounded-3xl border border-[#C9A24B]/30 bg-gradient-to-br from-[#131110] to-[#1C1712] px-8 py-16 text-center md:py-24">
             <div className="pointer-events-none absolute -top-24 left-1/2 h-64 w-[600px] -translate-x-1/2 rounded-full bg-[#C9A24B]/25 blur-3xl" />
-            <motion.div
-              animate={{ scale: [1, 1.1, 1] }}
-              transition={{ duration: 3, repeat: Infinity }}
-              className="absolute right-8 top-8 h-12 w-12 rounded-full border border-[#C9A24B]/20"
-            />
-            <motion.div
-              animate={{ scale: [1, 1.15, 1] }}
-              transition={{ duration: 4, repeat: Infinity, delay: 1 }}
-              className="absolute bottom-8 left-8 h-8 w-8 rounded-full border border-[#C9A24B]/20"
-            />
             <div className="relative">
-              <h2 className="font-display text-4xl md:text-6xl">Ready to verify anything, anywhere?</h2>
-              <p className="relative mx-auto mt-4 max-w-md text-[#9B948A]">
+              <h2 className="header-font-mobile text-4xl md:text-6xl">Ready to verify anything, anywhere?</h2>
+              <p className="relative mx-auto mt-4 max-w-md text-[#9B948A] body-font">
                 Get started with a real carrier-verified number in seconds.
               </p>
               <Magnetic className="relative mt-8">
                 <Link to="/signup">
-                  <motion.button 
-                    whileHover={{ scale: 1.05 }}
-                    className="inline-flex items-center gap-2 rounded-lg bg-[#C9A24B] px-8 py-3.5 text-sm font-medium text-[#0A0908]"
-                  >
+                  <button className="inline-flex items-center gap-2 rounded-lg bg-[#C9A24B] px-8 py-3.5 text-sm font-medium text-[#0A0908] transition-transform hover:scale-105 body-font">
                     Get your number now
                     <ArrowRight className="h-4 w-4" />
-                  </motion.button>
+                  </button>
                 </Link>
               </Magnetic>
-              <p className="mt-4 text-xs text-[#9B948A]">No hidden fees. Pay only for what you use.</p>
+              <p className="mt-4 text-xs text-[#9B948A] body-font">No hidden fees. Pay only for what you use.</p>
             </div>
           </div>
         </Reveal>
       </section>
 
-      {/* -------------------------------------------------- Footer */}
+      {/* Footer */}
       <footer className="relative z-10 border-t border-[#C9A24B]/15 bg-[#131110] px-6 py-14">
         <div className="mx-auto grid max-w-7xl gap-12 md:grid-cols-4">
           <div>
@@ -1259,9 +1258,9 @@ const HomePage = () => {
                 className="h-6 w-8 rounded-[3px]"
                 style={{ background: "linear-gradient(135deg, #F0CB6E, #C9A24B 55%, #7A6530)" }}
               />
-              <span className="font-display text-base">Wave Verify</span>
+              <span className="header-font text-base" style={{ fontSize: '18px', lineHeight: '22px' }}>Wave Verify</span>
             </div>
-            <p className="mt-4 max-w-xs text-sm text-[#9B948A]">
+            <p className="mt-4 max-w-xs text-sm text-[#9B948A] body-font">
               Real, carrier-verified numbers for OTP delivery across 150+ countries.
             </p>
             <div className="mt-4 flex gap-3">
@@ -1277,31 +1276,30 @@ const HomePage = () => {
             </div>
           </div>
           <div>
-            <p className="text-xs uppercase tracking-widest text-[#9B948A]">Product</p>
-            <nav className="mt-4 flex flex-col gap-3 text-sm text-[#9B948A]">
+            <p className="text-xs uppercase tracking-widest text-[#9B948A] body-font">Product</p>
+            <nav className="mt-4 flex flex-col gap-3 text-sm text-[#9B948A] body-font">
               <a href="#countries" className="hover:text-[#F0CB6E] transition-colors">Numbers</a>
               <a href="#features" className="hover:text-[#F0CB6E] transition-colors">Platform</a>
               <a href="#how" className="hover:text-[#F0CB6E] transition-colors">How it works</a>
             </nav>
           </div>
           <div>
-            <p className="text-xs uppercase tracking-widest text-[#9B948A]">Company</p>
-            <nav className="mt-4 flex flex-col gap-3 text-sm text-[#9B948A]">
+            <p className="text-xs uppercase tracking-widest text-[#9B948A] body-font">Company</p>
+            <nav className="mt-4 flex flex-col gap-3 text-sm text-[#9B948A] body-font">
               <a href="#" className="hover:text-[#F0CB6E] transition-colors">About</a>
               <a href="#faq" className="hover:text-[#F0CB6E] transition-colors">FAQ</a>
               <a href="#" className="hover:text-[#F0CB6E] transition-colors">Support</a>
             </nav>
           </div>
           <div>
-            <p className="text-xs uppercase tracking-widest text-[#9B948A]">Legal</p>
-            <nav className="mt-4 flex flex-col gap-3 text-sm text-[#9B948A]">
+            <p className="text-xs uppercase tracking-widest text-[#9B948A] body-font">Legal</p>
+            <nav className="mt-4 flex flex-col gap-3 text-sm text-[#9B948A] body-font">
               <Link to="/terms" className="hover:text-[#F0CB6E] transition-colors">Terms of Service</Link>
               <Link to="/privacy" className="hover:text-[#F0CB6E] transition-colors">Privacy Policy</Link>
-              <a href="#" className="hover:text-[#F0CB6E] transition-colors">Cookie Policy</a>
             </nav>
           </div>
         </div>
-        <div className="mx-auto mt-10 max-w-7xl border-t border-white/5 pt-6 text-xs text-[#9B948A]">
+        <div className="mx-auto mt-10 max-w-7xl border-t border-white/5 pt-6 text-xs text-[#9B948A] body-font">
           © {new Date().getFullYear()} Wave Verify. All numbers rented, not owned.
         </div>
       </footer>
