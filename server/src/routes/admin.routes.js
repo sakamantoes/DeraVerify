@@ -6,6 +6,7 @@ import {
   getAllOtpOrders,
   updateDepositsStatus,
   getAdminServices,
+  getAdminServiceGroups,
   getServicesAvailableName,
   updateServiceActiveStatus,
   updateServiceCustomPrice,
@@ -70,6 +71,13 @@ router.get(
   authMiddleware,
   validateAdminRole,
   getServicesAvailableName,
+);
+
+router.get(
+  "/all/platform/service-groups",
+  authMiddleware,
+  validateAdminRole,
+  getAdminServiceGroups,
 );
 
 router.patch(

@@ -347,6 +347,135 @@ const getAdminServices = async (req, res, next) => {
   }
 };
 
+// One row per (service, country) pair instead of one row per provider
+// listing — the flat listing table forced the admin to scroll through every
+// provider price for the same service+country to find the isVisible one.
+// Each group carries just the currently-visible listing's price (or null),
+// the modal drill-down (getAdminServices filtered to that exact pair) is
+// what shows every provider so the admin can pick which one to make visible.
+const getAdminServiceGroups = async (req, res, next) => {
+  const { page = 1, limit = 25, service = "", search = "" } = req.query;
+
+  try {
+    const pageNumber = Math.max(Number(page) || 1, 1);
+    const limitNumber = Math.min(Math.max(Number(limit) || 25, 1), 100);
+    const priceSetting = await PricingSetting.findOne({});
+
+    if (!priceSetting) {
+      res.statusCode = 400;
+
+      throw new Error("error fetching price");
+    }
+
+    const match = {};
+    const normalizedService = String(service).trim();
+    const normalizedSearch = String(search).trim();
+
+    if (normalizedService) {
+      match.internalService = normalizedService;
+    }
+
+    if (normalizedSearch) {
+      const searchRegex = new RegExp(normalizedSearch, "i");
+      match.$or = [
+        { internalCountry: searchRegex },
+        { internalService: searchRegex },
+      ];
+    }
+
+    const basePipeline = [
+      { $match: match },
+      {
+        $group: {
+          _id: { service: "$internalService", country: "$internalCountry" },
+          providerCount: { $sum: 1 },
+          liveProviderCount: {
+            $sum: {
+              $cond: [
+                { $and: ["$availability", { $gt: ["$stock", 0] }] },
+                1,
+                0,
+              ],
+            },
+          },
+          lowestProviderPrice: { $min: "$providerPrice" },
+          // Exclusivity guarantees at most one isVisible listing per
+          // group, so the conditional-push + $first pair below resolves
+          // to either that single listing or nothing.
+          visible: {
+            $push: {
+              $cond: [
+                "$isVisible",
+                {
+                  id: "$_id",
+                  provider: "$provider",
+                  providerPrice: "$providerPrice",
+                  customPrice: "$customPrice",
+                },
+                "$$REMOVE",
+              ],
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          internalService: "$_id.service",
+          internalCountry: "$_id.country",
+          providerCount: 1,
+          liveProviderCount: 1,
+          lowestProviderPrice: 1,
+          visible: { $first: "$visible" },
+        },
+      },
+      { $sort: { internalService: 1, internalCountry: 1 } },
+    ];
+
+    const [rows, totalResult] = await Promise.all([
+      AvailableService.aggregate([
+        ...basePipeline,
+        { $skip: (pageNumber - 1) * limitNumber },
+        { $limit: limitNumber },
+      ]),
+      AvailableService.aggregate([...basePipeline, { $count: "total" }]),
+    ]);
+
+    const total = totalResult[0]?.total || 0;
+
+    const data = rows.map((row) => ({
+      internalService: row.internalService,
+      internalCountry: row.internalCountry,
+      providerCount: row.providerCount,
+      liveProviderCount: row.liveProviderCount,
+      lowestProviderPrice: row.lowestProviderPrice,
+      visibleListing: row.visible
+        ? {
+            id: row.visible.id,
+            provider: row.visible.provider,
+            providerPrice: row.visible.providerPrice,
+            sellingPrice: calculateSellingPrice(row.visible, priceSetting),
+          }
+        : null,
+    }));
+
+    res.status(200).json({
+      status: 200,
+      success: true,
+      message: "grouped services fetched",
+      data,
+      pagination: {
+        page: pageNumber,
+        limit: limitNumber,
+        total,
+        totalPages: Math.max(Math.ceil(total / limitNumber), 1),
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const getServicesAvailableName = async (req, res, next) => {
   try {
     // Grouped by service (admin manages the catalog per-service), and
@@ -576,6 +705,7 @@ export {
   getUserWaitingForOtp,
   getAllOtpOrders,
   getAdminServices,
+  getAdminServiceGroups,
   getServicesAvailableName,
   updateServiceActiveStatus,
   updateServiceCustomPrice,

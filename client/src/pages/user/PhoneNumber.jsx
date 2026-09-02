@@ -301,7 +301,7 @@ const PhoneNumber = () => {
                 </div>
               </div>
 
-              <div className="max-h-72 overflow-y-auto px-2 pb-2">
+              <div className="max-h-72 space-y-2 overflow-y-auto p-3">
                 {loadingCountries ? (
                   <div className="flex items-center justify-center gap-2 py-8 text-sm text-gray-500">
                     <Loader2 size={16} className="animate-spin" />
@@ -320,10 +320,10 @@ const PhoneNumber = () => {
                         key={item.internalCountry}
                         type="button"
                         onClick={() => handleCountrySelect(item.internalCountry)}
-                        className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-colors ${
+                        className={`flex w-full items-center gap-3 rounded-xl border px-3 py-3 text-left text-sm transition-colors ${
                           isSelected
-                            ? "bg-gold-light/15 text-white"
-                            : "text-gray-300 hover:bg-white/5"
+                            ? "border-gold-light/40 bg-gold-light/10 text-white"
+                            : "border-white/10 bg-black/20 text-gray-300 hover:border-gold-light/25 hover:bg-white/5"
                         }`}
                       >
                         <span
@@ -421,7 +421,7 @@ const PhoneNumber = () => {
                     </div>
                   )}
 
-                  <div className="max-h-72 overflow-y-auto px-2 pb-2">
+                  <div className="max-h-72 space-y-2 overflow-y-auto p-3">
                     {loadingServices ? (
                       <div className="flex items-center justify-center gap-2 py-8 text-sm text-gray-500">
                         <Loader2 size={16} className="animate-spin" />
@@ -443,7 +443,11 @@ const PhoneNumber = () => {
                           <div
                             key={service.code}
                             onClick={() => toggleRevealService(service.code)}
-                            className="group flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-gray-300 transition-colors hover:bg-white/5"
+                            className={`group flex w-full cursor-pointer items-center gap-3 rounded-xl border px-3 py-3 text-sm transition-colors ${
+                              isRevealed
+                                ? "border-gold-light/40 bg-gold-light/10 text-white"
+                                : "border-white/10 bg-black/20 text-gray-300 hover:border-gold-light/25 hover:bg-white/5"
+                            }`}
                           >
                             <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/5 text-gray-500 transition-colors group-hover:bg-gold-light/20 group-hover:text-gold-light">
                               <Server size={14} />

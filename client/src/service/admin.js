@@ -53,6 +53,14 @@ export const getPlatformServiceNames = async () => {
   return res.data;
 };
 
+export const getAdminServiceGroups = async (params = {}) => {
+  const res = await api.get("/api/admin/all/platform/service-groups", {
+    params,
+  });
+
+  return res.data;
+};
+
 export const updatePlatformServiceActiveStatus = async (service, active) => {
   const res = await api.patch(
     `/api/admin/platform/service/${encodeURIComponent(service)}/active`,

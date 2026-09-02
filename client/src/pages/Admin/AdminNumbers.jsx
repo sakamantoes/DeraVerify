@@ -10,122 +10,81 @@ import {
   DollarSign,
   AlertCircle,
   Loader2,
-  Pencil,
-  Save,
-  X,
+  ChevronRight,
   ToggleLeft,
   ToggleRight,
 } from "lucide-react";
 import {
-  getAllPlatformServices,
+  getAdminServiceGroups,
   getPlatformServiceNames,
   updatePlatformServiceActiveStatus,
-  updatePlatformServiceCustomPrice,
-  updatePlatformServiceVisibility,
 } from "../../service/admin.js";
 import { formatCurrency } from "../../utils/transaction.js";
 import { formatServiceName } from "../../utils/serviceCode.js";
-import { getNumberAvailabilityInfo } from "../../utils/availability.js";
 import AdminPriceSetting from "../../components/AdminPriceSetting.jsx";
+import ServiceGroupModal from "../../components/Admin/ServiceGroupModal.jsx";
 
-const LISTINGS_PER_PAGE = 25;
+const GROUPS_PER_PAGE = 25;
 
-// providerPrice is stored in USD (the provider's raw cost), unlike every
-// other price on this page which is converted to NGN.
-const formatUsd = (value) =>
-  `$${new Intl.NumberFormat("en-US", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(Number(value || 0))}`;
+const normalizeGroups = (response) => {
+  const rows = Array.isArray(response?.data) ? response.data : [];
 
-const normalizeCatalog = (response) => {
-  const services = Array.isArray(response?.data) ? response.data : [];
-
-  return services
-    .filter(
-      (item) =>
-        (item?.internalService || item?.service) &&
-        (item?.internalCountry || item?.country),
-    )
-    .map((item) => {
-      const serviceCode = item.internalService || item.service;
-      const countryCode = item.internalCountry || item.country;
-      const availability = getNumberAvailabilityInfo(item);
-
-      return {
-        id: item._id || `${item.provider}-${countryCode}-${serviceCode}`,
-        service: serviceCode,
-        serviceName: formatServiceName(serviceCode),
-        country: countryCode,
-        providerPrice: Number(item.providerPrice || 0),
-        costPrice: Number(item.costPrice || 0),
-        countryName: item.countryName || countryCode,
-        provider: item.provider || "Auto",
-        stock: Number(item.stock || 0),
-        availability: Boolean(item.availability),
-        availabilityLabel: availability.label,
-        availabilityDetail: availability.detail,
-        availabilityScore: availability.score,
-        availabilityClassName: availability.className,
-        price: Number(item.sellingPrice || 0),
-        autoPrice: Number(item.sellingPrice || 0),
-        customPrice:
-          item.customPrice === null || item.customPrice === undefined
-            ? null
-            : Number(item.customPrice),
-        active: Boolean(item.active),
-        isVisible: Boolean(item.isVisible),
-        updatedAt: item.lastFetchedAt || item.updatedAt,
-      };
-    })
-    .sort((a, b) => {
-      const serviceSort = a.serviceName.localeCompare(b.serviceName);
-      if (serviceSort !== 0) return serviceSort;
-      return a.countryName.localeCompare(b.countryName);
-    });
+  return rows
+    .filter((item) => item?.internalService && item?.internalCountry)
+    .map((item) => ({
+      service: item.internalService,
+      serviceName: formatServiceName(item.internalService),
+      country: item.internalCountry,
+      providerCount: Number(item.providerCount || 0),
+      liveProviderCount: Number(item.liveProviderCount || 0),
+      visibleListing: item.visibleListing
+        ? {
+            provider: item.visibleListing.provider || "Auto",
+            providerPrice: Number(item.visibleListing.providerPrice || 0),
+            sellingPrice: Number(item.visibleListing.sellingPrice || 0),
+          }
+        : null,
+    }));
 };
 
 export default function AdminNumbers() {
-  const [catalog, setCatalog] = useState([]);
+  const [groups, setGroups] = useState([]);
   const [serviceNames, setServiceNames] = useState([]);
   const [selectedService, setSelectedService] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [loadingCatalog, setLoadingCatalog] = useState(true);
+  const [loadingGroups, setLoadingGroups] = useState(true);
   const [error, setError] = useState("");
   const [updatingService, setUpdatingService] = useState("");
-  const [editingId, setEditingId] = useState("");
-  const [priceDraft, setPriceDraft] = useState("");
-  const [savingPriceId, setSavingPriceId] = useState("");
-  const [updatingVisibilityId, setUpdatingVisibilityId] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [activeGroup, setActiveGroup] = useState(null);
   const [pagination, setPagination] = useState({
     page: 1,
-    limit: LISTINGS_PER_PAGE,
+    limit: GROUPS_PER_PAGE,
     total: 0,
     totalPages: 1,
   });
 
-  const fetchServices = useCallback(async () => {
+  const fetchGroups = useCallback(async () => {
     try {
-      setLoadingCatalog(true);
+      setLoadingGroups(true);
       setError("");
 
       const [response, namesResponse] = await Promise.all([
-        getAllPlatformServices({
+        getAdminServiceGroups({
           page: currentPage,
-          limit: LISTINGS_PER_PAGE,
+          limit: GROUPS_PER_PAGE,
           service: selectedService || undefined,
           search: searchTerm.trim() || undefined,
         }),
         getPlatformServiceNames(),
       ]);
-      const nextCatalog = normalizeCatalog(response);
-      setCatalog(nextCatalog);
+      const nextGroups = normalizeGroups(response);
+      setGroups(nextGroups);
       setPagination(
         response?.pagination || {
           page: currentPage,
-          limit: LISTINGS_PER_PAGE,
-          total: nextCatalog.length,
+          limit: GROUPS_PER_PAGE,
+          total: nextGroups.length,
           totalPages: 1,
         },
       );
@@ -136,17 +95,17 @@ export default function AdminNumbers() {
       console.error("Failed to fetch services:", err);
       setError(err?.response?.data?.message || "Failed to load services");
     } finally {
-      setLoadingCatalog(false);
+      setLoadingGroups(false);
     }
   }, [currentPage, searchTerm, selectedService]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      fetchServices();
+      fetchGroups();
     }, 0);
 
     return () => clearTimeout(timer);
-  }, [fetchServices]);
+  }, [fetchGroups]);
 
   const serviceOptions = useMemo(() => {
     if (serviceNames.length > 0) {
@@ -165,21 +124,14 @@ export default function AdminNumbers() {
 
     const summaries = new Map();
 
-    catalog.forEach((item) => {
+    groups.forEach((item) => {
       if (!summaries.has(item.service)) {
-        summaries.set(item.service, {
-          stock: 0,
-          countries: new Set(),
-          totalListings: 0,
-          activeCount: 0,
-        });
+        summaries.set(item.service, { stock: 0, countries: new Set() });
       }
 
       const summary = summaries.get(item.service);
-      summary.stock += item.availabilityScore;
+      summary.stock += item.liveProviderCount;
       summary.countries.add(item.country);
-      summary.totalListings += 1;
-      if (item.active) summary.activeCount += 1;
     });
 
     return Array.from(summaries.entries()).map(([service, item]) => ({
@@ -187,18 +139,16 @@ export default function AdminNumbers() {
       name: formatServiceName(service),
       stock: item.stock,
       countries: item.countries.size,
-      totalListings: item.totalListings,
-      activeCount: item.activeCount,
-      active: item.totalListings > 0 && item.activeCount === item.totalListings,
+      totalListings: 0,
+      activeCount: 0,
+      active: false,
     }));
-  }, [catalog, serviceNames]);
+  }, [groups, serviceNames]);
 
-  const filteredListings = catalog;
   const totalPages = Math.max(Number(pagination.totalPages || 1), 1);
-  const totalListings = Number(pagination.total || 0);
+  const totalGroups = Number(pagination.total || 0);
   const visiblePage = Math.min(currentPage, totalPages);
-  const pageStart = totalListings === 0 ? 0 : (visiblePage - 1) * LISTINGS_PER_PAGE;
-  const paginatedListings = filteredListings;
+  const pageStart = totalGroups === 0 ? 0 : (visiblePage - 1) * GROUPS_PER_PAGE;
 
   const selectedServiceLabel = selectedService
     ? serviceOptions.find((item) => item.code === selectedService)?.name ||
@@ -223,11 +173,6 @@ export default function AdminNumbers() {
             : item,
         ),
       );
-      setCatalog((prev) =>
-        prev.map((item) =>
-          item.service === service.code ? { ...item, active: nextActive } : item,
-        ),
-      );
     } catch (err) {
       console.error("Failed to update service status:", err);
       setError(err?.response?.data?.message || "Failed to update service");
@@ -236,76 +181,15 @@ export default function AdminNumbers() {
     }
   };
 
-  const startEditingPrice = (item) => {
-    setEditingId(item.id);
-    setPriceDraft(item.customPrice === null ? "" : String(item.customPrice));
-  };
-
-  const cancelEditingPrice = () => {
-    setEditingId("");
-    setPriceDraft("");
-  };
-
-  const saveCustomPrice = async (item) => {
-    const priceValue = priceDraft.trim() === "" ? null : Number(priceDraft);
-
-    if (priceValue !== null && (Number.isNaN(priceValue) || priceValue < 0)) {
-      setError("Custom price should be a valid amount");
-      return;
-    }
-
-    try {
-      setSavingPriceId(item.id);
-      setError("");
-      await updatePlatformServiceCustomPrice(item.id, priceValue);
-
-      setCatalog((prev) =>
-        prev.map((service) =>
-          service.id === item.id
-            ? {
-                ...service,
-                customPrice: priceValue,
-                price: priceValue === null ? service.autoPrice : priceValue,
-              }
-            : service,
-        ),
-      );
-      cancelEditingPrice();
-    } catch (err) {
-      console.error("Failed to update custom price:", err);
-      setError(err?.response?.data?.message || "Failed to update custom price");
-    } finally {
-      setSavingPriceId("");
-    }
-  };
-
-  const handleVisibilityToggle = async (item) => {
-    const nextVisible = !item.isVisible;
-
-    try {
-      setUpdatingVisibilityId(item.id);
-      setError("");
-      await updatePlatformServiceVisibility(item.id, nextVisible);
-
-      // Setting one listing visible un-visibles any sibling listing for the
-      // same service+country server-side, so a local patch of just this row
-      // would leave the sibling showing a stale "Visible" pill — refetch
-      // instead of guessing which other rows changed.
-      await fetchServices();
-    } catch (err) {
-      console.error("Failed to update service visibility:", err);
-      setError(err?.response?.data?.message || "Failed to update visibility");
-    } finally {
-      setUpdatingVisibilityId("");
-    }
-  };
-
-  const liveListings = catalog.filter((item) => item.availabilityScore > 0).length;
-  const activeCountries = new Set(catalog.map((item) => item.country)).size;
+  const liveGroups = groups.filter((item) => item.liveProviderCount > 0).length;
+  const activeCountries = new Set(groups.map((item) => item.country)).size;
   const totalServices = serviceOptions.length;
+  const visiblePrices = groups
+    .filter((item) => item.visibleListing)
+    .map((item) => item.visibleListing.sellingPrice);
   const averagePrice =
-    catalog.length > 0
-      ? catalog.reduce((sum, item) => sum + item.price, 0) / catalog.length
+    visiblePrices.length > 0
+      ? visiblePrices.reduce((sum, price) => sum + price, 0) / visiblePrices.length
       : 0;
 
   const stats = [
@@ -320,7 +204,7 @@ export default function AdminNumbers() {
     {
       label: "Active Countries",
       value: activeCountries,
-      change: `${liveListings} live listings`,
+      change: `${liveGroups} live pairs`,
       icon: ShieldCheck,
       iconBg: "bg-emerald-500/15",
       iconColor: "text-emerald-400",
@@ -393,7 +277,7 @@ export default function AdminNumbers() {
                 {serviceOptions.length === 1 ? "" : "s"} available
               </p>
             </div>
-            {loadingCatalog && (
+            {loadingGroups && (
               <Loader2 size={18} className="animate-spin text-gold-light" />
             )}
           </div>
@@ -420,7 +304,7 @@ export default function AdminNumbers() {
                 </span>
               </span>
               <span className="rounded-full border border-white/10 bg-white/10 px-2 py-0.5 text-xs text-gray-300">
-                {catalog.length}
+                {totalGroups}
               </span>
             </button>
 
@@ -491,8 +375,7 @@ export default function AdminNumbers() {
                 {selectedServiceLabel}
               </h2>
               <p className="mt-0.5 text-xs text-gray-500">
-                {totalListings} listing
-                {totalListings === 1 ? "" : "s"} found
+                {totalGroups} countr{totalGroups === 1 ? "y" : "ies"} found
               </p>
             </div>
 
@@ -512,13 +395,13 @@ export default function AdminNumbers() {
 
               <button
                 type="button"
-                onClick={() => fetchServices()}
-                disabled={loadingCatalog}
+                onClick={() => fetchGroups()}
+                disabled={loadingGroups}
                 className="flex h-10 items-center justify-center gap-2 rounded-lg border border-white/10 px-4 text-sm text-gray-400 transition-colors hover:border-gold-light/30 hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
               >
                 <RefreshCw
                   size={16}
-                  className={loadingCatalog ? "animate-spin" : ""}
+                  className={loadingGroups ? "animate-spin" : ""}
                 />
                 Refresh
               </button>
@@ -532,11 +415,11 @@ export default function AdminNumbers() {
             </div>
           )}
 
-          {loadingCatalog ? (
+          {loadingGroups ? (
             <div className="flex items-center justify-center py-16 text-gray-400">
               <Loader2 className="h-8 w-8 animate-spin text-gold-light" />
             </div>
-          ) : totalListings === 0 ? (
+          ) : totalGroups === 0 ? (
             <div className="px-5 py-14 text-center">
               <Package size={42} className="mx-auto text-gray-600" />
               <h3 className="mt-4 text-lg font-semibold text-white">
@@ -548,154 +431,66 @@ export default function AdminNumbers() {
             </div>
           ) : (
             <div className="w-full max-w-full overflow-x-auto">
-              <table className="w-full min-w-[860px] text-left">
+              <table className="w-full min-w-[640px] text-left">
                 <thead className="border-b border-white/10 text-xs uppercase tracking-widest text-gray-500">
                   <tr>
                     <th className="px-5 py-3 font-semibold">Service</th>
                     <th className="px-5 py-3 font-semibold">Country</th>
-                    <th className="px-5 py-3 font-semibold">Provider</th>
-                    <th className="px-5 py-3 font-semibold">Availability</th>
-                    <th className="px-5 py-3 font-semibold">Provider Price (USD)</th>
-                    <th className="px-5 py-3 font-semibold">Cost Price</th>
-                    <th className="px-5 py-3 font-semibold">Selling Price</th>
-                    <th className="px-5 py-3 font-semibold">Custom Price</th>
-                    <th className="px-5 py-3 font-semibold">Status</th>
-                    <th className="px-5 py-3 font-semibold">Visible</th>
+                    <th className="px-5 py-3 font-semibold">Providers</th>
+                    <th className="px-5 py-3 font-semibold">Visible Price</th>
                     <th className="px-5 py-3 font-semibold">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/10 text-sm">
-                  {paginatedListings.map((item) => (
+                  {groups.map((group) => (
                     <tr
-                      key={item.id}
+                      key={`${group.service}__${group.country}`}
                       className="bg-black/10 transition-colors hover:bg-white/[0.03]"
                     >
                       <td className="px-5 py-4">
                         <span className="inline-flex items-center gap-1.5 rounded-full bg-gold-light/10 px-2.5 py-1 text-xs font-semibold text-gold-light">
                           <Smartphone size={12} />
-                          {item.serviceName}
+                          {group.serviceName}
                         </span>
                       </td>
                       <td className="px-5 py-4 text-white">
                         <span className="flex items-center gap-2">
                           <MapPin size={14} className="text-gray-500" />
-                          {item.countryName}
+                          {group.country}
                         </span>
                       </td>
                       <td className="px-5 py-4 text-gray-300">
-                        {item.provider}
+                        {group.providerCount} provider
+                        {group.providerCount === 1 ? "" : "s"}
+                        <span className="ml-1.5 text-xs text-gray-500">
+                          ({group.liveProviderCount} live)
+                        </span>
                       </td>
                       <td className="px-5 py-4">
-                        <div className="flex flex-col items-start gap-1.5">
-                          <span
-                            className={`rounded-full border px-2 py-1 text-xs font-semibold ${item.availabilityClassName}`}
-                          >
-                            {item.availabilityLabel}
-                          </span>
-                          <span className="text-xs text-gray-500">
-                            {item.availabilityDetail}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-5 py-4 text-gray-300">
-                        {formatUsd(item.providerPrice)}
-                      </td>
-                      <td className="px-5 py-4 text-gray-300">
-                        {formatCurrency(item.costPrice)}
-                      </td>
-                      <td className="px-5 py-4 font-semibold text-white">
-                        {formatCurrency(item.price)}
-                      </td>
-                      <td className="px-5 py-4">
-                        {editingId === item.id ? (
-                          <input
-                            value={priceDraft}
-                            onChange={(e) => setPriceDraft(e.target.value)}
-                            placeholder="Auto price"
-                            type="number"
-                            min="0"
-                            className="h-9 w-32 rounded-lg border border-white/10 bg-black/40 px-3 text-sm text-white outline-none transition-all placeholder:text-gray-600 focus:border-gold-light/50 focus:ring-1 focus:ring-gold-light/50"
-                          />
+                        {group.visibleListing ? (
+                          <div>
+                            <p className="text-sm font-semibold text-white">
+                              {formatCurrency(group.visibleListing.sellingPrice)}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {group.visibleListing.provider}
+                            </p>
+                          </div>
                         ) : (
-                          <span className="text-gray-300">
-                            {item.customPrice === null
-                              ? "Auto"
-                              : formatCurrency(item.customPrice)}
+                          <span className="rounded-full border border-gray-500/20 bg-white/10 px-2 py-1 text-xs font-semibold text-gray-400">
+                            Not set
                           </span>
                         )}
-                      </td>
-                      <td className="px-5 py-4">
-                        <span
-                          className={`rounded-full border px-2 py-1 text-xs font-semibold ${
-                            item.active
-                              ? "border-emerald-500/20 bg-emerald-500/15 text-emerald-400"
-                              : "border-gray-500/20 bg-white/10 text-gray-400"
-                          }`}
-                        >
-                          {item.active ? "Active" : "Inactive"}
-                        </span>
                       </td>
                       <td className="px-5 py-4">
                         <button
                           type="button"
-                          onClick={() => handleVisibilityToggle(item)}
-                          disabled={updatingVisibilityId === item.id}
-                          title={
-                            item.isVisible
-                              ? "Hide from users"
-                              : "Show to users"
-                          }
-                          className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-1 text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
-                            item.isVisible
-                              ? "border-emerald-500/20 bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/25"
-                              : "border-gray-500/20 bg-white/10 text-gray-400 hover:bg-white/15"
-                          }`}
+                          onClick={() => setActiveGroup(group)}
+                          className="inline-flex items-center gap-1 rounded-lg border border-white/10 px-3 py-1.5 text-xs font-semibold text-gray-300 transition-colors hover:border-gold-light/30 hover:bg-white/10 hover:text-white"
                         >
-                          {updatingVisibilityId === item.id ? (
-                            <Loader2 size={13} className="animate-spin" />
-                          ) : item.isVisible ? (
-                            <ToggleRight size={13} />
-                          ) : (
-                            <ToggleLeft size={13} />
-                          )}
-                          {item.isVisible ? "Visible" : "Hidden"}
+                          Manage
+                          <ChevronRight size={14} />
                         </button>
-                      </td>
-                      <td className="px-5 py-4">
-                        {editingId === item.id ? (
-                          <div className="flex items-center gap-2">
-                            <button
-                              type="button"
-                              onClick={() => saveCustomPrice(item)}
-                              disabled={savingPriceId === item.id}
-                              className="flex h-9 w-9 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10 text-emerald-400 transition-colors hover:bg-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-60"
-                              title="Save custom price"
-                            >
-                              {savingPriceId === item.id ? (
-                                <Loader2 size={15} className="animate-spin" />
-                              ) : (
-                                <Save size={15} />
-                              )}
-                            </button>
-                            <button
-                              type="button"
-                              onClick={cancelEditingPrice}
-                              className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-gray-400 transition-colors hover:bg-white/10 hover:text-white"
-                              title="Cancel"
-                            >
-                              <X size={15} />
-                            </button>
-                          </div>
-                        ) : (
-                          <button
-                            type="button"
-                            onClick={() => startEditingPrice(item)}
-                            className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-gray-400 transition-colors hover:border-gold-light/30 hover:bg-white/10 hover:text-white"
-                            title="Edit custom price"
-                          >
-                            <Pencil size={15} />
-                          </button>
-                        )}
                       </td>
                     </tr>
                   ))}
@@ -704,8 +499,8 @@ export default function AdminNumbers() {
               <div className="flex flex-col gap-3 border-t border-white/10 px-5 py-4 text-sm text-gray-400 sm:flex-row sm:items-center sm:justify-between">
                 <span>
                   Showing {pageStart + 1}-
-                  {Math.min(pageStart + LISTINGS_PER_PAGE, totalListings)}{" "}
-                  of {totalListings}
+                  {Math.min(pageStart + GROUPS_PER_PAGE, totalGroups)}{" "}
+                  of {totalGroups}
                 </span>
                 <div className="flex items-center gap-2">
                   <button
@@ -735,6 +530,14 @@ export default function AdminNumbers() {
           )}
         </div>
       </section>
+
+      {activeGroup && (
+        <ServiceGroupModal
+          group={activeGroup}
+          onClose={() => setActiveGroup(null)}
+          onChanged={fetchGroups}
+        />
+      )}
     </div>
   );
 }
