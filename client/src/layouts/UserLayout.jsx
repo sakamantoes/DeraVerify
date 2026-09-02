@@ -10,7 +10,6 @@ import {
   Phone,
   ReceiptText,
   Settings,
-  Wallet,
   X,
 } from "lucide-react";
 import Sidebar from "../components/Sidebar";

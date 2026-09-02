@@ -287,13 +287,11 @@ export default function AdminNumbers() {
       setError("");
       await updatePlatformServiceVisibility(item.id, nextVisible);
 
-      setCatalog((prev) =>
-        prev.map((service) =>
-          service.id === item.id
-            ? { ...service, isVisible: nextVisible }
-            : service,
-        ),
-      );
+      // Setting one listing visible un-visibles any sibling listing for the
+      // same service+country server-side, so a local patch of just this row
+      // would leave the sibling showing a stale "Visible" pill — refetch
+      // instead of guessing which other rows changed.
+      await fetchServices();
     } catch (err) {
       console.error("Failed to update service visibility:", err);
       setError(err?.response?.data?.message || "Failed to update visibility");

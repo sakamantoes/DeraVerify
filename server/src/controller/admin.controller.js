@@ -505,28 +505,35 @@ const updateServiceVisibility = async (req, res, next) => {
       throw new Error("isVisible should be true or false");
     }
 
-    const service = await AvailableService.findByIdAndUpdate(
-      id,
-      {
-        $set: {
-          isVisible,
-        },
-      },
-      {
-        new: true,
-      },
-    );
+    const target = await AvailableService.findById(id);
 
-    if (!service) {
+    if (!target) {
       res.statusCode = 404;
       throw new Error("service not found");
     }
+
+    // Only one listing can be visible per service+country at a time — the
+    // buy flow resolves a purchase from whichever single listing is
+    // isVisible, so making a new one visible must retire the old one.
+    if (isVisible) {
+      await AvailableService.updateMany(
+        {
+          internalService: target.internalService,
+          internalCountry: target.internalCountry,
+          _id: { $ne: target._id },
+        },
+        { $set: { isVisible: false } },
+      );
+    }
+
+    target.isVisible = isVisible;
+    await target.save();
 
     res.status(200).json({
       status: 200,
       success: true,
       message: "service visibility updated successfully",
-      data: service,
+      data: target,
     });
   } catch (error) {
     next(error);

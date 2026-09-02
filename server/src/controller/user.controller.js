@@ -457,6 +457,11 @@ const getPlatformServices = async (req, res, next) => {
             _id: "$internalService",
             totalCountries: { $addToSet: "$internalCountry" },
             totalStock: { $sum: "$stock" },
+            // Exclusivity is enforced on isVisible (only one listing per
+            // service+country can be visible at a time), so when a country
+            // is selected there's exactly one match per group here.
+            providerPrice: { $first: "$providerPrice" },
+            customPrice: { $first: "$customPrice" },
             liveRoutes: {
               $sum: {
                 $cond: [
@@ -474,6 +479,8 @@ const getPlatformServices = async (req, res, next) => {
             internalService: "$_id",
             totalCountries: { $size: "$totalCountries" },
             totalStock: 1,
+            providerPrice: 1,
+            customPrice: 1,
             liveRoutes: 1,
           },
         },
@@ -488,12 +495,24 @@ const getPlatformServices = async (req, res, next) => {
       };
     });
 
+    // Only meaningful once a country is selected — that's when each group
+    // above resolves to the single isVisible listing for that service.
+    const finalServices = normalizedCountry
+      ? services.map((item) => ({
+          ...item,
+          sellingPrice:
+            item.providerPrice != null
+              ? calculateSellingPrice(item, priceSetting)
+              : null,
+        }))
+      : services;
+
     res.status(200).json({
       status: 200,
       success: true,
       message: "list of all available pricing",
       data: finalProduct,
-      services,
+      services: finalServices,
       pagination: {
         page: pageNumber,
         limit: limitNumber,
@@ -508,7 +527,7 @@ const getPlatformServices = async (req, res, next) => {
 
 const buyNumberService = async (req, res, next) => {
   const user = req.user;
-  const { service, country, id } = req.body;
+  const { service, country } = req.body;
   const session = await mongoose.startSession();
   const receiptNo = recieptNumberGenerator();
   let finalResult = null;
@@ -523,10 +542,13 @@ const buyNumberService = async (req, res, next) => {
       throw new Error("unAuthorise access");
     }
 
+    // The user only ever picks a service+country — which exact listing
+    // fulfills it is resolved here from whichever one admin has marked
+    // isVisible for that pair (exclusivity is enforced when it's set).
     const selectedService = await AvailableService.findOne({
-      _id: id,
       internalService: service,
       internalCountry: country,
+      isVisible: true,
       active: true,
     });
 
@@ -543,7 +565,6 @@ const buyNumberService = async (req, res, next) => {
     const activeServices = await AvailableService.find({
       internalService: service,
       internalCountry: country,
-      active: true,
       providerPrice: {
         $lte: maxAllowedProviderPrice,
       },
