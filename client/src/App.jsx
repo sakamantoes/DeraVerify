@@ -13,6 +13,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import UserLayout from "./layouts/UserLayout.jsx";
 import OtpBox from "./pages/user/OtpBox.jsx";
+import Community from "./pages/user/Community.jsx";
 import UserDeposits from "./pages/user/UserDeposits.jsx";
 import UserReceipts from "./pages/user/UserReceipts.jsx";
 import AdminLayout from "./layouts/AdminLayout.jsx";
@@ -57,6 +58,7 @@ const App = () => {
           <Route path="fund-account" element={<FundAccount />} />
           <Route path="numbers" element={<PhoneNumber />} />
           <Route path="otp-box" element={<OtpBox />} />
+          <Route path="community" element={<Community />} />
           <Route path="deposits" element={<UserDeposits />} />
           <Route path="receipts" element={<UserReceipts />} />
           <Route path="settings" element={<Setting />} />
