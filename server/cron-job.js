@@ -53,7 +53,7 @@ const CronJob = async () => {
                 continue;
               }
 
-               if (Number(details.count) <= 60) {
+               if (Number(details.count) < 100) {
                 continue;
               }
 
