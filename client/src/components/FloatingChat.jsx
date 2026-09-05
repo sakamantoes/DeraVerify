@@ -153,7 +153,7 @@ const FloatingChat = () => {
               {/* Content */}
               <div className="p-6">
                 <p className="text-gray-300 text-center leading-relaxed mb-2">
-                  👋 Welcome to Smswinners Support!
+                  👋 Welcome to wave verify Support!
                   <br />
                   How would you like to connect with us?
                 </p>
