@@ -14,7 +14,7 @@ const walletTransactionSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["DEPOSIT", "PURCHASE"],
+      enum: ["DEPOSIT", "PURCHASE", "REFUND"],
       default: "DEPOSIT",
     },
     amount: {
@@ -35,7 +35,7 @@ const walletTransactionSchema = new mongoose.Schema(
 
     paymentMethod: {
       type: String,
-      enum: ["QUEST", "SQUAD", "MANUAL_TRANSFER"],
+      enum: ["QUEST", "SQUAD", "MANUAL_TRANSFER","ADMIN_REFUND"],
     },
 
     balanceBefore: Number,
