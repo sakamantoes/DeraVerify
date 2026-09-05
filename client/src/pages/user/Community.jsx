@@ -1,6 +1,6 @@
 import { MessageCircle } from "lucide-react";
 
-const WHATSAPP_COMMUNITY_URL = "https://chat.whatsapp.com/HPT5a2mtvgQExF3V7rpJXg";
+const TELEGRAM_COMMUNITY_URL = "https://t.me/waveverify54";
 
 export default function Community() {
   return (
@@ -14,7 +14,7 @@ export default function Community() {
           prices.
         </p>
         <a
-          href={WHATSAPP_COMMUNITY_URL}
+          href={TELEGRAM_COMMUNITY_URL}
           target="_blank"
           rel="noopener noreferrer"
           className="mt-6 inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-gold-light to-gold-dark px-6 text-sm font-semibold text-white shadow-lg shadow-gold-light/20 transition-transform hover:scale-[1.02] active:scale-95"

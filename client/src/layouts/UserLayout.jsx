@@ -22,7 +22,7 @@ const userNavItems = [
   { label: "Dashboard", to: "/f/dashboard", icon: Gauge },
   { label: "Numbers and Services", to: "/f/numbers", icon: Phone },
   { label: "OTP Inbox", to: "/f/otp-box", icon: Inbox },
-  { label: "WhatsApp Community", to: "/f/community", icon: MessageCircle },
+  { label: "Telegram Community", to: "/f/community", icon: MessageCircle },
   { label: "Deposits History", to: "/f/deposits", icon: CreditCard },
   { label: "View Receipts", to: "/f/receipts", icon: ReceiptText },
   { label: "Settings", to: "/f/settings", icon: Settings },
