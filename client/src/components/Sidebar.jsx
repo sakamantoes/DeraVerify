@@ -12,32 +12,6 @@ export default function Sidebar({
   userRole = "user",
   onLogout,
 }) {
-  const navigate = useNavigate();
-  const { user } = useAuth();
-
-  const handleSupportClick = (e) => {
-    e.preventDefault();
-    
-    // If this is admin sidebar (passed as prop), go directly to admin support
-    if (userRole === "admin") {
-      navigate("/a/support");
-      return;
-    }
-    
-    // For non-admin, check if user is authenticated
-    if (!user) {
-      navigate("/login");
-      return;
-    }
-    
-    // Navigate based on user role
-    const role = user?.data?.role || user?.role;
-    if (role === "admin") {
-      navigate("/a/support");
-    } else {
-      navigate("/f/support");
-    }
-  };
 
   return (
     <aside className="flex h-full w-72 shrink flex-col border-r border-gold-light/15 bg-black backdrop-blur-xl">
@@ -80,13 +54,6 @@ export default function Sidebar({
       </nav>
 
       <div className="space-y-3 border-t border-gold-light/10 p-4">
-        <button
-          onClick={handleSupportClick}
-          className="flex h-10 w-full items-center justify-start gap-2 border-b border-white/5 px-3 text-sm font-semibold text-gray-200 transition-all hover:bg-gold-light/10 hover:text-white active:scale-95"
-        >
-          <LifeBuoy size={17} />
-          {supportLabel}
-        </button>
         {onLogout && (
           <button
             onClick={onLogout}
