@@ -1,30 +1,15 @@
 // src/components/FloatingChat.jsx
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaWhatsapp, FaTelegramPlane, FaHeadset } from "react-icons/fa";
+import { FaTelegramPlane, FaHeadset } from "react-icons/fa";
 
 const FloatingChat = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
 
-  // WhatsApp Configuration
-  const whatsappNumber = "09074705972";
-  const whatsappMessage = "Hello! I'm interested in Smswinners services.";
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
-  const whatsappGroupUrl = "https://chat.whatsapp.com/BPXIzzwuftU4f3ZTCPRhuj";
-
   // Telegram Configuration
-  const telegramUsername = "SmswinnersSupport"; // Your Telegram username
-  const telegramNumber = "09013712464";
+  const telegramUsername = "waveverify54"; // Your Telegram username
   const telegramUrl = `https://t.me/${telegramUsername}`;
-  // Alternative: Direct phone number link
-  const telegramPhoneUrl = `https://t.me/+${telegramNumber}`;
-
-  const handleWhatsApp = () => {
-    window.open(whatsappGroupUrl, "_blank");
-    setIsOpen(false);
-    setShowOptions(false);
-  };
 
   const handleTelegram = () => {
     window.open(telegramUrl, "_blank");
@@ -173,43 +158,8 @@ const FloatingChat = () => {
                   How would you like to connect with us?
                 </p>
 
-                {/* Options Cards */}
+                {/* Telegram Option */}
                 <div className="space-y-4">
-                  {/* WhatsApp Option */}
-                  <motion.button
-                    onClick={handleWhatsApp}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="
-                      w-full
-                      p-4
-                      rounded-xl
-                      flex
-                      items-center
-                      gap-4
-                      bg-gradient-to-r
-                      from-green-500/10
-                      to-green-600/10
-                      border
-                      border-green-500/30
-                      hover:border-green-500
-                      transition-all
-                      group
-                    "
-                  >
-                    <div className="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <FaWhatsapp className="text-green-500 text-2xl" />
-                    </div>
-                    <div className="flex-1 text-left">
-                      <h4 className="text-white font-semibold">WhatsApp Group</h4>
-                      <p className="text-gray-400 text-sm">Join our community & get support</p>
-                    </div>
-                    <span className="text-green-500 opacity-0 group-hover:opacity-100 transition-opacity">
-                      →
-                    </span>
-                  </motion.button>
-
-                  {/* Telegram Option */}
                   <motion.button
                     onClick={handleTelegram}
                     whileHover={{ scale: 1.02 }}

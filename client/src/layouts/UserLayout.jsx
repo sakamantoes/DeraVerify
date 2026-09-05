@@ -16,6 +16,7 @@ import Sidebar from "../components/Sidebar";
 import useAuth from "../store/useAuth";
 import { logout } from "../service/auth.js";
 import NotificationBell from "../components/NotificationBell";
+import FloatingChat from "../components/FloatingChat";
 
 const userNavItems = [
   { label: "Dashboard", to: "/f/dashboard", icon: Gauge },
@@ -217,6 +218,7 @@ const UserLayout = () => {
         <main className="min-h-[calc(100vh-4rem)] px-4 pb-6 pt-[30px] sm:px-6 lg:px-8">
           <Outlet />
         </main>
+        <FloatingChat />
       </div>
     </div>
   );
