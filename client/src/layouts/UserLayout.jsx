@@ -142,6 +142,7 @@ const UserLayout = () => {
         <Sidebar
           {...userSidebarConfig}
           userRole="user"
+          supportLabel="Support"
           onNavigate={() => {}} // Desktop navigation doesn't need to close anything
           onLogout={handleLogout}
         />
@@ -161,6 +162,7 @@ const UserLayout = () => {
             <Sidebar
               {...userSidebarConfig}
               userRole="user"
+              supportLabel="Support"
               onNavigate={closeMobileNav} // Close when any nav item is clicked
               onLogout={handleLogout}
             />
