@@ -155,7 +155,7 @@ const FloatingChat = () => {
                 <p className="text-gray-300 text-center leading-relaxed mb-2">
                   👋 Welcome to wave verify Support!
                   <br />
-                  How would you like to connect with us?
+                  How would you like to connect with us? click the button below 👇.
                 </p>
 
                 {/* Telegram Option */}
