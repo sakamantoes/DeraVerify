@@ -61,21 +61,35 @@ export default function Sidebar({
 
       <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-5">
         {navItems.map((item) => (
-          <NavLink
-            key={item.label}
-            to={item.to}
-            onClick={onNavigate}
-            className={({ isActive }) =>
-              `flex h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold transition ${
-                isActive
-                  ? "bg-gradient-to-r from-gold-light to-gold-dark text-white shadow-lg shadow-gold-light/25"
-                  : "text-gray-400 hover:bg-gold-light/10 hover:text-white"
-              }`
-            }
-          >
-            <item.icon size={19} />
-            <span>{item.label}</span>
-          </NavLink>
+          item.externalUrl ? (
+            <a
+              key={item.label}
+              href={item.externalUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={onNavigate}
+              className="flex h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold text-gray-400 transition hover:bg-gold-light/10 hover:text-white"
+            >
+              <item.icon size={19} />
+              <span>{item.label}</span>
+            </a>
+          ) : (
+            <NavLink
+              key={item.label}
+              to={item.to}
+              onClick={onNavigate}
+              className={({ isActive }) =>
+                `flex h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold transition ${
+                  isActive
+                    ? "bg-gradient-to-r from-gold-light to-gold-dark text-white shadow-lg shadow-gold-light/25"
+                    : "text-gray-400 hover:bg-gold-light/10 hover:text-white"
+                }`
+              }
+            >
+              <item.icon size={19} />
+              <span>{item.label}</span>
+            </NavLink>
+          )
         ))}
       </nav>
 
