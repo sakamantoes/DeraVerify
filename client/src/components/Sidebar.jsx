@@ -80,13 +80,13 @@ export default function Sidebar({
       </nav>
 
       <div className="space-y-3 border-t border-gold-light/10 p-4">
-        <button
+        {/* <button
           onClick={handleSupportClick}
-          className="flex h-10 w-full items-center justify-start gap-2 border-b border-white/5 px-3 text-sm font-semibold text-gray-200 transition-all hover:bg-gold-light/10 hover:text-white active:scale-95"
+          className="flex h-10 w-full items-center justify-start gap-2 border-b border-white/5 px-3 text-sm font-semibold text-red-300 transition-all hover:bg-gold-light/10 hover:text-white active:scale-95"
         >
           <LifeBuoy size={17} />
           {supportLabel}
-        </button>
+        </button> */}
         {onLogout && (
           <button
             onClick={onLogout}
