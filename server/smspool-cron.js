@@ -1,5 +1,6 @@
 // @ts-nocheck
 import axios from "axios";
+import mongoose from "mongoose";
 import AvailableService from "./src/model/ServicesAvailable.js";
 import { env } from "./src/config/constant.js";
 import { provider2CountryServices } from "./src/utils/serviceCode.js";
@@ -17,6 +18,15 @@ const SMSPOOLCRON = async () => {
   console.log("starting up SMSPOOL-CRON-JOB");
   const data = { max_price: 10, key: env.sms_pool_api_key };
   try {
+    console.log("connecting to mongoDb.....");
+    await mongoose.connect(env.mongodb_url);
+    console.log("MongoDB connected successfully");
+
+    await AvailableService.updateMany(
+      { provider: "smspool" },
+      { $set: { availability: false } },
+    );
+
     const response = await axios.post(
       "https://api.smspool.net/request/pricing",
       data,
@@ -38,21 +48,28 @@ const SMSPOOLCRON = async () => {
 
         if (!service_name) return;
 
-
-
         return {
-          providerCountry: item.country,
-          providerService: item.service,
-          providerId: String(item.pool),
-          provider: "smspool",
-          internalService:
-            service_name.service === "TikTok/Douyin"
-              ? "TikTok"
-              : service_name.service,
-          internalCountry: service_name.country,
-          providerPrice: item.price,
-          availability: true,
-          lastFetchedAt: new Date(),
+          updateOne: {
+            filter: {
+              providerCountry: item.country,
+              providerService: item.service,
+              providerId: String(item.pool),
+              provider: "smspool",
+            },
+            update: {
+              $set: {
+                internalService:
+                  service_name.service === "TikTok/Douyin"
+                    ? "TikTok"
+                    : service_name.service,
+                internalCountry: service_name.country,
+                providerPrice: item.price,
+                availability: true,
+                lastFetchedAt: new Date(),
+              },
+            },
+            upsert: true,
+          },
         };
       })
       .filter(Boolean);
@@ -68,7 +85,6 @@ const SMSPOOLCRON = async () => {
       await AvailableService.bulkWrite(element);
     }
     console.log("data saved successfully");
-
     console.log(
       `smspool cron job ran successfully and Prepared ${arr.length} operations`,
     );
