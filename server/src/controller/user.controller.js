@@ -11,6 +11,7 @@ import recieptNumberGenerator from "../utils/recieptNo.generator.js";
 import { cancelNumberServices } from "../services/number/cancelNumber.js";
 import { buyNumberOption } from "../services/number/buyNumber.js";
 import { requestUserOtp } from "../services/number/checkNumber.js";
+import refundOtpOrder from "../services/number/refundOtpOrder.js";
 import { isPast, differenceInSeconds } from "date-fns";
 
 const getUserWalletBalance = async (req, res, next) => {
@@ -227,6 +228,7 @@ const checkUserOtpOrderStatus = async (req, res, next) => {
   const user = req.user;
   const { orderId } = req.params;
   const now = new Date();
+  const session = await mongoose.startSession();
 
   try {
     if (!orderId) {
@@ -261,6 +263,37 @@ const checkUserOtpOrderStatus = async (req, res, next) => {
       });
     }
 
+    const response = await requestUserOtp(otpOrder);
+    const nextStatus = response.status || otpOrder.status;
+    const otpCode = response.otpCode || otpOrder.otpCode;
+    const otpMessage = response.otpMessage || otpOrder.otpMessage;
+
+    if (["CANCELLED", "FAILED"].includes(nextStatus)) {
+      await session.withTransaction(async () => {
+        const refundResult = await refundOtpOrder({
+          order: otpOrder,
+          userId: user._id,
+          reason: `Provider marked order as ${nextStatus}`,
+          status: nextStatus,
+          session,
+        });
+
+        if (refundResult.refundIssued) {
+          otpOrder.status = refundResult.order.status;
+          otpOrder.cancelReason = refundResult.order.cancelReason;
+        }
+      });
+
+      return res.status(200).json({
+        success: true,
+        status: 200,
+        message: "request was successfull",
+        otpCode: otpOrder.otpCode,
+        otpMessage: otpOrder.otpMessage,
+        data: await OtpOrder.findById(orderId).session(session),
+      });
+    }
+
     if (otpOrder.expiresAt) {
       const expiresAt = new Date(otpOrder.expiresAt);
 
@@ -281,11 +314,7 @@ const checkUserOtpOrderStatus = async (req, res, next) => {
       }
     }
 
-    const response = await requestUserOtp(otpOrder);
-    const otpCode = response.otpCode || otpOrder.otpCode;
-    const otpMessage = response.otpMessage || otpOrder.otpMessage;
-    const status = response.status || otpOrder.status;
-
+    const status = nextStatus;
     const hasChanges =
       otpOrder.otpCode !== otpCode ||
       otpOrder.otpMessage !== otpMessage ||
@@ -314,6 +343,8 @@ const checkUserOtpOrderStatus = async (req, res, next) => {
     });
   } catch (error) {
     next(error);
+  } finally {
+    await session.endSession();
   }
 };
 
@@ -449,7 +480,11 @@ const getPlatformServices = async (req, res, next) => {
       AvailableService.aggregate([
         {
           $match: normalizedCountry
-            ? { active: true, isVisible: true, internalCountry: normalizedCountry }
+            ? {
+                active: true,
+                isVisible: true,
+                internalCountry: normalizedCountry,
+              }
             : { active: true, isVisible: true },
         },
         {
@@ -735,7 +770,6 @@ const cancelOtpAndRefund = async (req, res, next) => {
   const user = req.user;
   const { orderId } = req.params;
   const session = await mongoose.startSession();
-  const receiptNo = recieptNumberGenerator();
   let finalResult = null;
 
   try {
@@ -768,9 +802,7 @@ const cancelOtpAndRefund = async (req, res, next) => {
 
     // cancel from provider
     const smsCancel = await cancelNumberServices(userOrderExist);
-    const response = smsCancel;
-    const providerCancelSucceeded =
-      response === "ACCESS_CANCEL" || response?.success === 1;
+    const providerCancelSucceeded = smsCancel?.success === true;
 
     // if provider fails to cancel
     if (!providerCancelSucceeded) {
@@ -779,75 +811,17 @@ const cancelOtpAndRefund = async (req, res, next) => {
     }
 
     await session.withTransaction(async () => {
-      // cancel order
-      const updatedOrder = await OtpOrder.findByIdAndUpdate(
-        userOrderExist._id,
-        {
-          $set: {
-            status: "CANCELLED",
-            cancelReason: "Cancelled by user",
-          },
-        },
-        {
-          session,
-          new: true,
-        },
-      );
-
-      if (!updatedOrder) {
-        throw new Error("failed to update otp order");
-      }
-
-      // refund wallet
-      const userSaved = await User.findByIdAndUpdate(
-        user._id,
-        {
-          $inc: {
-            walletBalance: Number(userOrderExist.sellingPrice),
-          },
-        },
-        {
-          session,
-          new: true,
-        },
-      );
-
-      // invalid user
-      if (!userSaved) {
-        throw new Error("user not found");
-      }
-
-      const balanceAfter = userSaved.walletBalance;
-
-      const balanceBefore = balanceAfter - userOrderExist.sellingPrice;
-
-      // generate receipt for record purpose
-      const [receipt] = await PurchaseReceipt.create(
-        [
-          {
-            userId: user._id,
-            amount: userOrderExist.sellingPrice,
-            itemModel: "OtpOrder",
-            itemId: userOrderExist._id,
-            receiptNo,
-            purchaseType: "OTP_REFUND",
-            description: "OTP order cancelled and refunded",
-            balanceAfter: Number(balanceAfter),
-            balanceBefore: Number(balanceBefore),
-          },
-        ],
-        {
-          session,
-        },
-      );
-
-      if (!receipt) {
-        throw new Error("failed to create refund receipt");
-      }
+      const refundResult = await refundOtpOrder({
+        order: userOrderExist,
+        userId: user._id,
+        reason: "OTP order cancelled and refunded",
+        status: "CANCELLED",
+        session,
+      });
 
       finalResult = {
-        receipt,
-        order: updatedOrder,
+        receipt: refundResult.receipt,
+        order: refundResult.order,
       };
     });
 
