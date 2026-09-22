@@ -7,9 +7,6 @@ import { env } from "../config/constant.js";
 import mongoose from "mongoose";
 import crypto from "crypto";
 import { sendMail } from "../services/resend.js";
-import PurchaseReceipt from "../model/PurchaseReceipt.js";
-import WalletTransaction from "../model/WalletTransactions.js";
-import recieptNumberGenerator from "../utils/recieptNo.generator.js";
 
 const googleSetup = async (req, res, next) => {
   const { token } = req.body;
@@ -149,7 +146,7 @@ const emailSignup = async (req, res, next) => {
 
     if (isUser) {
       res.statusCode = 400;
-      throw new Error("An account with htese details could not be created");
+      throw new Error("An account with these details could not be created");
     }
 
     const hashedPassword = await hashPassword(password);
