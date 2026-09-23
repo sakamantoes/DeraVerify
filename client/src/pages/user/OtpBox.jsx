@@ -271,7 +271,6 @@ const OtpBox = () => {
         {order.status === "WAITING_FOR_SMS" ? (
           <span className="inline-flex h-9 items-center gap-2 px-2 text-xs text-gray-400">
             <Loader2 size={14} className="animate-spin" />
-            Polling
           </span>
         ) : null}
       </div>
@@ -376,7 +375,7 @@ const OtpBox = () => {
             />
           )
         ) : (
-          <div className="grid gap-5 p-4 sm:p-6 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-5 p-4 sm:p-6 md:grid-cols-2">
             {orders.map((order) => {
               const statusBadge = getStatusBadge(order.status);
               const StatusIcon = statusBadge.icon;
