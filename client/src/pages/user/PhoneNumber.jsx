@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import {
   AlertCircle,
   CheckCircle2,
-  Copy,
   Eye,
   EyeOff,
   Globe,
@@ -28,7 +27,11 @@ import { formatServiceName } from "../../utils/serviceCode.js";
 
 const PhoneNumber = () => {
   const navigate = useNavigate();
-  const { balance, isLoading: isWalletLoading, isError: isWalletError } = useWallet();
+  const {
+    balance,
+    isLoading: isWalletLoading,
+    isError: isWalletError,
+  } = useWallet();
   const [showBalance, setShowBalance] = useState(false);
 
   const [countries, setCountries] = useState([]);
@@ -45,7 +48,6 @@ const PhoneNumber = () => {
   const [revealedService, setRevealedService] = useState("");
   const [loadingServices, setLoadingServices] = useState(false);
   const [buyingService, setBuyingService] = useState("");
-  const [purchaseData, setPurchaseData] = useState(null);
   const [servicesError, setServicesError] = useState("");
 
   // The country list is fetched once, independent of any selection — it's
@@ -84,7 +86,9 @@ const PhoneNumber = () => {
       );
     } catch (err) {
       console.error("Failed to fetch services:", err);
-      setServicesError(err?.response?.data?.message || "Failed to load services");
+      setServicesError(
+        err?.response?.data?.message || "Failed to load services",
+      );
     } finally {
       setLoadingServices(false);
     }
@@ -142,10 +146,11 @@ const PhoneNumber = () => {
   }, [serviceOptions, serviceQuery]);
 
   const handleCountrySelect = (countryCode) => {
-    setSelectedCountry((current) => (current === countryCode ? current : countryCode));
+    setSelectedCountry((current) =>
+      current === countryCode ? current : countryCode,
+    );
     setRevealedService("");
     setServiceQuery("");
-    setPurchaseData(null);
     setMobilePanel("service");
   };
 
@@ -158,7 +163,6 @@ const PhoneNumber = () => {
 
     try {
       setBuyingService(serviceCode);
-      setPurchaseData(null);
 
       const response = await buyNumber({
         country: selectedCountry,
@@ -166,37 +170,16 @@ const PhoneNumber = () => {
       });
 
       const otpOrder = response?.data?.otpOrder || response?.data;
-      const nextPurchaseData = {
-        ...otpOrder,
-        orderId: otpOrder?._id,
-        phone: otpOrder?.phoneNumber,
-        cost: otpOrder?.sellingPrice,
-        country: selectedCountry,
-      };
-
-      setPurchaseData(nextPurchaseData);
       toast.success(response?.message || "Number purchased successfully");
+      navigate("/f/otp-box", {
+        state: { orderId: otpOrder?._id },
+      });
     } catch (err) {
       console.error("Failed to purchase number:", err);
       toast.error(err?.response?.data?.message || "Failed to purchase number");
     } finally {
       setBuyingService("");
     }
-  };
-
-  const handleCopy = async (value, successMessage) => {
-    if (!value) return;
-
-    try {
-      await navigator.clipboard.writeText(value);
-      toast.success(successMessage);
-    } catch {
-      toast.error("Failed to copy to clipboard");
-    }
-  };
-
-  const handleBuyAnother = () => {
-    setPurchaseData(null);
   };
 
   return (
@@ -219,7 +202,9 @@ const PhoneNumber = () => {
               type="button"
               onClick={() => setShowBalance((prev) => !prev)}
               className="text-gray-500 transition-colors hover:text-white"
-              aria-label={showBalance ? "Hide wallet balance" : "Show wallet balance"}
+              aria-label={
+                showBalance ? "Hide wallet balance" : "Show wallet balance"
+              }
             >
               {showBalance ? <EyeOff size={13} /> : <Eye size={13} />}
             </button>
@@ -319,7 +304,9 @@ const PhoneNumber = () => {
                       <button
                         key={item.internalCountry}
                         type="button"
-                        onClick={() => handleCountrySelect(item.internalCountry)}
+                        onClick={() =>
+                          handleCountrySelect(item.internalCountry)
+                        }
                         className={`flex w-full items-center gap-3 rounded-xl border px-3 py-3 text-left text-sm transition-colors ${
                           isSelected
                             ? "border-gold-light/40 bg-gold-light/10 text-white"
@@ -396,8 +383,7 @@ const PhoneNumber = () => {
                     Step 1: Select Country
                   </p>
                   <p className="mt-1 max-w-[220px] text-xs text-gray-500">
-                    Please select a country to see the services available
-                    there.
+                    Please select a country to see the services available there.
                   </p>
                 </div>
               ) : (
@@ -407,7 +393,9 @@ const PhoneNumber = () => {
                       <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-500" />
                       <input
                         value={serviceQuery}
-                        onChange={(event) => setServiceQuery(event.target.value)}
+                        onChange={(event) =>
+                          setServiceQuery(event.target.value)
+                        }
                         placeholder="Find a service"
                         className="h-10 w-full rounded-lg border border-white/10 bg-black/40 pl-9 pr-3 text-sm text-white placeholder:text-gray-600 focus:border-gold-light/50 focus:outline-none focus:ring-1 focus:ring-gold-light/50"
                       />
@@ -459,7 +447,9 @@ const PhoneNumber = () => {
                             {hasPrice && (
                               <span
                                 className={`shrink-0 text-sm font-semibold text-white ${
-                                  isRevealed ? "hidden" : "block group-hover:hidden"
+                                  isRevealed
+                                    ? "hidden"
+                                    : "block group-hover:hidden"
                                 }`}
                               >
                                 {formatCurrency(service.price)}
@@ -496,82 +486,6 @@ const PhoneNumber = () => {
             </div>
           </div>
         </div>
-
-        {/* Purchase result — buying happens inline on each service row's
-            hover-revealed Buy button, this only shows the outcome. */}
-        {purchaseData && (
-          <div className="border-t border-white/10 bg-black/20 p-4 sm:p-5">
-            <div className="mx-auto max-w-md rounded-xl border border-gold-light/20 bg-black/30 p-4">
-              <div className="flex items-center gap-2">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500/15 text-emerald-400">
-                  <CheckCircle2 size={18} />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-white">Number Purchased</h3>
-                  <p className="text-xs text-gray-500">
-                    {purchaseData.status || "Waiting for SMS"}
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-4 space-y-2">
-                <div className="rounded-lg border border-white/10 bg-black/30 p-3">
-                  <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-500">
-                    Phone Number
-                  </p>
-                  <div className="mt-1 flex items-center justify-between gap-3">
-                    <p className="break-all font-mono text-base font-bold text-white">
-                      {purchaseData.phone}
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        void handleCopy(purchaseData.phone, "Phone number copied")
-                      }
-                      className="shrink-0 rounded-lg p-1.5 text-gray-500 transition-colors hover:bg-white/10 hover:text-white"
-                      aria-label="Copy phone number"
-                    >
-                      <Copy size={14} />
-                    </button>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="rounded-lg border border-white/10 bg-black/30 p-3">
-                    <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-500">
-                      Cost
-                    </p>
-                    <p className="mt-1 text-sm font-bold text-white">
-                      {formatCurrency(purchaseData.cost)}
-                    </p>
-                  </div>
-                  <div className="rounded-lg border border-white/10 bg-black/30 p-3">
-                    <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-500">
-                      Country
-                    </p>
-                    <p className="mt-1 truncate text-sm font-medium text-white">
-                      {purchaseData.country}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => navigate("/f/otp-box")}
-                className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-gold-light to-gold-dark py-3 text-sm font-semibold text-white shadow-lg shadow-gold-light/20 transition-transform hover:scale-[1.02] active:scale-95"
-              >
-                Open OTP Box
-              </button>
-              <button
-                type="button"
-                onClick={handleBuyAnother}
-                className="mt-2 w-full rounded-lg py-2 text-xs font-semibold text-gray-500 transition-colors hover:text-white"
-              >
-                Buy another number
-              </button>
-            </div>
-          </div>
-        )}
       </section>
     </div>
   );

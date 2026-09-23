@@ -24,8 +24,12 @@ const refundOtpOrder = async ({
     };
   }
 
-  const updatedOrder = await OtpOrder.findByIdAndUpdate(
-    otpOrder._id,
+  const updatedOrder = await OtpOrder.findOneAndUpdate(
+    {
+      _id: otpOrder._id,
+      userId,
+      status: { $nin: ["OTP_RECEIVED", "COMPLETED", "CANCELLED", "FAILED"] },
+    },
     {
       $set: {
         status,
@@ -39,7 +43,19 @@ const refundOtpOrder = async ({
   );
 
   if (!updatedOrder) {
-    throw new Error("failed to update otp order");
+    const finalizedOrder = await OtpOrder.findById(otpOrder._id).session(
+      session,
+    );
+
+    if (!finalizedOrder) {
+      throw new Error("otp order not found");
+    }
+
+    return {
+      order: finalizedOrder,
+      receipt: null,
+      refundIssued: false,
+    };
   }
 
   const userSaved = await User.findByIdAndUpdate(

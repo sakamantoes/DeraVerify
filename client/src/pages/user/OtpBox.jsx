@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   AlertCircle,
@@ -27,7 +27,7 @@ const TERMINAL_STATUSES = ["OTP_RECEIVED", "COMPLETED", "CANCELLED", "FAILED"];
 const OTP_STEPS = [
   "Buy a number",
   "Link it to the service you're verifying",
-  "Click Get OTP to receive the code",
+  "Wait for the OTP to arrive",
 ];
 
 const OtpBox = () => {
@@ -38,8 +38,12 @@ const OtpBox = () => {
   const [searchInput, setSearchInput] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
-  const [checkingOrderId, setCheckingOrderId] = useState("");
   const [cancellingOrderId, setCancellingOrderId] = useState("");
+  const [now, setNow] = useState(() => Date.now());
+  const ordersRef = useRef([]);
+  const inFlightOrderIdsRef = useRef(new Set());
+
+  ordersRef.current = orders;
 
   const fetchOrders = async () => {
     try {
@@ -82,6 +86,69 @@ const OtpBox = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [statusFilter, searchTerm]);
 
+  useEffect(() => {
+    const pollWaitingOrders = async () => {
+      const waitingOrders = ordersRef.current.filter(
+        (order) => order.status === "WAITING_FOR_SMS",
+      );
+
+      await Promise.all(
+        waitingOrders.map(async (order) => {
+          if (!order._id || inFlightOrderIdsRef.current.has(order._id)) {
+            return;
+          }
+
+          inFlightOrderIdsRef.current.add(order._id);
+
+          try {
+            const response = await checkOtpStatus(order._id);
+            const updatedOrder = response?.data;
+
+            if (!updatedOrder?._id) return;
+
+            setOrders((currentOrders) =>
+              currentOrders.map((currentOrder) =>
+                currentOrder._id === updatedOrder._id
+                  ? updatedOrder
+                  : currentOrder,
+              ),
+            );
+
+            if (updatedOrder.status === "OTP_RECEIVED") {
+              toast.success("OTP received");
+            } else if (
+              updatedOrder.status === "CANCELLED" ||
+              updatedOrder.status === "FAILED"
+            ) {
+              toast.info("OTP order ended and your wallet was refunded");
+            }
+          } catch (err) {
+            console.error("Failed to poll OTP status:", err);
+          } finally {
+            inFlightOrderIdsRef.current.delete(order._id);
+          }
+        }),
+      );
+    };
+
+    const intervalId = window.setInterval(() => {
+      void pollWaitingOrders();
+    }, 5000);
+
+    return () => {
+      window.clearInterval(intervalId);
+      inFlightOrderIdsRef.current.clear();
+    };
+  }, []);
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setNow(Date.now());
+    }, 1000);
+
+    return () => window.clearInterval(intervalId);
+  }, []);
+
   const hasActiveFilter = Boolean(searchTerm || statusFilter !== "ALL");
 
   const clearFilters = () => {
@@ -97,6 +164,20 @@ const OtpBox = () => {
     if (Number.isNaN(date.getTime())) return "N/A";
 
     return date.toLocaleString();
+  };
+
+  const getServiceName = (service) => {
+    const value = String(service || "").trim();
+    if (!value) return "This service";
+
+    const formatted = formatServiceName(value);
+    return formatted === value.toUpperCase() ? value : formatted;
+  };
+
+  const getSecondsLeft = (expiresAt) => {
+    if (!expiresAt) return 0;
+
+    return Math.max(0, Math.ceil((new Date(expiresAt).getTime() - now) / 1000));
   };
 
   const getStatusBadge = (status) => {
@@ -135,36 +216,6 @@ const OtpBox = () => {
     }
   };
 
-  const handleCheckOtp = async (orderId) => {
-    if (!orderId) return;
-
-    try {
-      setCheckingOrderId(orderId);
-
-      const response = await checkOtpStatus(orderId);
-      const updatedOrder = response?.data;
-
-      if (updatedOrder?._id) {
-        setOrders((currentOrders) =>
-          currentOrders.map((order) =>
-            order._id === updatedOrder._id ? updatedOrder : order,
-          ),
-        );
-      }
-
-      if (response?.otpCode || updatedOrder?.otpCode) {
-        toast.success("OTP received");
-      } else {
-        toast.info("OTP is not available yet");
-      }
-    } catch (err) {
-      console.error("Failed to check OTP status:", err);
-      toast.error(err?.response?.data?.message || "Failed to check OTP");
-    } finally {
-      setCheckingOrderId("");
-    }
-  };
-
   const handleCancelOtp = async (order) => {
     if (!order?._id || !order?.activationId) return;
 
@@ -198,9 +249,7 @@ const OtpBox = () => {
   };
 
   const renderActions = (order) => {
-    const isChecking = checkingOrderId === order._id;
     const isCancelling = cancellingOrderId === order._id;
-    const canCheckOtp = !TERMINAL_STATUSES.includes(order.status);
     const canCancelOtp =
       Boolean(order.activationId) && !TERMINAL_STATUSES.includes(order.status);
 
@@ -219,19 +268,12 @@ const OtpBox = () => {
           )}
           Cancel
         </button>
-        <button
-          type="button"
-          onClick={() => void handleCheckOtp(order._id)}
-          disabled={isChecking || !canCheckOtp}
-          className="inline-flex h-9 items-center gap-2 rounded-lg bg-gradient-to-r from-gold-light to-gold-dark px-3 text-xs font-semibold text-white shadow-md transition-transform hover:scale-[1.02] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
-        >
-          {isChecking ? (
+        {order.status === "WAITING_FOR_SMS" ? (
+          <span className="inline-flex h-9 items-center gap-2 px-2 text-xs text-gray-400">
             <Loader2 size={14} className="animate-spin" />
-          ) : (
-            <RefreshCw size={14} />
-          )}
-          {order.otpCode ? "Checked" : "Get OTP"}
-        </button>
+            Polling
+          </span>
+        ) : null}
       </div>
     );
   };
@@ -260,13 +302,11 @@ const OtpBox = () => {
       <section className="overflow-hidden rounded-xl border border-white/10 bg-white/5 shadow-md">
         <div className="flex flex-col gap-4 border-b border-white/10 bg-black/20 px-4 py-4 sm:px-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <h2 className="text-sm font-semibold text-white">
-              OTP Orders
-            </h2>
+            <h2 className="text-sm font-semibold text-white">OTP Orders</h2>
             <p className="mt-1 text-xs text-gray-500">
               {orders.length} result
-              {orders.length === 1 ? "" : "s"} — search by phone,
-              service, country, or activation ID.
+              {orders.length === 1 ? "" : "s"} — search by phone, service,
+              country, or activation ID.
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -336,196 +376,103 @@ const OtpBox = () => {
             />
           )
         ) : (
-          <>
-            {/* Desktop table */}
-            <div className="hidden overflow-x-auto lg:block">
-              <table className="w-full">
-                <thead className="border-b border-white/10 bg-black/20">
-                  <tr>
-                    {[
-                      "Number",
-                      "Service",
-                      "Amount",
-                      "OTP",
-                      "Status",
-                      "Date",
-                      "Expires At",
-                      "Action",
-                    ].map((heading) => (
-                      <th
-                        key={heading}
-                        className="px-4 py-3 text-left text-xs font-medium text-gray-500"
-                      >
-                        {heading}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/10">
-                  {orders.map((order) => {
-                    const statusBadge = getStatusBadge(order.status);
-                    const StatusIcon = statusBadge.icon;
+          <div className="grid gap-5 p-4 sm:p-6 md:grid-cols-2 xl:grid-cols-3">
+            {orders.map((order) => {
+              const statusBadge = getStatusBadge(order.status);
+              const StatusIcon = statusBadge.icon;
+              const serviceName = getServiceName(order.service);
+              const secondsLeft = getSecondsLeft(order.expiresAt);
+              const minutesLeft = Math.floor(secondsLeft / 60);
+              const secondsLabel = String(secondsLeft % 60).padStart(2, "0");
 
-                    return (
-                      <tr
-                        key={order._id}
-                        className="transition-colors hover:bg-white/5"
-                      >
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-2">
-                            <div>
-                              <p className="font-mono text-sm font-medium text-white">
-                                {order.phoneNumber || "N/A"}
-                              </p>
-                              <p className="text-xs text-gray-500">
-                                {order.activationId || "No activation ID"}
-                              </p>
-                            </div>
-                            {order.phoneNumber ? (
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  void handleCopy(order.phoneNumber, "Phone")
-                                }
-                                className="rounded-lg p-1.5 text-gray-500 transition-colors hover:bg-white/10 hover:text-white"
-                                aria-label="Copy phone number"
-                              >
-                                <Copy size={14} />
-                              </button>
-                            ) : null}
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 text-sm text-gray-300">
-                          <p className="font-medium text-white">
-                            {String(
-                              formatServiceName(order.service) || "N/A",
-                            ).toUpperCase()}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            Country {order.country || "N/A"}
-                          </p>
-                        </td>
-                        <td className="px-4 py-3 text-sm font-semibold text-emerald-400">
-                          {formatCurrency(order.sellingPrice)}
-                        </td>
-                        <td className="px-4 py-3">
-                          <p className="font-mono text-sm font-semibold text-white">
-                            {order.otpCode || "Waiting"}
-                          </p>
-                          <p className="mt-1 max-w-xs truncate text-xs text-gray-500">
-                            {order.otpMessage || "No message yet"}
-                          </p>
-                        </td>
-                        <td className="px-4 py-3">
-                          <span
-                            className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium ${statusBadge.className}`}
-                          >
-                            <StatusIcon size={12} />
-                            {statusBadge.label}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-sm text-gray-400">
-                          {formatDate(order.purchasedAt || order.createdAt)}
-                        </td>
-                        <td className="px-4 py-3 text-sm text-gray-400">
-                          {formatDate(order.expiresAt)}
-                        </td>
-                        <td className="px-4 py-3">{renderActions(order)}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Mobile cards */}
-            <div className="grid gap-3 p-4 lg:hidden">
-              {orders.map((order) => {
-                const statusBadge = getStatusBadge(order.status);
-                const StatusIcon = statusBadge.icon;
-
-                return (
-                  <article
-                    key={order._id}
-                    className="rounded-xl border border-white/10 bg-black/20 p-4"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-1.5">
-                          <p className="truncate font-mono text-sm font-semibold text-white">
-                            {order.phoneNumber || "N/A"}
-                          </p>
-                          {order.phoneNumber ? (
-                            <button
-                              type="button"
-                              onClick={() =>
-                                void handleCopy(order.phoneNumber, "Phone")
-                              }
-                              className="shrink-0 rounded-lg p-1 text-gray-500 transition-colors hover:bg-white/10 hover:text-white"
-                              aria-label="Copy phone number"
-                            >
-                              <Copy size={13} />
-                            </button>
-                          ) : null}
-                        </div>
-                        <p className="mt-0.5 text-xs text-gray-500">
-                          {order.activationId || "No activation ID"}
-                        </p>
-                      </div>
-                      <span
-                        className={`inline-flex shrink-0 items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium ${statusBadge.className}`}
-                      >
-                        <StatusIcon size={12} />
-                        {statusBadge.label}
+              return (
+                <article
+                  key={order._id}
+                  className="min-h-[430px] rounded-2xl border border-gold-light/20 bg-black/30 p-5 shadow-lg shadow-black/20"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-3 py-1 text-[10px] font-medium text-emerald-300">
+                        <CheckCircle2 size={12} />
+                        Number ready
                       </span>
-                    </div>
-
-                    <div className="mt-3 grid grid-cols-2 gap-2 text-sm text-gray-400">
-                      <p className="flex flex-col">
-                        <span className="text-xs text-gray-500">Service</span>
-                        <span className="font-medium text-white">
-                          {String(
-                            formatServiceName(order.service) || "N/A",
-                          ).toUpperCase()}
-                        </span>
-                      </p>
-                      <p className="flex flex-col">
-                        <span className="text-xs text-gray-500">Country</span>
-                        <span className="font-medium text-white">
-                          {order.country || "N/A"}
-                        </span>
-                      </p>
-                      <p className="flex flex-col">
-                        <span className="text-xs text-gray-500">Amount</span>
-                        <span className="font-semibold text-emerald-400">
-                          {formatCurrency(order.sellingPrice)}
-                        </span>
-                      </p>
-                      <p className="flex flex-col">
-                        <span className="text-xs text-gray-500">OTP</span>
-                        <span className="font-mono font-semibold text-white">
-                          {order.otpCode || "Waiting"}
-                        </span>
+                      <p className="mt-1 text-[11px] text-gray-500">
+                        {serviceName} · {formatCurrency(order.sellingPrice)}
                       </p>
                     </div>
+                    <span
+                      className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[10px] font-medium ${statusBadge.className}`}
+                    >
+                      <StatusIcon size={12} />
+                      {statusBadge.label}
+                    </span>
+                  </div>
 
-                    {order.otpMessage ? (
-                      <p className="mt-2 truncate text-xs text-gray-500">
-                        {order.otpMessage}
-                      </p>
+                  <div className="mt-5 rounded-xl border border-gold-light/10 bg-black/30 px-3 py-5 text-center">
+                    <p className="break-all font-mono text-lg font-bold tracking-wide text-white">
+                      {order.phoneNumber || "N/A"}
+                    </p>
+                    {order.phoneNumber ? (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          void handleCopy(order.phoneNumber, "Phone")
+                        }
+                        className="mt-2 inline-flex items-center gap-1 text-[10px] text-gold-light transition-colors hover:text-white"
+                      >
+                        <Copy size={11} />
+                        Tap to copy
+                      </button>
                     ) : null}
+                  </div>
 
-                    <div className="mt-3 flex items-center justify-between gap-3 border-t border-white/10 pt-3 text-xs text-gray-500">
-                      <span>{formatDate(order.purchasedAt || order.createdAt)}</span>
-                      <span>Expires {formatDate(order.expiresAt)}</span>
+                  <div className="mt-4 flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+                    <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-gold-light shadow-[0_0_12px_rgba(241,194,88,0.8)]" />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium text-white">
+                        {order.otpCode
+                          ? "OTP received"
+                          : "Waiting for your SMS..."}
+                      </p>
+                      <p className="mt-1 text-[11px] leading-relaxed text-gray-500">
+                        {order.otpMessage ||
+                          "Codes usually arrive within a minute. It shows up here automatically."}
+                      </p>
                     </div>
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-gold-light text-[10px] font-semibold text-white">
+                      {order.status === "WAITING_FOR_SMS" ? (
+                        `${minutesLeft}:${secondsLabel}`
+                      ) : (
+                        <span className="font-mono text-xs">
+                          {order.otpCode || "--"}
+                        </span>
+                      )}
+                    </div>
+                  </div>
 
-                    <div className="mt-3">{renderActions(order)}</div>
-                  </article>
-                );
-              })}
-            </div>
-          </>
+                  <div className="mt-4 rounded-xl bg-amber-500/15 p-4 text-[11px] text-gray-300">
+                    <p className="font-semibold text-gold-light">
+                      Always do this before getting a new number
+                    </p>
+                    <ul className="mt-2 list-disc space-y-1 pl-4">
+                      <li>Delete and reinstall your {serviceName} app</li>
+                      <li>Use normal {serviceName} app</li>
+                    </ul>
+                    <p className="mt-2 font-medium text-white">
+                      Most especially, make use of a VPN.
+                    </p>
+                  </div>
+
+                  <div className="mt-4 flex items-center justify-between gap-3 text-[10px] text-gray-500">
+                    <span>{order.country || "Unknown country"}</span>
+                    <span>Expires {formatDate(order.expiresAt)}</span>
+                  </div>
+
+                  <div className="mt-4">{renderActions(order)}</div>
+                </article>
+              );
+            })}
+          </div>
         )}
       </section>
     </div>

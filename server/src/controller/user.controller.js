@@ -12,7 +12,7 @@ import { cancelNumberServices } from "../services/number/cancelNumber.js";
 import { buyNumberOption } from "../services/number/buyNumber.js";
 import { requestUserOtp } from "../services/number/checkNumber.js";
 import refundOtpOrder from "../services/number/refundOtpOrder.js";
-import { isPast, differenceInSeconds } from "date-fns";
+import { isPast } from "date-fns";
 
 const getUserWalletBalance = async (req, res, next) => {
   const user = req.user;
@@ -192,10 +192,21 @@ const getUserOtpOrders = async (req, res, next) => {
       throw new Error("User not found");
     }
 
-    const query = { userId: userExist._id };
+    const visibleStatuses = [
+      "PENDING",
+      "WAITING_FOR_SMS",
+      "OTP_RECEIVED",
+      "COMPLETED",
+    ];
+    const query = {
+      userId: userExist._id,
+      status: { $in: visibleStatuses },
+    };
 
     if (status && status !== "ALL") {
-      query.status = status;
+      query.status = visibleStatuses.includes(status)
+        ? status
+        : "__HIDDEN_STATUS__";
     }
 
     if (search && search.trim()) {
@@ -227,7 +238,6 @@ const getUserOtpOrders = async (req, res, next) => {
 const checkUserOtpOrderStatus = async (req, res, next) => {
   const user = req.user;
   const { orderId } = req.params;
-  const now = new Date();
   const session = await mongoose.startSession();
 
   try {
@@ -294,23 +304,43 @@ const checkUserOtpOrderStatus = async (req, res, next) => {
       });
     }
 
+    if (
+      otpOrder.expiresAt &&
+      isPast(new Date(otpOrder.expiresAt)) &&
+      nextStatus === "WAITING_FOR_SMS"
+    ) {
+      try {
+        await cancelNumberServices(otpOrder);
+      } catch (cancelError) {
+        console.error("Failed to cancel expired OTP provider order:", cancelError);
+      }
+
+      await session.withTransaction(async () => {
+        await refundOtpOrder({
+          order: otpOrder,
+          userId: user._id,
+          reason: "OTP session expired without receiving an OTP",
+          status: "CANCELLED",
+          session,
+        });
+      });
+
+      return res.status(200).json({
+        success: true,
+        status: 200,
+        message: "OTP session expired and wallet refunded",
+        otpCode: otpOrder.otpCode,
+        otpMessage: otpOrder.otpMessage,
+        data: await OtpOrder.findById(orderId).session(session),
+      });
+    }
+
     if (otpOrder.expiresAt) {
       const expiresAt = new Date(otpOrder.expiresAt);
 
       if (isPast(expiresAt)) {
         res.statusCode = 400;
-        throw new Error(
-          "otp session expired, click the cancel button to get a refund",
-        );
-      }
-
-      const secondsLeft = differenceInSeconds(expiresAt, now);
-
-      if (secondsLeft <= 30) {
-        res.statusCode = 400;
-        throw new Error(
-          "otp session expiring soon, click the cancel button to get a refund",
-        );
+        throw new Error("otp session expired");
       }
     }
 
