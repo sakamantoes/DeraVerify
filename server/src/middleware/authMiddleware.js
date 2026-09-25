@@ -20,18 +20,22 @@ const authMiddleware = async (req, res, next) => {
     // Verify token
     const decoded = verifyToken(token);
 
-    // if a user of our platform
-    const findUser = await User.findOne({
-      email: decoded.email,
-    }).select("-password");
+    // // if a user of our platform
+    // const findUser = await User.findOne({
+    //   email: decoded.email,
+    // }).select("-password");
 
-    if (!findUser) {
-      res.statusCode = 401;
-      throw new Error("unauthorize");
-    }
+    // if (!findUser) {
+    //   res.statusCode = 401;
+    //   throw new Error("unauthorize");
+    // }
 
     // Attach user info to request
-    req.user = findUser;
+    req.user = {
+      _id: decoded.id,
+      email: decoded.email,
+      role: decoded.role
+    };
     next();
   } catch (error) {
     next(error);
