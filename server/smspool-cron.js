@@ -6,6 +6,8 @@ import { env } from "./src/config/constant.js";
 import { provider2CountryServices } from "./src/utils/serviceCode.js";
 
 const REQUEST_TIMEOUT_MS = 15000;
+const BULK_WRITE_CHUNK_SIZE = 500;
+let isRunning = false;
 
 const serviceCountryMap = new Map(
   provider2CountryServices.map((it) => [
@@ -15,17 +17,20 @@ const serviceCountryMap = new Map(
 );
 
 const SMSPOOLCRON = async () => {
+  if (isRunning) {
+    console.log("SMSPOOL cron job is already running");
+    return { skipped: true, reason: "already_running" };
+  }
+
+  isRunning = true;
   console.log("starting up SMSPOOL-CRON-JOB");
   const data = { max_price: 10, key: env.sms_pool_api_key };
   try {
-    console.log("connecting to mongoDb.....");
-    await mongoose.connect(env.mongodb_url);
-    console.log("MongoDB connected successfully");
-
-    await AvailableService.updateMany(
-      { provider: "smspool" },
-      { $set: { availability: false } },
-    );
+    if (mongoose.connection.readyState !== 1) {
+      console.log("connecting to mongoDb.....");
+      await mongoose.connect(env.mongodb_url);
+      console.log("MongoDB connected successfully");
+    }
 
     const response = await axios.post(
       "https://api.smspool.net/request/pricing",
@@ -38,58 +43,77 @@ const SMSPOOLCRON = async () => {
       return [];
     }
 
-    const arr = response.data
-      .map((item) => {
-        if (!item.service_name || !item.country_name) return;
+    await AvailableService.updateMany(
+      { provider: "smspool" },
+      { $set: { availability: false } },
+    );
 
-        const service_name = serviceCountryMap.get(
-          `${item.service_name.toLowerCase()}|${item.country_name.toLowerCase()}`,
-        );
+    let preparedCount = 0;
+    let operations = [];
+    const fetchedAt = new Date();
 
-        if (!service_name) return;
+    const flushOperations = async () => {
+      if (operations.length === 0) return;
+      const chunk = operations;
+      operations = [];
+      await AvailableService.bulkWrite(chunk, { ordered: false });
+    };
 
-        return {
-          updateOne: {
-            filter: {
-              providerCountry: item.country,
-              providerService: item.service,
-              providerId: String(item.pool),
-              provider: "smspool",
-            },
-            update: {
-              $set: {
-                internalService:
-                  service_name.service === "TikTok/Douyin"
-                    ? "TikTok"
-                    : service_name.service,
-                internalCountry: service_name.country,
-                providerPrice: item.price,
-                availability: true,
-                lastFetchedAt: new Date(),
-              },
-            },
-            upsert: true,
+    for (const item of response.data) {
+      if (!item.service_name || !item.country_name) continue;
+
+      const service_name = serviceCountryMap.get(
+        `${item.service_name.toLowerCase()}|${item.country_name.toLowerCase()}`,
+      );
+
+      if (!service_name) continue;
+
+      operations.push({
+        updateOne: {
+          filter: {
+            providerCountry: item.country,
+            providerService: item.service,
+            providerId: String(item.pool),
+            provider: "smspool",
           },
-        };
-      })
-      .filter(Boolean);
+          update: {
+            $set: {
+              internalService:
+                service_name.service === "TikTok/Douyin"
+                  ? "TikTok"
+                  : service_name.service,
+              internalCountry: service_name.country,
+              providerPrice: item.price,
+              availability: true,
+              lastFetchedAt: fetchedAt,
+            },
+          },
+          upsert: true,
+        },
+      });
+      preparedCount++;
 
-    if (arr.length === 0) {
+      if (operations.length >= BULK_WRITE_CHUNK_SIZE) {
+        await flushOperations();
+      }
+    }
+
+    await flushOperations();
+
+    if (preparedCount === 0) {
       console.log("SMSPOOL: no valid operations to write");
       return [];
     }
-    let chunkSize = 500;
-
-    for (let index = 0; index < arr.length; chunkSize++) {
-      const element = arr.slice(index, index + chunkSize);
-      await AvailableService.bulkWrite(element);
-    }
     console.log("data saved successfully");
     console.log(
-      `smspool cron job ran successfully and Prepared ${arr.length} operations`,
+      `smspool cron job ran successfully and Prepared ${preparedCount} operations`,
     );
+    return { preparedCount };
   } catch (error) {
     console.log("smspool CRON JOB ERROR: ", error.message);
+    return { error: error.message };
+  } finally {
+    isRunning = false;
   }
 };
 
