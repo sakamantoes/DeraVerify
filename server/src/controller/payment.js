@@ -330,7 +330,7 @@ const initializeQuestPayment = async (req, res, next) => {
     };
 
     const response = await axios.post(
-      "https://payments-server.questlabs.cc/api/v1/checkout/initialize",
+      "https://payments-api.questlabs.cc/api/v1/checkout/initialize",
       data,
       {
         headers: {
