@@ -47,6 +47,11 @@ export const getSmsPoolBalance = async () => {
   return res.data;
 };
 
+export const getDaislyBalance = async () => {
+  const res = await api.get("/api/admin/daisy/balance");
+  return res.data;
+};
+
 export const getPlatformServiceNames = async () => {
   const res = await api.get("/api/admin/all/platform/service-name");
 

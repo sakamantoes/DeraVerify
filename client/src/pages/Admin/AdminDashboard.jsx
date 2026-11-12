@@ -21,7 +21,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { getAllUsers } from "../../service/auth";
-import { getPlatformDeposits, getSmsPoolBalance } from "../../service/admin";
+import { getPlatformDeposits, getSmsPoolBalance, getDaislyBalance } from "../../service/admin";
 import { getSmsBowerBalance } from "../../service/number";
 import useActiveOtp from "../../hooks/useActiveOtp.js";
 import { getRecentSystemNotifications } from "../../service/notificationApi";
@@ -87,6 +87,7 @@ export default function AdminDashboard() {
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [smsBowerBalance, setSmsBowerBalance] = useState(0);
   const [smsPoolBalance, setSmsPoolBalance] = useState(0);
+  const [daisyBalance, setDaisyBalance] = useState(0);
   const [loadingBalances, setLoadingBalances] = useState(true);
   const [recentNotifications, setRecentNotifications] = useState([]);
   const [loadingNotifications, setLoadingNotifications] = useState(true);
@@ -191,17 +192,20 @@ export default function AdminDashboard() {
   const fetchProviderBalances = async () => {
     try {
       setLoadingBalances(true);
-      const [bowerResponse, poolResponse] = await Promise.all([
+      const [bowerResponse, poolResponse, daisyResponse] = await Promise.all([
         getSmsBowerBalance(),
         getSmsPoolBalance(),
+        getDaislyBalance(),
       ]);
 
       setSmsBowerBalance(parseBalanceValue(bowerResponse));
       setSmsPoolBalance(parseBalanceValue(poolResponse));
+      setDaisyBalance(parseBalanceValue(daisyResponse));
     } catch (error) {
       console.error("Error fetching provider balances:", error);
       setSmsBowerBalance(0);
       setSmsPoolBalance(0);
+      setDaisyBalance(0);
     } finally {
       setLoadingBalances(false);
     }
@@ -299,10 +303,11 @@ export default function AdminDashboard() {
               <p className="text-xs sm:text-sm font-semibold uppercase tracking-widest text-gold-light">
                 SMS provider wallet health
               </p>
-              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <div className="mt-4 grid gap-3 sm:grid-cols-3">
                 {[
                   ["SMSBower", smsBowerBalance],
                   ["SMSPool", smsPoolBalance],
+                  ["DaisySMS", daisyBalance],
                 ].map(([label, balance]) => (
                   <div
                     key={label}

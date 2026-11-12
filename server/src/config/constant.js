@@ -10,6 +10,7 @@ export const env = {
   nodeApiKey: process.env.NODEOTP_API_KEY,
   // squad_api_key: process.env.SQUAD_API_KEY,
   // squad_api_secret: process.env.SQUAD_API_SECRET,
+  daisy_api_key: process.env.DAISY_API_KEY,
   smsBowerApiKey: process.env.SMSBOWER_API_KEY,
   smsBowerBaseUrl: process.env.SMSBOWER_BASE_URL,
   sms_bower_api_key: process.env.SMS_BOWER_API_KEY,

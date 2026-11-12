@@ -383,6 +383,7 @@ const getServicesAvailableName = async (req, res, next) => {
     // A country/service only counts here if the admin has both activated
     // AND made it visible — same two-flag rule as getPlatformServices.
     const servicesName = await AvailableService.aggregate([
+      { $match: { provider: { $ne: "smsbower" } } },
       {
         $group: {
           _id: "$internalCountry",
@@ -473,6 +474,7 @@ const getPlatformServices = async (req, res, next) => {
     const query = {
       active: true,
       isVisible: true,
+      provider: { $ne: "smsbower" },
     };
     const normalizedService = String(service).trim();
     const normalizedSearch = String(search).trim();
@@ -513,9 +515,14 @@ const getPlatformServices = async (req, res, next) => {
             ? {
                 active: true,
                 isVisible: true,
+                provider: { $ne: "smsbower" },
                 internalCountry: normalizedCountry,
               }
-            : { active: true, isVisible: true },
+            : {
+                active: true,
+                isVisible: true,
+                provider: { $ne: "smsbower" },
+              },
         },
         {
           $group: {
@@ -615,6 +622,7 @@ const buyNumberService = async (req, res, next) => {
       internalCountry: country,
       isVisible: true,
       active: true,
+      provider: { $ne: "smsbower" },
     });
 
     if (!selectedService) {
@@ -630,6 +638,7 @@ const buyNumberService = async (req, res, next) => {
     const activeServices = await AvailableService.find({
       internalService: service,
       internalCountry: country,
+      provider: { $ne: "smsbower" },
       providerPrice: {
         $lte: maxAllowedProviderPrice,
       },

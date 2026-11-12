@@ -7,6 +7,8 @@ import AvailableService from "../model/ServicesAvailable.js";
 import calculateSellingPrice from "../utils/calculateSellingPrice.js";
 import PricingSetting from "../model/PriceSetting.js";
 import smspool_api from "../utils/smspool.js";
+import axios from "axios";
+import { env } from "../config/constant.js";
 
 const getPlatformDeposits = async (req, res, next) => {
   try {
@@ -255,7 +257,7 @@ const getAdminServices = async (req, res, next) => {
 
     // No `active: true` here — admin manages the catalog, so listings the
     // admin has deactivated must still be visible (and filterable).
-    const query = {};
+    const query = { provider: { $ne: "smsbower" } };
     const normalizedService = String(service).trim();
     const normalizedSearch = String(search).trim();
     const normalizedCountry = String(country).trim();
@@ -289,8 +291,11 @@ const getAdminServices = async (req, res, next) => {
       AvailableService.aggregate([
         {
           $match: normalizedCountry
-            ? { internalCountry: normalizedCountry }
-            : {},
+            ? {
+                provider: { $ne: "smsbower" },
+                internalCountry: normalizedCountry,
+              }
+            : { provider: { $ne: "smsbower" } },
         },
         {
           $group: {
@@ -367,7 +372,7 @@ const getAdminServiceGroups = async (req, res, next) => {
       throw new Error("error fetching price");
     }
 
-    const match = {};
+    const match = { provider: { $ne: "smsbower" } };
     const normalizedService = String(service).trim();
     const normalizedSearch = String(search).trim();
 
@@ -483,6 +488,7 @@ const getServicesAvailableName = async (req, res, next) => {
     // `active` — admin sees every country and every service regardless
     // of activation status.
     const servicesName = await AvailableService.aggregate([
+      { $match: { provider: { $ne: "smsbower" } } },
       {
         $group: {
           _id: "$internalService",
@@ -698,6 +704,35 @@ const getSmsPoolBalance = async (req, res, next) => {
   }
 };
 
+const getDaislyBqalance = async (req, res, next) => {
+  try {
+    const response = await axios.get(
+      "https://daisysms.io/stubs/handler_api.php",
+      { params: { api_key: env.daisy_api_key, action: "getBalance" } },
+    );
+    const responseBody = response.data;
+    const balance =
+      responseBody?.ACCESS_BALANCE ??
+      (typeof responseBody === "string"
+        ? responseBody.match(/^ACCESS_BALANCE:(.+)$/)?.[1]
+        : undefined);
+
+    if (balance === undefined || balance === null || balance === "") {
+      res.statusCode = 502;
+      throw new Error("Error fetching Daisy balance");
+    }
+
+    return res.status(200).json({
+      status: 200,
+      success: true,
+      message: "Fetched Daisy balance successfully",
+      data: { balance: Number(balance), currency: "USD" },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export {
   getPlatformDeposits,
   updateDepositsStatus,
@@ -711,4 +746,5 @@ export {
   updateServiceCustomPrice,
   updateServiceVisibility,
   getSmsPoolBalance,
+  getDaislyBqalance,
 };

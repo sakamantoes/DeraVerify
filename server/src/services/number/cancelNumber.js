@@ -80,6 +80,34 @@ export const cancelNumberServices = async (payload) => {
       console.log("cancelling smspool: ", normalized);
       return normalized;
     }
+    case "daisy": {
+      try {
+        const response = await axios.get(
+          "https://daisysms.io/stubs/handler_api.php",
+          {
+            params: {
+              api_key: env.daisy_api_key,
+              action: "setStatus",
+              id: payload.activationId,
+              status: 8,
+            },
+          },
+        );
+        console.log("[cancelNumber.js][DaisySMS] setStatus response", {
+          activationId: payload.activationId,
+          response: response.data,
+        });
+        return normalizeCancelResult("daisy", response.data);
+      } catch (error) {
+        console.error("[cancelNumber.js][DaisySMS] setStatus request failed", {
+          activationId: payload.activationId,
+          message: error.message,
+          httpStatus: error.response?.status,
+          providerResponse: error.response?.data,
+        });
+        throw error;
+      }
+    }
     default:
       return {
         success: false,

@@ -14,7 +14,7 @@ const AvailableServiceSchema = new mongoose.Schema(
     },
     provider: {
       type: String,
-      enum: ["smspool", "smsbower"],
+      enum: ["smspool", "smsbower", "daisy"],
       required: true,
       index: true,
     },
@@ -40,6 +40,11 @@ const AvailableServiceSchema = new mongoose.Schema(
 
     stock: {
       type: Number,
+    },
+
+    canGetAnotherSms: {
+      type: Boolean,
+      default: false,
     },
 
     active: {

@@ -12,6 +12,7 @@ import {
   updateServiceCustomPrice,
   updateServiceVisibility,
   getSmsPoolBalance,
+  getDaislyBqalance,
 } from "../controller/admin.controller.js";
 import authMiddleware, {
   validateAdminRole,
@@ -108,6 +109,13 @@ router.get(
   authMiddleware,
   validateAdminRole,
   getSmsPoolBalance,
+);
+
+router.get(
+  "/daisy/balance",
+  authMiddleware,
+  validateAdminRole,
+  getDaislyBqalance,
 );
 
 router.put('/:id/wallet', authMiddleware, validateAdminRole, editUserWallet)

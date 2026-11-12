@@ -106,6 +106,76 @@ export const requestUserOtp = async (payload) => {
       return normalizeSmsPoolStatus(response.data);
     }
 
+    case "daisy": {
+      try {
+        const response = await axios.get(
+          "https://daisysms.io/stubs/handler_api.php",
+          {
+            params: {
+              api_key: env.daisy_api_key,
+              action: "getStatus",
+              id: payload.activationId,
+              text: 1,
+            },
+          },
+        );
+        const raw = String(response.data || "").trim();
+        const codeMatch = raw.match(/^STATUS_OK:(.+)$/);
+        console.log("[checkNumber.js][DaisySMS] getStatus response", {
+          activationId: payload.activationId,
+          response: codeMatch ? "STATUS_OK:<code omitted>" : raw,
+          hasMessageText: Boolean(response.headers?.["x-text"]),
+        });
+        let status = "WAITING_FOR_SMS";
+        if (codeMatch) status = "OTP_RECEIVED";
+        else if (raw === "STATUS_CANCEL") status = "CANCELLED";
+        else if (raw === "NO_ACTIVATION") status = "FAILED";
+
+        if (codeMatch && !payload.canGetAnotherSms) {
+          try {
+            const completionResponse = await axios.get(
+              "https://daisysms.io/stubs/handler_api.php",
+              {
+                params: {
+                  api_key: env.daisy_api_key,
+                  action: "setStatus",
+                  id: payload.activationId,
+                  status: 6,
+                },
+              },
+            );
+            console.log("[checkNumber.js][DaisySMS] setStatus response", {
+              activationId: payload.activationId,
+              response: completionResponse.data,
+            });
+          } catch (error) {
+            console.error("[checkNumber.js][DaisySMS] setStatus request failed", {
+              activationId: payload.activationId,
+              message: error.message,
+              httpStatus: error.response?.status,
+              providerResponse: error.response?.data,
+            });
+          }
+        }
+
+        return {
+          provider: "daisy",
+          status,
+          otpCode: codeMatch?.[1] || null,
+          otpMessage: response.headers?.["x-text"] || raw,
+          raw: response.data,
+        };
+      } catch (error) {
+        console.error("[checkNumber.js][DaisySMS] getStatus request failed", {
+          activationId: payload.activationId,
+          message: error.message,
+          httpStatus: error.response?.status,
+          providerResponse: error.response?.data,
+        });
+        throw error;
+      }
+    }
+
     default:
       throw new Error("invalid provider");
   }

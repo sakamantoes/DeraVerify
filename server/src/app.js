@@ -14,6 +14,7 @@ import cookieParser from "cookie-parser";
 import CronJob from "../cron-job.js";
 import compression from "compression";
 import SMSPOOLCRON from "../smspool-cron.js";
+import DaisyCron from "../daisy-cron.js";
 
 const app = express();
 
@@ -55,6 +56,11 @@ app.get("/cron-jobs", (req, res) => {
 app.get("/smspool", (req, res) => {
   SMSPOOLCRON();
   res.status(200).send("SMSPOOL Cron Job Ran");
+});
+
+app.get("/daisy", async (req, res) => {
+  const result = await DaisyCron();
+   res.status(200).json({ success: true});
 });
 
 // database connection

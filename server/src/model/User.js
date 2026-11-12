@@ -22,13 +22,14 @@ const userSchema = new mongoose.Schema(
       enum: ["admin", "user"],
       default: "user",
     },
-    walletBalance: {
-      type: Number,
-      default: 0,
+    gender: {
+      type: String,
     },
-    isActive: {
-      type: Boolean,
-      default: true,
+    bloodGroup: {
+      type: String,
+    },
+    diseases: {
+      type: Array,
     },
     resetPasswordToken: String,
     resetPasswordTokenExpires: Date,

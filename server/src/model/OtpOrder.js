@@ -10,7 +10,7 @@ const otpOrderSchema = new mongoose.Schema(
 
     provider: {
       type: String,
-      enum: [ "smspool", "smsbower"],
+      enum: ["smspool", "smsbower", "daisy"],
       required: true,
     },
 
