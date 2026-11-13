@@ -78,8 +78,9 @@ export const buyNumberOption = async (payload) => {
           activationId: match[1],
           service: payload.providerService,
           country: payload.providerCountry,
-          response: "ACCESS_NUMBER:<activationId>:<phone number omitted>",
+          response: match[2] || "empty response",
         });
+
         return {
           provider: "daisy",
           activationId: match[1],

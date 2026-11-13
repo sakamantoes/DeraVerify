@@ -95,7 +95,7 @@ const DaisyCron = async () => {
     if (!env.daisy_api_key) throw new Error("DAISY_API_KEY is not configured");
 
     if (mongoose.connection.readyState !== 1) {
-      await mongoose.connect(env.mongodb_url);
+      await mongoose.connect(env.mongodb_url, { retryWrites: false });
     }
 
     const response = await axios.get(
