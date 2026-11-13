@@ -53,13 +53,9 @@ app.get("/cron-jobs", (req, res) => {
   res.status(200).send("SMSBOWER Cron Job Ran");
 });
 
-app.get("/smspool", (req, res) => {
-  SMSPOOLCRON();
-  res.status(200).send("SMSPOOL Cron Job Ran");
-});
-
-app.get("/daisy", async (req, res) => {
-  const result = await DaisyCron();
+app.get("/smspool", async (req, res) => {
+   await DaisyCron();
+  await  SMSPOOLCRON();
    res.status(200).json({ success: true});
 });
 
