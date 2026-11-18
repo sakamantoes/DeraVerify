@@ -257,7 +257,7 @@ const getAdminServices = async (req, res, next) => {
 
     // No `active: true` here — admin manages the catalog, so listings the
     // admin has deactivated must still be visible (and filterable).
-    const query = { provider: { $ne: "smsbower" } };
+    const query = {};
     const normalizedService = String(service).trim();
     const normalizedSearch = String(search).trim();
     const normalizedCountry = String(country).trim();
@@ -289,14 +289,9 @@ const getAdminServices = async (req, res, next) => {
       // Service dropdown summary — scoped to the selected country (if any),
       // but never to `active`, mirroring getAdminServices' own query.
       AvailableService.aggregate([
-        {
-          $match: normalizedCountry
-            ? {
-                provider: { $ne: "smsbower" },
-                internalCountry: normalizedCountry,
-              }
-            : { provider: { $ne: "smsbower" } },
-        },
+        ...(normalizedCountry
+          ? [{ $match: { internalCountry: normalizedCountry } }]
+          : []),
         {
           $group: {
             _id: "$internalService",
@@ -372,7 +367,7 @@ const getAdminServiceGroups = async (req, res, next) => {
       throw new Error("error fetching price");
     }
 
-    const match = { provider: { $ne: "smsbower" } };
+    const match = {};
     const normalizedService = String(service).trim();
     const normalizedSearch = String(search).trim();
 
@@ -488,7 +483,6 @@ const getServicesAvailableName = async (req, res, next) => {
     // `active` — admin sees every country and every service regardless
     // of activation status.
     const servicesName = await AvailableService.aggregate([
-      { $match: { provider: { $ne: "smsbower" } } },
       {
         $group: {
           _id: "$internalService",

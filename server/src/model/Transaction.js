@@ -14,7 +14,7 @@ const transactionSchema = new mongoose.Schema(
       required: true,
     },
 
-    provider: { type: String, enum: ["nodeotp", "smsactivate"] },
+    provider: { type: String, enum: ["smspool", "smsbower", "daisy"] },
 
     amount: { type: Number, required: true },
 
