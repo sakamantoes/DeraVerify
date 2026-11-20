@@ -48,14 +48,14 @@ export default function CtexPayment({ amount, onBack }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 py-6 backdrop-blur-sm overflow-y-auto">
-      <div className="w-full max-w-lg overflow-hidden rounded-2xl border border-red-light/20 bg-[#111] shadow-2xl">
+      <div className="w-full max-w-lg overflow-hidden rounded-2xl border border-gold-light/10 bg-panel shadow-2xl">
         <div className="flex items-start justify-between border-b border-white/10 px-5 py-4">
           <div className="flex items-start gap-3">
             <button
               type="button"
               onClick={onBack}
               aria-label="Go back"
-              className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/10 text-gray-400 transition-colors hover:border-red-light/40 hover:text-white"
+              className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/10 text-gray-400 transition-colors hover:border-gold-light/30 hover:text-white"
             >
               <ArrowLeft size={18} />
             </button>
@@ -71,8 +71,8 @@ export default function CtexPayment({ amount, onBack }) {
         </div>
 
         <div className="space-y-5 p-5">
-          <div className="flex items-center gap-3 rounded-xl border border-red-light/60 bg-red-light/10 p-4">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-red-light text-white">
+          <div className="flex items-center gap-3 rounded-xl border border-gold-light/40 bg-gold-light/10 p-4">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-gold-light to-gold-dark text-white">
               <Landmark size={20} />
             </span>
             <span className="min-w-0 flex-1">
@@ -89,7 +89,7 @@ export default function CtexPayment({ amount, onBack }) {
             type="button"
             onClick={handlePay}
             disabled={loading || !Number(amount)}
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-red-dark px-4 text-sm font-bold text-white transition-colors hover:bg-red disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-gray-500"
+            className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-gold-light to-gold-dark px-4 text-sm font-bold text-white transition-colors hover:brightness-110 disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-gray-500"
           >
             {loading ? "Starting payment..." : "Continue to payment"}
             {!loading && <ArrowRight size={17} />}

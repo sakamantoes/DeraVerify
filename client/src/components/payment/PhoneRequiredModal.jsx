@@ -33,10 +33,10 @@ export default function PhoneRequiredModal({ onClose, onSaved }) {
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 px-4 py-6 backdrop-blur-sm overflow-y-auto">
-      <div className="w-full max-w-sm overflow-hidden rounded-2xl border border-red-light/20 bg-[#111] shadow-2xl">
+      <div className="w-full max-w-sm overflow-hidden rounded-2xl border border-gold-light/10 bg-panel shadow-2xl">
         <div className="flex items-start justify-between border-b border-white/10 px-5 py-4">
           <div className="flex items-start gap-3">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-red-light text-white">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-gold-light to-gold-dark text-white">
               <Phone size={20} />
             </span>
             <div>
@@ -52,7 +52,7 @@ export default function PhoneRequiredModal({ onClose, onSaved }) {
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/10 text-gray-400 transition-colors hover:border-red-light/40 hover:text-white"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/10 text-gray-400 transition-colors hover:border-gold-light/30 hover:text-white"
           >
             <X size={18} />
           </button>
@@ -68,7 +68,7 @@ export default function PhoneRequiredModal({ onClose, onSaved }) {
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="08012345678"
-              className="mt-2 h-12 w-full rounded-xl border border-white/10 bg-black/40 px-4 text-white outline-none transition-colors placeholder:text-gray-600 focus:border-red-light/60"
+              className="mt-2 h-12 w-full rounded-xl border border-white/10 bg-black/40 px-4 text-white outline-none transition-colors placeholder:text-gray-600 focus:border-gold-light/40"
             />
           </label>
 
@@ -76,7 +76,7 @@ export default function PhoneRequiredModal({ onClose, onSaved }) {
             type="button"
             onClick={save}
             disabled={!valid || saving}
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-red-dark px-4 text-sm font-bold text-white transition-colors hover:bg-red disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-gray-500"
+            className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-gold-light to-gold-dark px-4 text-sm font-bold text-white transition-colors hover:brightness-110 disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-gray-500"
           >
             {saving ? "Saving..." : "Save and continue"}
           </button>

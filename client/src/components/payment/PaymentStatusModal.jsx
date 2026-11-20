@@ -23,7 +23,7 @@ const statusContent = {
     message:
       "We could not confirm this payment. Please try again or use another payment method.",
     icon: XCircle,
-    iconClass: "bg-red-light text-white",
+    iconClass: "bg-red-500/10 text-red-400",
   },
 };
 
@@ -99,13 +99,13 @@ export default function PaymentStatusModal() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 py-6 backdrop-blur-sm overflow-y-auto">
-      <div className="w-full max-w-md overflow-hidden rounded-2xl border border-red-light/20 bg-[#111] shadow-2xl">
+      <div className="w-full max-w-md overflow-hidden rounded-2xl border border-gold-light/10 bg-panel shadow-2xl">
         <div className="flex justify-end border-b border-white/10 px-4 py-3">
           <button
             type="button"
             onClick={handleClose}
             aria-label="Close payment status"
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-gray-400 transition-colors hover:border-red-light/40 hover:text-white"
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-gray-400 transition-colors hover:border-gold-light/30 hover:text-white"
           >
             <X size={18} />
           </button>
@@ -142,7 +142,7 @@ export default function PaymentStatusModal() {
             type="button"
             onClick={handleClose}
             disabled={isLoading}
-            className="mt-6 flex h-12 w-full items-center justify-center rounded-xl bg-red-dark px-4 text-sm font-bold text-white transition-colors hover:bg-red disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-gray-500"
+            className="mt-6 flex h-12 w-full items-center justify-center rounded-xl bg-gradient-to-r from-gold-light to-gold-dark px-4 text-sm font-bold text-white transition-colors hover:brightness-110 disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-gray-500"
           >
             {isLoading ? "Checking..." : "Okay"}
           </button>
