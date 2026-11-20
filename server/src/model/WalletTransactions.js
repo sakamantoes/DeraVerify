@@ -35,7 +35,7 @@ const walletTransactionSchema = new mongoose.Schema(
 
     paymentMethod: {
       type: String,
-      enum: ["QUEST", "SQUAD", "MANUAL_TRANSFER","ADMIN_REFUND"],
+      enum: ["QUEST", "SQUAD", "MANUAL_TRANSFER","ADMIN_REFUND", "CTEX"],
     },
 
     balanceBefore: Number,
