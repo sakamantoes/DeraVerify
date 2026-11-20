@@ -48,14 +48,13 @@ app.use("/api/notification", notificationRoute);
 app.use("/api/admin", adminRoutes);
 app.use("/api/support", supportRoute);
 
-app.get("/cron-jobs", (req, res) => {
-  CronJob();
+app.get("/cron-jobs", async(req, res) => {
+  await CronJob();
   res.status(200).send("SMSBOWER Cron Job Ran");
 });
 
 app.get("/smspool", async (req, res) => {
-   await DaisyCron();
-  await  SMSPOOLCRON();
+   await Promise.all([DaisyCron(), SMSPOOLCRON()]);
    res.status(200).json({ success: true});
 });
 
