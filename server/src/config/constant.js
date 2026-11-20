@@ -20,5 +20,9 @@ export const env = {
   client_url: process.env.CLIENT_URL,
   sms_pool_api_key: process.env.SMS_POOL_API_KEY,
   quest_api_secret: process.env.QUEST_API_SECRET, 
-  internal_api_secret: process.env.INTERNAL_API_SECRET
+  internal_api_secret: process.env.INTERNAL_API_SECRET,
+  ctex_api_key: process.env.ctex_api_key,
+  ctex_webhook_secret: process.env.ctex_webhook_secret,
+  ctex_base_url: process.env.ctex_base_url,
+  frontend_url: process.env.FRONTEND_URL,
 };

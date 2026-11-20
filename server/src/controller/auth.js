@@ -8,6 +8,16 @@ import mongoose from "mongoose";
 import crypto from "crypto";
 import { sendMail } from "../services/resend.js";
 
+// Accepts 08012345678, +2348012345678, 2348012345678 -> returns 08012345678
+const normalizePhone = (value) => {
+  const digits = String(value || "").replace(/\D/g, "");
+  const local =
+    digits.startsWith("234") && digits.length === 13
+      ? `0${digits.slice(3)}`
+      : digits;
+  return /^0[789]\d{9}$/.test(local) ? local : null;
+};
+
 const googleSetup = async (req, res, next) => {
   const { token } = req.body;
   try {
@@ -69,7 +79,7 @@ const googleSetup = async (req, res, next) => {
 };
 
 const googleVerified = async (req, res, next) => {
-  const { googleId, email, name, picture, emailVerified } = req.body;
+  const { googleId, email, name } = req.body;
 
   try {
     if (!googleId || !email) {
@@ -106,6 +116,7 @@ const googleVerified = async (req, res, next) => {
         email: user.email,
         username: user.username,
         role: user.role,
+        phone: user.phone || null,
       },
     });
   } catch (error) {
@@ -130,6 +141,7 @@ const getAuthUser = async (req, res, next) => {
         email: user.email,
         username: user.username,
         role: user.role,
+        phone: user.phone || null,
       },
     });
   } catch (error) {
@@ -140,8 +152,21 @@ const getAuthUser = async (req, res, next) => {
 const emailSignup = async (req, res, next) => {
   const { email, password, username } = req.body;
   try {
+    // Phone is optional at signup; if sent, it must be valid
+    const phone = req.body.phone ? normalizePhone(req.body.phone) : null;
+    if (req.body.phone && !phone) {
+      res.statusCode = 400;
+      throw new Error("Enter a valid Nigerian phone number, e.g. 08012345678");
+    }
+
+    const normalizedEmail = String(email || "").trim().toLowerCase();
+
     const isUser = await User.findOne({
-      $or: [{ email }, { username }],
+      $or: [
+        { email: normalizedEmail },
+        { username },
+        ...(phone ? [{ phone }] : []),
+      ],
     });
 
     if (isUser) {
@@ -151,9 +176,10 @@ const emailSignup = async (req, res, next) => {
 
     const hashedPassword = await hashPassword(password);
     const user = await User.create({
-      email: email,
+      email: normalizedEmail,
       username,
       password: hashedPassword,
+      ...(phone && { phone }), // never store phone: null (unique sparse index)
     });
 
     const jwtToken = generateToken({
@@ -173,6 +199,13 @@ const emailSignup = async (req, res, next) => {
       },
     });
   } catch (error) {
+    // Two simultaneous signups with the same email/username/phone
+    if (error?.code === 11000) {
+      res.statusCode = 400;
+      return next(
+        new Error("An account with these details could not be created"),
+      );
+    }
     next(error);
   }
 };
@@ -211,6 +244,7 @@ const emailLogin = async (req, res, next) => {
         email: user.email,
         username: user.username,
         role: user.role,
+        phone: user.phone || null,
         token: jwtToken,
       },
     });
@@ -313,6 +347,34 @@ const updateUsername = async (req, res, next) => {
       data: user,
     });
   } catch (error) {
+    next(error);
+  }
+};
+
+const updatePhone = async (req, res, next) => {
+  try {
+    const phone = normalizePhone(req.body.phone);
+    if (!phone) {
+      res.statusCode = 400;
+      throw new Error("Enter a valid Nigerian phone number, e.g. 08012345678");
+    }
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { phone },
+      { new: true },
+    );
+    res.status(200).json({
+      success: true,
+      message: "Phone number saved",
+      data: { phone: user.phone },
+    });
+  } catch (error) {
+    if (error?.code === 11000) {
+      res.statusCode = 400;
+      return next(
+        new Error("This phone number is already linked to another account"),
+      );
+    }
     next(error);
   }
 };
@@ -465,9 +527,10 @@ const resetPassword = async (req, res, next) => {
 
 // EDIT USER WALLET BALANCE
 const editUserWallet = async (req, res, next) => {
-  const { id } = req.params;
-  const { walletBalance } = req.body;
   try {
+    const { id } = req.params;
+    const { walletBalance } = req.body;
+
     // Validate user ID
     if (!id || !mongoose.Types.ObjectId.isValid(id)) {
       res.statusCode = 400;
@@ -489,7 +552,7 @@ const editUserWallet = async (req, res, next) => {
     const user = await User.findByIdAndUpdate(
       id,
       { walletBalance: walletBalance },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     ).select("-password");
 
     if (!user) {
@@ -506,6 +569,7 @@ const editUserWallet = async (req, res, next) => {
         email: user.email,
         walletBalance: user.walletBalance,
         isActive: user.isActive,
+        role: user.role,
       },
     });
   } catch (error) {
@@ -524,8 +588,9 @@ export {
   activateUser,
   updatePassword,
   updateUsername,
+  updatePhone,
   logout,
   forgotPassword,
   resetPassword,
-  editUserWallet
+  editUserWallet,
 };
