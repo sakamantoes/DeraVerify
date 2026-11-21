@@ -1,73 +1,65 @@
 import { Router } from "express";
+import {
+  activateUser,
+  deactivateUser,
+  emailLogin,
+  emailSignup,
+  getAllUser,
+  getAuthUser,
+  googleSetup,
+  googleVerified,
+  updatePassword,
+  updateUsername,
+  forgotPassword,
+  resetPassword,
+  logout,
+} from "../controller/auth.js";
+import authMiddleware, {
+  validateAdminRole,
+} from "../middleware/authMiddleware.js";
+import { loginLimiter } from "../middleware/rateLimiter.js";
 import { validateData } from "../validator/validator.js";
 import {
-  initialiseDeposit,
-  callbackUrlHandler,
-  getPaymentStatus,
-  initializeManualPayment,
-  webhookHandler,
-  initializeQuestPayment,
-  questWebhook,
-  ctexWebhook,
-  initializeCtexPayment,
-} from "../controller/payment.js";
-import {
-  initialiseDepositValidator,
-  callbackUrlValidator,
-  paymentStatusValidator,
-  manualPaymentValidator,
-} from "../validator/payment.validator.js";
-import authMiddleware from "../middleware/authMiddleware.js";
-import { validateUserRole } from "../middleware/authMiddleware.js";
+  googleSchema,
+  forgotPasswordSchema,
+  loginSchema,
+  registerSchema,
+  resetPasswordSchema,
+} from "../validator/auth.validator.js";
+import { verifyInternalSecret } from "../middleware/verifyInternalSecret.js";
 
 const router = Router();
 
-router.post(
-  "/squad/initialize-deposit",
+router.post("/signup", loginLimiter, registerSchema, validateData, emailSignup);
+router.post("/login", loginLimiter, loginSchema, validateData, emailLogin);
+router.post("/google", loginLimiter, googleSchema, validateData, googleSetup);
+router.post("/google-verified", verifyInternalSecret, googleVerified);
+router.post("/logout", logout);
+router.get("/me", authMiddleware, getAuthUser);
+router.get("/allUsers", authMiddleware, validateAdminRole, getAllUser);
+router.put("/activate/:id", authMiddleware, validateAdminRole, activateUser);
+router.put(
+  "/deactivate/:id",
   authMiddleware,
-  validateUserRole,
-  initialiseDepositValidator,
-  validateData,
-  initialiseDeposit,
+  validateAdminRole,
+  deactivateUser,
 );
+router.put("/update-username", authMiddleware, updateUsername);
+router.put("/update-password", authMiddleware, updatePassword);
 
 router.post(
-  "/manual/initialize-deposit",
-  authMiddleware,
-  validateUserRole,
-  manualPaymentValidator,
+  "/forgot/password",
+  loginLimiter,
+  forgotPasswordSchema,
   validateData,
-  initializeManualPayment,
+  forgotPassword,
 );
-
 router.post(
-  "/quest/initialize-deposit",
-  authMiddleware,
-  validateUserRole,
-  initialiseDepositValidator,
+  "/reset-password/:token",
+  loginLimiter,
+  resetPasswordSchema,
   validateData,
-  initializeQuestPayment,
+  resetPassword,
 );
-
-router.post(
-  "/callback",
-  callbackUrlValidator,
-  validateData,
-  callbackUrlHandler,
-);
-
-router.post("/status", paymentStatusValidator, validateData, getPaymentStatus);
-router.post(
-  "/ctex/initialize-deposit",
-  authMiddleware,
-  validateUserRole,
-  initialiseDepositValidator,
-  validateData,
-  initializeCtexPayment,
-);
-router.post("/ctex/webhook", ctexWebhook);
-
-router.post("/webhook", webhookHandler);
-router.post("/quest/webhook", questWebhook);
 
 export default router;
