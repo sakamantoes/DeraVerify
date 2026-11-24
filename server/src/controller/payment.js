@@ -392,7 +392,7 @@ const ensureCtexCustomer = async (user) => {
       firstName: first.slice(0, 100).padEnd(2, "_"),
       lastName: (rest.join(" ") || "User").slice(0, 100).padEnd(2, "_"),
       email: user.email,
-      phone: user.phone,
+      phone: env.ctex_merchant_phone,
       metadata: { userId: String(user._id) },
     });
     customerId = data.data.customer.id;
@@ -426,11 +426,10 @@ const initializeCtexPayment = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id);
 
-    if (!user.phone) {
+    if (!env.ctex_merchant_phone) {
       return res.status(400).json({
         success: false,
-        code: "PHONE_REQUIRED",
-        message: "Add your phone number to continue",
+        message: "CTEX merchant phone number is not configured",
       });
     }
 

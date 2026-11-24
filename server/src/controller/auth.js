@@ -152,20 +152,12 @@ const getAuthUser = async (req, res, next) => {
 const emailSignup = async (req, res, next) => {
   const { email, password, username } = req.body;
   try {
-    // Phone is optional at signup; if sent, it must be valid
-    const phone = req.body.phone ? normalizePhone(req.body.phone) : null;
-    if (req.body.phone && !phone) {
-      res.statusCode = 400;
-      throw new Error("Enter a valid Nigerian phone number, e.g. 08012345678");
-    }
-
     const normalizedEmail = String(email || "").trim().toLowerCase();
 
     const isUser = await User.findOne({
       $or: [
         { email: normalizedEmail },
         { username },
-        ...(phone ? [{ phone }] : []),
       ],
     });
 
@@ -179,7 +171,6 @@ const emailSignup = async (req, res, next) => {
       email: normalizedEmail,
       username,
       password: hashedPassword,
-      ...(phone && { phone }), // never store phone: null (unique sparse index)
     });
 
     const jwtToken = generateToken({
@@ -199,7 +190,7 @@ const emailSignup = async (req, res, next) => {
       },
     });
   } catch (error) {
-    // Two simultaneous signups with the same email/username/phone
+    // Two simultaneous signups with the same email or username
     if (error?.code === 11000) {
       res.statusCode = 400;
       return next(

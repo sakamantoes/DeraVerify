@@ -2,14 +2,9 @@ import { ArrowLeft, ArrowRight, Landmark } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import api from "../../service/api.js";
-import useAuth from "../../store/useAuth.js";
 import { formatCurrency } from "../../utils/transaction.js";
-import PhoneRequiredModal from "./PhoneRequiredModal.jsx";
 
 export default function CtexPayment({ amount, onBack }) {
-  const { user } = useAuth();
-  const profile = user?.data || user || {};
-  const [showPhone, setShowPhone] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const startPayment = async () => {
@@ -32,18 +27,9 @@ export default function CtexPayment({ amount, onBack }) {
 
       window.location.href = checkoutUrl; // CTEX hosted checkout
     } catch (error) {
-      if (error.response?.data?.code === "PHONE_REQUIRED") {
-        setShowPhone(true);
-      } else {
-        toast.error(error.response?.data?.message || "Could not start payment");
-      }
+      toast.error(error.response?.data?.message || "Could not start payment");
       setLoading(false);
     }
-  };
-
-  const handlePay = () => {
-    if (!profile.phone) return setShowPhone(true);
-    startPayment();
   };
 
   return (
@@ -87,7 +73,7 @@ export default function CtexPayment({ amount, onBack }) {
 
           <button
             type="button"
-            onClick={handlePay}
+            onClick={startPayment}
             disabled={loading || !Number(amount)}
             className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-gold-light to-gold-dark px-4 text-sm font-bold text-white transition-colors hover:brightness-110 disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-gray-500"
           >
@@ -97,15 +83,6 @@ export default function CtexPayment({ amount, onBack }) {
         </div>
       </div>
 
-      {showPhone && (
-        <PhoneRequiredModal
-          onClose={() => setShowPhone(false)}
-          onSaved={() => {
-            setShowPhone(false);
-            startPayment();
-          }}
-        />
-      )}
     </div>
   );
 }
