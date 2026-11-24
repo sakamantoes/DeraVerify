@@ -23,6 +23,11 @@ export const env = {
   internal_api_secret: process.env.INTERNAL_API_SECRET,
   ctex_api_key: process.env.ctex_api_key,
   ctex_webhook_secret: process.env.ctex_webhook_secret,
-  ctex_base_url: process.env.ctex_base_url,
+  ctex_base_url:
+    process.env.CTEX_BASE_URL ||
+    process.env.ctex_base_url ||
+    process.env.CTEX_API_BASE_URL ||
+    process.env.ctex_api_base ||
+    "https://api.ctex.online/api/v1",
   frontend_url: process.env.FRONTEND_URL,
 };
