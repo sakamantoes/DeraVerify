@@ -24,6 +24,5 @@ export const env = {
   ctex_api_key: process.env.ctex_api_key,
   ctex_webhook_secret: process.env.ctex_webhook_secret,
   ctex_base_url: process.env.ctex_base_url,
-  ctex_merchant_phone: process.env.CTEX_MERCHANT_PHONE,
   frontend_url: process.env.FRONTEND_URL,
 };

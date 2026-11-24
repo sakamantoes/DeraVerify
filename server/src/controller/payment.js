@@ -11,7 +11,7 @@ import {
 } from "./notificationController.js";
 
 const ctex = axios.create({
-  baseURL: env.ctex_api_base,
+  baseURL: env.ctex_base_url,
   headers: { Authorization: `Bearer ${env.ctex_api_key}` },
   timeout: 30000,
 });
@@ -381,67 +381,33 @@ const initializeQuestPayment = async (req, res, next) => {
 // ---------------------------------------------------------------------------
 // CTEX PAY
 // ---------------------------------------------------------------------------
-const ensureCtexCustomer = async (user) => {
-  if (user.ctexCustomerId) return user.ctexCustomerId;
-
-  const [first, ...rest] = user.username.trim().split(/\s+/);
-  let customerId;
-
-  try {
-    const { data } = await ctex.post("/customers", {
-      firstName: first.slice(0, 100).padEnd(2, "_"),
-      lastName: (rest.join(" ") || "User").slice(0, 100).padEnd(2, "_"),
-      email: user.email,
-      phone: env.ctex_merchant_phone,
-      metadata: { userId: String(user._id) },
-    });
-    customerId = data.data.customer.id;
-  } catch (err) {
-    if (err.response?.status !== 409) throw err;
-
-    // Already exists (created earlier but never saved here): look it up by email
-    const { data } = await ctex.get("/customers", {
-      params: { search: user.email, limit: 100 },
-    });
-    const found = data.data.customers.find(
-      (c) => c.email?.toLowerCase() === user.email.toLowerCase(),
-    );
-
-    if (!found) {
-      const e = new Error(
-        "This phone number is already linked to another customer",
-      );
-      e.statusCode = 400;
-      throw e;
-    }
-    customerId = found.id;
-  }
-
-  await User.updateOne({ _id: user._id }, { ctexCustomerId: customerId });
-  return customerId;
-};
-
 const initializeCtexPayment = async (req, res, next) => {
-  const { amount } = req.body;
+  const amount = Number(req.body.amount);
   try {
     const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
 
-    if (!env.ctex_merchant_phone) {
+    const amountInKobo = Math.round(amount * 100);
+    if (
+      !Number.isFinite(amount) ||
+      amountInKobo < 50 ||
+      amountInKobo > 1_000_000_000
+    ) {
       return res.status(400).json({
         success: false,
-        message: "CTEX merchant phone number is not configured",
+        message: "CTEX payment amount must be between NGN 0.50 and NGN 10,000,000",
       });
     }
 
-    const customerId = await ensureCtexCustomer(user);
     const reference = `waveverify-${user._id}-${crypto.randomBytes(6).toString("hex").toUpperCase()}`;
 
     const { data } = await ctex.post(
       "/payments",
       {
-        amount: Math.round(Number(amount) * 100), // kobo
+        amount: amountInKobo,
         currency: "NGN",
-        customerId,
         reference,
         description: "wallet topup",
         paymentMethod: "ACCOUNT_TRANSFER",
