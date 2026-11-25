@@ -381,6 +381,87 @@ const initializeQuestPayment = async (req, res, next) => {
 // ---------------------------------------------------------------------------
 // CTEX PAY
 // ---------------------------------------------------------------------------
+const getCtexMerchantOwnerPhone = async () => {
+  const { data } = await ctex.get("/merchants/me/owner-phone");
+  const phone = String(data?.data?.ownerPhone || "").trim();
+  const digits = phone.replace(/\D/g, "");
+  const localPhone = digits.startsWith("234") && digits.length === 13
+    ? `0${digits.slice(3)}`
+    : digits;
+
+  if (!/^0[789]\d{9}$/.test(localPhone)) {
+    const error = new Error(
+      "Add a valid Nigerian phone number to the CTEX merchant owner account",
+    );
+    error.statusCode = 400;
+    throw error;
+  }
+
+  return phone;
+};
+
+const ensureCtexCustomer = async (user, ownerPhone) => {
+  if (user.ctexCustomerId) {
+    try {
+      await ctex.patch(`/customers/${encodeURIComponent(user.ctexCustomerId)}`, {
+        phone: ownerPhone,
+      });
+      return user.ctexCustomerId;
+    } catch (error) {
+      if (error.response?.status !== 404) throw error;
+      await User.updateOne(
+        { _id: user._id },
+        { $unset: { ctexCustomerId: 1 } },
+      );
+    }
+  }
+
+  const [first = "User", ...rest] = String(user.username || "User")
+    .trim()
+    .split(/\s+/);
+  const customerDetails = {
+    firstName: first.slice(0, 100).padEnd(2, "_"),
+    lastName: (rest.join(" ") || "User").slice(0, 100).padEnd(2, "_"),
+    email: user.email,
+    phone: ownerPhone,
+    metadata: { userId: String(user._id) },
+  };
+  let customerId;
+
+  try {
+    const { data } = await ctex.post("/customers", customerDetails);
+    customerId = data?.data?.customer?.id;
+  } catch (error) {
+    if (error.response?.status !== 409) throw error;
+
+    const { data } = await ctex.get("/customers", {
+      params: { search: user.email, limit: 100 },
+    });
+    const existingCustomer = data?.data?.customers?.find(
+      (customer) => customer.email?.toLowerCase() === user.email.toLowerCase(),
+    );
+
+    if (!existingCustomer?.id) {
+      const conflict = new Error("Could not find the existing CTEX customer");
+      conflict.statusCode = 409;
+      throw conflict;
+    }
+
+    await ctex.patch(
+      `/customers/${encodeURIComponent(existingCustomer.id)}`,
+      { phone: ownerPhone },
+    );
+    customerId = existingCustomer.id;
+  }
+
+  if (!customerId) {
+    throw new Error("CTEX did not return a customer ID");
+  }
+
+  await User.updateOne({ _id: user._id }, { ctexCustomerId: customerId });
+  return customerId;
+};
+
 const initializeCtexPayment = async (req, res, next) => {
   const amount = Number(req.body.amount);
   try {
@@ -392,6 +473,7 @@ const initializeCtexPayment = async (req, res, next) => {
     const amountInKobo = Math.round(amount * 100);
     if (
       !Number.isFinite(amount) ||
+      !Number.isInteger(amount * 100) ||
       amountInKobo < 50 ||
       amountInKobo > 1_000_000_000
     ) {
@@ -401,6 +483,8 @@ const initializeCtexPayment = async (req, res, next) => {
       });
     }
 
+    const ownerPhone = await getCtexMerchantOwnerPhone();
+    const customerId = await ensureCtexCustomer(user, ownerPhone);
     const reference = `waveverify-${user._id}-${crypto.randomBytes(6).toString("hex").toUpperCase()}`;
 
     const { data } = await ctex.post(
@@ -408,6 +492,7 @@ const initializeCtexPayment = async (req, res, next) => {
       {
         amount: amountInKobo,
         currency: "NGN",
+        customerId,
         reference,
         description: "wallet topup",
         paymentMethod: "ACCOUNT_TRANSFER",
@@ -418,10 +503,13 @@ const initializeCtexPayment = async (req, res, next) => {
     );
 
     const payment = data.data;
+    if (!payment?.checkoutUrl) {
+      throw new Error("CTEX did not return a checkout URL");
+    }
 
     await WalletTransaction.create({
       userId: user._id,
-      amount: Number(amount),
+      amount: amountInKobo / 100,
       type: "DEPOSIT",
       referenceId: reference,
       paymentMethod: "CTEX",
@@ -436,6 +524,18 @@ const initializeCtexPayment = async (req, res, next) => {
     });
   } catch (error) {
     console.log("ctex init:", error.response?.data || error.message);
+    if (error.statusCode) {
+      res.statusCode = error.statusCode;
+    } else if (error.response) {
+      res.statusCode = 502;
+      return res.status(502).json({
+        success: false,
+        message:
+          error.response.status === 401 || error.response.status === 403
+            ? "CTEX API key is invalid or lacks a required permission"
+            : "CTEX could not initialize this payment. Please try again.",
+      });
+    }
     next(error);
   }
 };
