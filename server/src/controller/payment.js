@@ -385,9 +385,12 @@ const getCtexMerchantOwnerPhone = async () => {
   const { data } = await ctex.get("/merchants/me/owner-phone");
   const phone = String(data?.data?.ownerPhone || "").trim();
   const digits = phone.replace(/\D/g, "");
-  const localPhone = digits.startsWith("234") && digits.length === 13
-    ? `0${digits.slice(3)}`
-    : digits;
+  const localPhone =
+    digits.startsWith("234") && digits.length === 13
+      ? `0${digits.slice(3)}`
+      : digits.length === 10 && /^[789]/.test(digits)
+        ? `0${digits}`
+        : digits;
 
   if (!/^0[789]\d{9}$/.test(localPhone)) {
     const error = new Error(
@@ -397,7 +400,7 @@ const getCtexMerchantOwnerPhone = async () => {
     throw error;
   }
 
-  return phone;
+  return localPhone;
 };
 
 const ensureCtexCustomer = async (user, ownerPhone) => {
